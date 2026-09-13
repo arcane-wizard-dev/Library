@@ -1,6 +1,6 @@
 # Arcane Wizard: Library
 
-[![GitHub Release](https://img.shields.io/github/v/release/wow-addon-dev/Library?color=blue&logo=github&cacheSeconds=600)](https://github.com/wow-addon-dev/Library/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/wow-addon-dev/Library?color=blue&logo=github&cacheSeconds=600)](https://github.com/wow-addon-dev/Library/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/arcane-wizard-dev/Library?color=blue&logo=github&cacheSeconds=600)](https://github.com/arcane-wizard-dev/Library/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/arcane-wizard-dev/Library?color=blue&logo=github&cacheSeconds=600)](https://github.com/arcane-wizard-dev/Library/releases)
 
 This addon is a library for World of Warcraft that bundles recurring code segments and functionalities. Originally developed to optimize the code of my own addons, it is designed to be easily utilized by other addon developers.
 

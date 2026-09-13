@@ -14,7 +14,7 @@
 ## X-Revision: 1
 ## X-BuildDate: @build-date@
 ## X-E-Mail: feedback@wow-addon.dev
-## X-Github: https://github.com/wow-addon-dev/Library
+## X-Github: https://github.com/arcane-wizard-dev/Library
 ## X-Curseforge: https://www.curseforge.com/wow/addons/arcane-wizard-library
 ## X-Wago: https://addons.wago.io/addons/arcane-wizard-library
 
