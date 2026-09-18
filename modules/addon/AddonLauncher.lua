@@ -42,6 +42,8 @@ local function ShowTooltip(addon, config, tooltip)
 end
 
 local function HandleClick(addon, config, button)
+	if addon.initializationAborted then return end
+
 	if button == "LeftButton" and config.onLeftClick then
 		config.onLeftClick()
 	elseif button == "RightButton" then

@@ -7,6 +7,10 @@ LIB.Localization = setmetatable({},{__index=function(self,key)
 
 local L = LIB.Localization
 
+-- Initialization
+
+L["error.character-identity-unavailable"] = "Startup aborted: the player GUID, name or realm is unavailable. Please try /reload."
+
 -- Dialog
 
 L["dialog.link.text"] = "To copy the link press CTRL + C."

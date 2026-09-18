@@ -4,6 +4,10 @@ if GetLocale() ~= "deDE" then return end
 
 local L = LIB.Localization
 
+-- Initialization
+
+L["error.character-identity-unavailable"] = "Start abgebrochen: Spieler-GUID, Name oder Realm ist nicht verfügbar. Bitte versuche /reload."
+
 -- Dialog
 
 L["dialog.link.text"] = "Um den Link zu kopieren, drücke STRG + C."

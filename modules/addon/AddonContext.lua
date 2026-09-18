@@ -6,9 +6,11 @@ local _, LIB = ...
 ---@field buildDate string|nil
 ---@field mediaPath string
 ---@field mainCategoryId number|nil
+---@field initializationAborted boolean|nil
 ---@field GetMediaPath fun(self: ArcaneWizardLibraryAddon, fileName: string|nil): string Returns the addon media path or a media file path below it.
 ---@field SetMainCategoryId fun(self: ArcaneWizardLibraryAddon, categoryId: number) Stores the Blizzard settings category ID for this addon.
 ---@field OpenCategory fun(self: ArcaneWizardLibraryAddon): boolean Opens the stored Blizzard settings category when not blocked by combat lockdown.
+---@field AbortInitialization fun(self: ArcaneWizardLibraryAddon, frame: Frame) Stops startup when the player identity is unavailable.
 ---@field RegisterMinimapButton fun(self: ArcaneWizardLibraryAddon, config: table): table Registers a LibDataBroker minimap button for this addon.
 ---@field CreateCompartmentHandlers fun(self: ArcaneWizardLibraryAddon, config: table): table Creates AddonCompartment handler functions for this addon.
 
@@ -55,6 +57,8 @@ function AddonContextMixin:SetMainCategoryId(categoryId)
 end
 
 function AddonContextMixin:OpenCategory()
+	if self.initializationAborted then return false end
+
 	local categoryId = self.mainCategoryId
 
 	assert(categoryId, LIB.CommonData.debugPrefix .. "No Options Category ID defined for " .. tostring(self.name) .. ". The options menu cannot be opened.")
@@ -65,6 +69,17 @@ function AddonContextMixin:OpenCategory()
 	end
 
 	return false
+end
+
+--- Call before initializing settings, feature hooks, or timers if the player identity is unavailable.
+--- Stops the supplied event frame and blocks launcher actions for this session.
+--- Does not unload Lua files or change the addon's enabled state; /reload allows another attempt.
+---@param frame Frame The addon's startup event frame.
+function AddonContextMixin:AbortInitialization(frame)
+	self.initializationAborted = true
+	frame:UnregisterAllEvents()
+	frame:SetScript("OnEvent", nil)
+	print(self.name .. ": " .. LIB.Localization["error.character-identity-unavailable"])
 end
 
 function AddonContextMixin:RegisterMinimapButton(config)

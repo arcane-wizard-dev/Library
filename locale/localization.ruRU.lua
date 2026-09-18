@@ -4,6 +4,10 @@ if GetLocale() ~= "ruRU" then return end
 
 local L = LIB.Localization
 
+-- Initialization
+
+L["error.character-identity-unavailable"] = "Запуск прерван: GUID, имя персонажа или игровой мир недоступны. Попробуйте /reload."
+
 -- Dialog
 
 L["dialog.link.text"] = "Чтобы скопировать ссылку, нажмите CTRL + C."
