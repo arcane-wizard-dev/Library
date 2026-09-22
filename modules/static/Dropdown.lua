@@ -471,6 +471,7 @@ function ArcaneWizardLibrary_DropdownMixin:OpenSubmenu(owner)
 	self:BuildMenuPanel(owner.option.children, owner.panel.depth + 1, owner)
 end
 
+--- Refreshes options and the menu; clears any selection absent from the options.
 function ArcaneWizardLibrary_DropdownMixin:GenerateMenu()
 	self.currentOptions = self:ResolveOptions()
 
@@ -486,6 +487,7 @@ function ArcaneWizardLibrary_DropdownMixin:GenerateMenu()
 	end
 end
 
+--- Opens and refreshes the menu unless disabled or already open.
 function ArcaneWizardLibrary_DropdownMixin:OpenMenu()
 	if not self:IsEnabled() or self.menuOpen then
 		return
@@ -498,6 +500,7 @@ function ArcaneWizardLibrary_DropdownMixin:OpenMenu()
 	self:UpdateVisualState()
 end
 
+--- Closes the dropdown menu and all nested menu panels.
 function ArcaneWizardLibrary_DropdownMixin:CloseMenu()
 	if not self.menuOpen then
 		return
@@ -509,6 +512,7 @@ function ArcaneWizardLibrary_DropdownMixin:CloseMenu()
 	self:UpdateVisualState()
 end
 
+--- Opens or closes the dropdown menu according to its current state.
 function ArcaneWizardLibrary_DropdownMixin:ToggleMenu()
 	if self.menuOpen then
 		self:CloseMenu()
@@ -527,10 +531,16 @@ function ArcaneWizardLibrary_DropdownMixin:SelectOption(option)
 	end
 end
 
+--- Returns the selected option value.
+---
+--- @return string|number|boolean|nil value The selected value, or nil when no option is selected.
 function ArcaneWizardLibrary_DropdownMixin:GetValue()
 	return self.value
 end
 
+--- Selects an option without invoking onValueChanged.
+---
+--- @param value string|number|boolean|nil A value present in the options, or nil to clear the selection.
 function ArcaneWizardLibrary_DropdownMixin:SetValue(value)
 	if value == nil then
 		self.value = nil
@@ -552,18 +562,27 @@ function ArcaneWizardLibrary_DropdownMixin:SetValue(value)
 	end
 end
 
+--- Replaces the options source and refreshes the menu.
+---
+--- @param options ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[] Options or provider.
 function ArcaneWizardLibrary_DropdownMixin:SetOptions(options)
 	assert(type(options) == "table" or type(options) == "function", LIB.CommonData.debugPrefix .. "Dropdown SetOptions options must be a table or function.")
 	self.optionsSource = options
 	self:GenerateMenu()
 end
 
+--- Sets the text displayed when no option is selected.
+---
+--- @param text string The non-empty selection placeholder.
 function ArcaneWizardLibrary_DropdownMixin:SetDefaultText(text)
 	assert(type(text) == "string" and text ~= "", LIB.CommonData.debugPrefix .. "Dropdown SetDefaultText text must be a non-empty string.")
 	self.defaultText = text
 	self:UpdateDisplayedText()
 end
 
+--- Sets the text displayed when the menu has no entries.
+---
+--- @param text string The non-empty empty-menu label.
 function ArcaneWizardLibrary_DropdownMixin:SetEmptyText(text)
 	assert(type(text) == "string" and text ~= "", LIB.CommonData.debugPrefix .. "Dropdown SetEmptyText text must be a non-empty string.")
 	self.emptyText = text

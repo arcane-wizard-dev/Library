@@ -4,11 +4,7 @@ local _, LIB = ...
 --- Public Functions ---
 ------------------------
 
---- Creates a deep copy of a table.
----
---- Copies nested table values recursively.
---- Intended for plain, acyclic SavedVariables-style tables.
---- Metatables are not preserved and cyclic references are not supported.
+--- Deep-copies an acyclic table; metatables are not preserved.
 ---
 --- @param source table The table to copy.
 ---
@@ -29,8 +25,8 @@ end
 
 --- Returns the character and realm name of the current player as separate values.
 ---
---- @return string characterName The character name.
---- @return string realmName The realm name.
+--- @return string|nil characterName The character name, or nil if unavailable.
+--- @return string|nil realmName The realm name, or nil if unavailable.
 function ArcaneWizardLibrary.Utils:GetCharacterAndRealm()
 	local characterName = UnitName("player")
 	local realmName = GetRealmName()
@@ -38,11 +34,9 @@ function ArcaneWizardLibrary.Utils:GetCharacterAndRealm()
 	return characterName, realmName
 end
 
---- Returns the name-based character-realm key used by existing addon versions.
+--- Returns the legacy name-based character-realm key.
 ---
---- This API keeps its name-based format even when a GUID is available.
---- GUID-based addons use GetCharacterGUID and may use this key to find legacy data.
---- @return string? characterRealmKey "CharacterName#RealmName", or nil before names are available.
+--- @return string|nil characterRealmKey "CharacterName#RealmName", or nil if either name is unavailable.
 function ArcaneWizardLibrary.Utils:GetCharacterRealmKey()
 	local characterName, realmName = self:GetCharacterAndRealm()
 	if not characterName or characterName == "" or not realmName or realmName == "" then
@@ -52,9 +46,9 @@ function ArcaneWizardLibrary.Utils:GetCharacterRealmKey()
 	return characterName .. "#" .. realmName
 end
 
---- Returns the current player's complete GUID. Check for nil before using it as a key.
---- This is a separate identity API; it does not change existing name-based keys or SavedVariables.
---- @return string? characterGUID The character identity, or nil if unavailable.
+--- Returns the current player's complete GUID.
+---
+--- @return string|nil characterGUID The GUID, or nil if unavailable.
 function ArcaneWizardLibrary.Utils:GetCharacterGUID()
 	local guid = UnitGUID("player")
 	if not guid or guid == "" then
@@ -64,10 +58,10 @@ function ArcaneWizardLibrary.Utils:GetCharacterGUID()
 	return guid
 end
 
---- Merges missing values from plain SavedVariables tables without replacing existing values.
---- Migration is opt-in: the calling addon selects the tables and handles its own SavedVariables.
---- @param target table The destination table; false and zero are preserved.
---- @param source table The legacy table.
+--- Recursively fills missing values without replacing existing values.
+---
+--- @param target table The table to update in place.
+--- @param source table The values to copy from.
 function ArcaneWizardLibrary.Utils:MergeMissingTableEntries(target, source)
 	for key, value in pairs(source) do
 		if target[key] == nil then

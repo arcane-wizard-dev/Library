@@ -4,6 +4,8 @@
 
 **Important note: This is an initial test version for World of Warcraft: Forever. Some addon features may not work correctly yet.**
 
-- Added: Shared helpers for character GUIDs and migration of existing addon data, while retaining name-based identity helpers for existing addon versions
-- Added: Shared handling for aborting addon initialization when the player identity is unavailable
-- Added: TOC version for patch 1.60.1 [forever]
+- Added: Separate version checks for Retail and Forever
+- Added: Centralized settings and GUID-based profiles with shared defaults and version-based cleanup
+- Changed: Character profile labels now include the current character's name
+- Changed: Standardized and shortened API comments
+- Deprecated: Combined game-version flag, retained for compatibility

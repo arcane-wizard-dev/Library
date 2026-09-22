@@ -62,10 +62,9 @@ StaticPopupDialogs["ARCANE_WIZARD_LIB_CONFIRM"] = {
 --- Public Functions ---
 ------------------------
 
---- Shows a popup dialog with a copyable text/link field.
---- The text inside the edit box is automatically highlighted for easy copying (Ctrl+C).
+--- Shows a dialog with preselected, copyable text.
 ---
---- @param address string The URL or text to be displayed in the edit box.
+--- @param address string The URL or text to display.
 function ArcaneWizardLibrary.Dialogs:ShowLinkDialog(address)
 	StaticPopup_Show("ARCANE_WIZARD_LIB_LINK", nil, nil, address)
 end

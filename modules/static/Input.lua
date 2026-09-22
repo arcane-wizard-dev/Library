@@ -166,6 +166,9 @@ function ArcaneWizardLibrary_InputMixin:UpdateVisualState()
 	self:UpdateClearButton()
 end
 
+--- Sets the text displayed while the unfocused input is empty.
+---
+--- @param text string The placeholder text; an empty string hides it.
 function ArcaneWizardLibrary_InputMixin:SetPlaceholder(text)
 	assert(type(text) == "string", LIB.CommonData.debugPrefix .. "Input SetPlaceholder text must be a string.")
 
@@ -174,6 +177,9 @@ function ArcaneWizardLibrary_InputMixin:SetPlaceholder(text)
 	self:UpdatePlaceholder()
 end
 
+--- Returns the configured placeholder text.
+---
+--- @return string text The placeholder text.
 function ArcaneWizardLibrary_InputMixin:GetPlaceholder()
 	return self.placeholderText
 end

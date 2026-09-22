@@ -69,12 +69,12 @@ end
 --- Public Functions ---
 ------------------------
 
---- Adds a clickable button to the settings layout.
+--- Adds a button to the settings layout.
 ---
---- @param layout table The layout object to append the initializer to.
---- @param config table Configuration table. Expected keys: name, buttonText, onClick, tooltip. Optional keys: parentInit, parentCondition, shownPredicate.
+--- @param layout table The settings layout.
+--- @param config table Button text, callback, tooltip and optional visibility settings.
 ---
---- @return table initializer The layout initializer object for the button.
+--- @return table initializer The button initializer.
 function ArcaneWizardLibrary.Settings:AddButton(layout, config)
 	local initializer = CreateSettingsButtonInitializer(
 		config.name,
@@ -91,12 +91,12 @@ function ArcaneWizardLibrary.Settings:AddButton(layout, config)
 	return initializer
 end
 
---- Adds a static text row to the settings layout, typically used for key-value pairs (e.g., in an "About" section).
+--- Adds a static text row to the settings layout.
 ---
---- @param layout table The layout object to append the initializer to.
---- @param config table Configuration table. Expected keys: leftText, rightText. Optional keys: height number|string ("compact" or "default"), parentInit, parentCondition, shownPredicate.
+--- @param layout table The settings layout.
+--- @param config table Left/right text and optional height and visibility settings.
 ---
---- @return table initializer The layout initializer object for the text panel.
+--- @return table initializer The text row initializer.
 function ArcaneWizardLibrary.Settings:AddInfoText(layout, config)
 	local initializer = Settings.CreateElementInitializer("ArcaneWizardLibrary_SettingsPanelText", {
 		leftText = config.leftText or "",
@@ -114,13 +114,13 @@ function ArcaneWizardLibrary.Settings:AddInfoText(layout, config)
 	return initializer
 end
 
---- Registers and adds a standard checkbox to the settings layout.
+--- Registers a checkbox in the settings category.
 ---
---- @param category table The settings category object.
---- @param config table Configuration table. Expected keys: settingKey, variableName, variableTable, name, tooltip, default. Optional keys: parentInit, parentCondition, shownPredicate, onClick.
+--- @param category table The settings category.
+--- @param config table Variable binding, label, tooltip, default and optional behavior settings.
 ---
---- @return table initializer The layout initializer object for the checkbox.
---- @return table setting The registered setting object.
+--- @return table initializer The checkbox initializer.
+--- @return table setting The registered setting.
 function ArcaneWizardLibrary.Settings:AddCheckbox(category, config)
 	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, Settings.VarType.Boolean, config.name, config.default or false)
 	local initializer = Settings.CreateCheckbox(category, setting, config.tooltip)
@@ -131,13 +131,13 @@ function ArcaneWizardLibrary.Settings:AddCheckbox(category, config)
 	return initializer, setting
 end
 
---- Registers and adds a Slider element to the settings layout.
+--- Registers a slider in the settings category.
 ---
---- @param category table The settings category object.
---- @param config table Configuration table. Expected keys: settingKey, variableName, variableTable, name, tooltip, default, minValue, maxValue, step, formatter. Optional keys: parentInit, parentCondition, shownPredicate, onClick.
+--- @param category table The settings category.
+--- @param config table Variable binding, label, range, step, default and optional behavior settings.
 ---
---- @return table initializer The layout initializer object for the slider.
---- @return table setting The registered setting object.
+--- @return table initializer The slider initializer.
+--- @return table setting The registered setting.
 function ArcaneWizardLibrary.Settings:AddSlider(category, config)
 	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, Settings.VarType.Number, config.name, config.default or 1)
 	local options = Settings.CreateSliderOptions(config.minValue or 1, config.maxValue or 10, config.step or 1)
@@ -154,15 +154,15 @@ function ArcaneWizardLibrary.Settings:AddSlider(category, config)
 	return initializer, setting
 end
 
---- Registers and adds a combined Checkbox and Slider element to the settings layout.
+--- Registers a combined checkbox and slider.
 ---
---- @param category table The settings category object.
---- @param layout table The layout object to append the initializer to.
---- @param config table Configuration table. Expected keys: checkboxSettingKey, checkboxVariableName, checkboxName, checkboxTooltip, checkboxDefault, sliderSettingKey, sliderVariableName, sliderName, sliderTooltip, sliderDefault, sliderMin, sliderMax, sliderStep, sliderFormatter, variableTable. Optional keys: parentInit, parentCondition, shownPredicate.
+--- @param category table The settings category.
+--- @param layout table The settings layout.
+--- @param config table Checkbox and slider bindings, labels, defaults, range and optional visibility settings.
 ---
---- @return table initializer The layout initializer object for the combined element.
---- @return table settingCheckbox The registered setting object for the checkbox.
---- @return table settingSlider The registered setting object for the slider.
+--- @return table initializer The combined initializer.
+--- @return table settingCheckbox The checkbox setting.
+--- @return table settingSlider The slider setting.
 function ArcaneWizardLibrary.Settings:AddCheckboxSliderCombo(category, layout, config)
 	local settingCheckbox = Settings.RegisterAddOnSetting(category, config.checkboxSettingKey, config.checkboxVariableName, config.variableTable, Settings.VarType.Boolean, config.checkboxName, config.checkboxDefault or false)
 	local settingSlider = Settings.RegisterAddOnSetting(category, config.sliderSettingKey, config.sliderVariableName, config.variableTable, Settings.VarType.Number, config.sliderName, config.sliderDefault or 1)
@@ -182,13 +182,13 @@ function ArcaneWizardLibrary.Settings:AddCheckboxSliderCombo(category, layout, c
 	return initializer, settingCheckbox, settingSlider
 end
 
---- Registers and adds a Dropdown menu to the settings layout.
+--- Registers a dropdown in the settings category.
 ---
---- @param category table The settings category object.
---- @param config table Configuration table. Expected keys: settingKey, variableName, variableTable, name, tooltip, default, options. Optional keys: parentInit, parentCondition, shownPredicate, onClick.
+--- @param category table The settings category.
+--- @param config table Variable binding, label, options, default and optional behavior settings.
 ---
---- @return table initializer The layout initializer object for the dropdown.
---- @return table setting The registered setting object.
+--- @return table initializer The dropdown initializer.
+--- @return table setting The registered setting.
 function ArcaneWizardLibrary.Settings:AddDropdown(category, config)
 	local varType = type(config.default) == "string" and Settings.VarType.String or Settings.VarType.Number
 	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, varType, config.name, config.default)
@@ -242,6 +242,11 @@ function ArcaneWizardLibrary.Settings:AddProfilesSection(layout, config)
 	if config.useAccountProfile then
 		profileModeText = L["settings.profiles.mode.account"]
 		switchButtonText = L["settings.profiles.switch.button.account-to-character"]
+	else
+		local characterName = UnitName("player")
+		if characterName and characterName ~= "" then
+			profileModeText = profileModeText .. " (" .. characterName .. ")"
+		end
 	end
 
 	layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["settings.profiles.section-header"]))

@@ -457,6 +457,13 @@ local function CreateTabButton(tabGroup, id, text)
 	)
 end
 
+--- Adds a tab and its content page; selects the first tab automatically.
+---
+--- @param tabGroup ArcaneWizardLibraryTabGroup The owning tab group.
+--- @param id string The unique, non-empty tab identifier.
+--- @param text string The non-empty tab label.
+---
+--- @return ArcaneWizardLibraryTabPage page The created content page.
 local function AddTab(tabGroup, id, text)
 	assert(type(id) == "string" and id ~= "", LIB.CommonData.debugPrefix .. "AddTab id must be a non-empty string.")
 	assert(type(text) == "string" and text ~= "", LIB.CommonData.debugPrefix .. "AddTab text must be a non-empty string.")
@@ -485,6 +492,12 @@ local function AddTab(tabGroup, id, text)
 	return page
 end
 
+--- Selects an enabled tab; calls onTabChanged only when the selection changes.
+---
+--- @param tabGroup ArcaneWizardLibraryTabGroup The owning tab group.
+--- @param id string The registered tab identifier.
+---
+--- @return ArcaneWizardLibraryTabPage page The selected content page.
 local function SelectTab(tabGroup, id)
 	local entry = tabGroup.tabsById[id]
 	assert(entry, LIB.CommonData.debugPrefix .. "SelectTab id is not registered.")
@@ -515,6 +528,12 @@ local function SelectTab(tabGroup, id)
 	return entry.page
 end
 
+--- Returns the selected tab and its content page.
+---
+--- @param tabGroup ArcaneWizardLibraryTabGroup The owning tab group.
+---
+--- @return string|nil id The selected tab identifier, or nil when no tab is selected.
+--- @return ArcaneWizardLibraryTabPage|nil page The selected content page, or nil.
 local function GetSelectedTab(tabGroup)
 	local entry = tabGroup.selectedTabId and tabGroup.tabsById[tabGroup.selectedTabId]
 	if not entry then
@@ -524,6 +543,11 @@ local function GetSelectedTab(tabGroup)
 	return entry.id, entry.page
 end
 
+--- Enables or disables a tab, selecting an enabled replacement when necessary.
+---
+--- @param tabGroup ArcaneWizardLibraryTabGroup The owning tab group.
+--- @param id string The registered tab identifier.
+--- @param enabled boolean Whether the tab can be selected.
 local function SetTabEnabled(tabGroup, id, enabled)
 	local entry = tabGroup.tabsById[id]
 	assert(entry, LIB.CommonData.debugPrefix .. "SetTabEnabled id is not registered.")
@@ -558,6 +582,10 @@ local function SetTabEnabled(tabGroup, id, enabled)
 	end
 end
 
+--- Sets the callback invoked when the selected tab changes.
+---
+--- @param tabGroup ArcaneWizardLibraryTabGroup The owning tab group.
+--- @param callback fun(id: string|nil, page: ArcaneWizardLibraryTabPage|nil)|nil The callback, or nil to remove it.
 local function SetOnTabChanged(tabGroup, callback)
 	assert(callback == nil or type(callback) == "function", LIB.CommonData.debugPrefix .. "SetOnTabChanged callback must be a function or nil.")
 	tabGroup.onTabChanged = callback
@@ -567,14 +595,11 @@ end
 --- Public Functions ---
 ------------------------
 
---- Creates a scalable window with an integrated title bar.
----
---- The returned frame is hidden and centered by default. Add child controls to frame.content.
---- Use frame.titleText:SetText() to change the title after creation.
+--- Creates a hidden, centered window with a title bar and frame.content.
 ---
 --- @param config ArcaneWizardLibraryWindowConfig Window configuration.
 ---
---- @return ArcaneWizardLibraryWindowFrame frame The created window frame.
+--- @return ArcaneWizardLibraryWindowFrame frame The created window.
 function ArcaneWizardLibrary.Frames:CreateWindow(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateWindow config must be a table.")
 
@@ -612,13 +637,11 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 	return frame
 end
 
---- Creates a scalable popup with an optional thin frame.
----
---- The returned frame is hidden and centered by default. Add child controls to frame.content.
+--- Creates a hidden, centered popup with frame.content and an optional border.
 ---
 --- @param config ArcaneWizardLibraryPopupConfig Popup configuration.
 ---
---- @return ArcaneWizardLibraryPopupFrame frame The created popup frame.
+--- @return ArcaneWizardLibraryPopupFrame frame The created popup.
 function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreatePopup config must be a table.")
 
@@ -659,12 +682,9 @@ function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	return frame
 end
 
---- Creates a tab group attached to the bottom of a Library window.
+--- Creates window tabs whose pages fill window.content; the first added tab is selected.
 ---
---- Each tab creates a page that fills window.content without adding another inset.
---- The first added tab is selected automatically.
----
---- @param window ArcaneWizardLibraryWindowFrame Window that owns the tab group.
+--- @param window ArcaneWizardLibraryWindowFrame The owning window.
 ---
 --- @return ArcaneWizardLibraryTabGroup tabGroup The created tab group.
 function ArcaneWizardLibrary.Frames:CreateTabGroup(window)

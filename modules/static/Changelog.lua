@@ -192,14 +192,12 @@ end
 --- Public Functions ---
 ------------------------
 
---- Opens an addon's changelog window.
+--- Opens the addon's changelog window, creating it on first use.
 ---
---- A separate window is created for each addon name on first use and then reused.
+--- @param addonName string The addon name.
+--- @param versions ArcaneWizardLibraryChangelogVersion[] Changelog versions.
 ---
---- @param addonName string Addon name displayed in the window title.
---- @param versions ArcaneWizardLibraryChangelogVersion[] Structured changelog versions.
----
---- @return ArcaneWizardLibraryWindowFrame frame The addon's changelog window.
+--- @return ArcaneWizardLibraryWindowFrame frame The changelog window.
 function ArcaneWizardLibrary.Frames:OpenChangelog(addonName, versions)
 	assert(type(addonName) == "string" and addonName ~= "", LIB.CommonData.debugPrefix .. "OpenChangelog addonName must be a non-empty string.")
 	ValidateChangelog(versions, addonName)

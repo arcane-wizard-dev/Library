@@ -352,10 +352,16 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	group.buttonsByValue = {}
 	group.enabled = true
 
+	--- Returns the selected option value.
+	---
+	--- @return string|number|boolean value The selected value.
 	function group:GetValue()
 		return self.value
 	end
 
+	--- Selects an option without invoking onValueChanged.
+	---
+	--- @param value string|number|boolean A value present in the option group.
 	function group:SetValue(value)
 		local selectedButton = self.buttonsByValue[value]
 		assert(selectedButton ~= nil, LIB.CommonData.debugPrefix .. "OptionGroup SetValue value must match an option value.")
@@ -366,6 +372,9 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 		end
 	end
 
+	--- Enables or disables every option in the group.
+	---
+	--- @param enabled boolean Whether the options can be selected.
 	function group:SetEnabled(enabled)
 		assert(type(enabled) == "boolean", LIB.CommonData.debugPrefix .. "OptionGroup SetEnabled enabled must be a boolean.")
 

@@ -358,6 +358,9 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	CreateScrollableContent(frame)
 	CreateScrollBar(frame)
 
+	--- Updates the content height and scroll range, keeping at least the viewport height.
+	---
+	--- @param contentHeight number The non-negative content height in pixels.
 	function frame:SetContentHeight(contentHeight)
 		assert(type(contentHeight) == "number" and contentHeight >= 0, LIB.CommonData.debugPrefix .. "ScrollFrame SetContentHeight contentHeight must be a non-negative number.")
 
@@ -365,11 +368,17 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 		UpdateContentSize(self)
 	end
 
+	--- Sets the scroll distance used by the mouse wheel and arrow buttons.
+	---
+	--- @param scrollStep number The positive scroll distance in pixels.
 	function frame:SetScrollStep(scrollStep)
 		assert(type(scrollStep) == "number" and scrollStep > 0, LIB.CommonData.debugPrefix .. "ScrollFrame SetScrollStep scrollStep must be greater than zero.")
 		self.scrollStep = scrollStep
 	end
 
+	--- Sets the vertical scroll offset, clamped to the current scroll range.
+	---
+	--- @param value number The requested vertical offset in pixels.
 	function frame:SetVerticalScroll(value)
 		assert(type(value) == "number", LIB.CommonData.debugPrefix .. "ScrollFrame SetVerticalScroll value must be a number.")
 
@@ -377,14 +386,19 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 		self.scrollBar:SetValue(math.max(minimum, math.min(value, maximum)))
 	end
 
+	--- Returns the current vertical scroll offset.
+	---
+	--- @return number value The vertical offset in pixels.
 	function frame:GetVerticalScroll()
 		return self.scrollBar:GetValue()
 	end
 
+	--- Scrolls to the top of the content.
 	function frame:ScrollToTop()
 		self:SetVerticalScroll(0)
 	end
 
+	--- Scrolls to the bottom of the content.
 	function frame:ScrollToBottom()
 		local _, maximum = self.scrollBar:GetMinMaxValues()
 		self:SetVerticalScroll(maximum)
