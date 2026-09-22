@@ -67,7 +67,7 @@ This library provides pre-built solutions for common addon functionalities.
 ## Supported Languages & Flavors
 
 * Languages: English, German, Russian
-* Flavors: Classic, Burning Crusade - Classic Anniversary Edition, Mists of Pandaria - Classic, Retail
+* Flavors: Classic, Burning Crusade - Classic Anniversary Edition, Mists of Pandaria - Classic, Retail, Forever
 
 ## Bugs & Feedback
 
