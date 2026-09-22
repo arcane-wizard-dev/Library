@@ -1,3 +1,10 @@
+**v1.35 (2026-09-22)**
+- Added: Separate version checks for Retail and Forever
+- Added: Centralized settings and GUID-based profiles with shared defaults and version-based cleanup
+- Changed: Character profile labels now include the current character's name
+- Changed: Standardized and shortened API comments
+- Deprecated: Combined game-version flag, retained for compatibility
+
 **v1.34 (2026-09-18)**
 - Added: Shared helpers for character GUIDs and migration of existing addon data, while retaining name-based identity helpers for existing addon versions
 - Added: Shared handling for aborting addon initialization when the player identity is unavailable
