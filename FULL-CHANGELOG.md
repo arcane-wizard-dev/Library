@@ -8,7 +8,7 @@
 **v1.34 (2026-09-18)**
 - Added: Shared helpers for character GUIDs and migration of existing addon data, while retaining name-based identity helpers for existing addon versions
 - Added: Shared handling for aborting addon initialization when the player identity is unavailable
-- Added: TOC version for patch 1.60.1 [forever]
+- Added: Support for 'Forever'
 
 **v1.33 (2026-09-13)**
 - Updated: GitHub links following the organization rename to 'arcane-wizard-dev'

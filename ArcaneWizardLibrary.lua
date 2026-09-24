@@ -22,18 +22,18 @@ AWL.ADDON_REVISION = C_AddOns.GetAddOnMetadata(addonName, "X-Revision")
 AWL.GAME_VERSION = GetBuildInfo()
 local interfaceVersion = select(4, GetBuildInfo())
 
-AWL.GAME_TYPE_VANILLA = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+AWL.GAME_TYPE_CLASSIC = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+-- Compatibility for published addons; new code uses CLASSIC.
+AWL.GAME_TYPE_VANILLA = AWL.GAME_TYPE_CLASSIC
 AWL.GAME_TYPE_TBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
 ---@diagnostic disable-next-line: undefined-global
 AWL.GAME_TYPE_MISTS = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC)
--- Compatibility for published addons; new code uses RETAIL and FOREVER directly.
-AWL.GAME_TYPE_MAINLINE = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
 AWL.GAME_TYPE_RETAIL = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) and interfaceVersion >= 120000
 AWL.GAME_TYPE_FOREVER = (interfaceVersion == 16001)
 
 AWL.GAME_FLAVOR = "unknown"
 
-if AWL.GAME_TYPE_VANILLA then
+if AWL.GAME_TYPE_CLASSIC then
 	AWL.GAME_FLAVOR = "Classic"
 elseif AWL.GAME_TYPE_TBC then
 	AWL.GAME_FLAVOR = "Burning Crusade - Classic Anniversary Edition"

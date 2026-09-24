@@ -21,21 +21,21 @@ This library provides pre-built solutions for common addon functionalities.
 
 #### Frames
 
-* <sup>✨ NEW</sup> Windows: Provides consistently styled, movable windows with configurable backgrounds, borders, portraits, and close buttons.
-* <sup>✨ NEW</sup> Window Tabs: Provides bottom text tabs with automatically managed content pages.
-* <sup>✨ NEW</sup> Popups: Provides compact popups with configurable backgrounds, borders, and close buttons.
+* Windows: Provides consistently styled, movable windows with configurable backgrounds, borders, portraits, and close buttons.
+* Window Tabs: Provides bottom text tabs with automatically managed content pages.
+* Popups: Provides compact popups with configurable backgrounds, borders, and close buttons.
 
 #### Scroll Frames
 
-* <sup>✨ NEW</sup> Provides scroll areas with transparent, solid, or patterned backgrounds, optional borders, custom vertical scrollbars, and mouse-wheel support across supported game versions.
+* Provides scroll areas with transparent, solid, or patterned backgrounds, optional borders, custom vertical scrollbars, and mouse-wheel support across supported game versions.
 
 #### Controls
 
-* <sup>✨ NEW</sup> Provides consistently styled action buttons with classic or red styles, checkboxes, option groups, input fields, and dropdown menus across supported game versions.
+* Provides consistently styled action buttons with classic or red styles, checkboxes, option groups, input fields, and dropdown menus across supported game versions.
 
 #### Prebuilt Windows
 
-* <sup>✨ NEW</sup> Changelog Window: Provides a reusable single-page changelog with a localized button for the addon options menu.
+* Changelog Window: Provides a reusable single-page changelog with a localized button for the addon options menu.
 
 #### Dialogs
 
@@ -67,7 +67,7 @@ This library provides pre-built solutions for common addon functionalities.
 ## Supported Languages & Flavors
 
 * Languages: English, German, Russian
-* Flavors: Classic, Burning Crusade - Classic Anniversary Edition, Mists of Pandaria - Classic, Retail, Forever
+* Flavors: Classic, Burning Crusade - Classic Anniversary Edition, Mists of Pandaria - Classic, Forever, Retail
 
 ## Bugs & Feedback
 
