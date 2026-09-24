@@ -1,3 +1,7 @@
+**v1.36 (2026-09-24)**
+- Changed: Renamed the Classic flag to `GAME_TYPE_CLASSIC`, retaining `GAME_TYPE_VANILLA` for compatibility
+- Removed: Combined game-version flag `GAME_TYPE_MAINLINE`
+
 **v1.35 (2026-09-22)**
 - Added: Separate version checks for Retail and Forever
 - Added: Centralized settings and GUID-based profiles with shared defaults and version-based cleanup
