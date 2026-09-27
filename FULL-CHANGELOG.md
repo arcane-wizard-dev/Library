@@ -1,3 +1,7 @@
+**v1.37 (2026-09-27)**
+- Removed: Deprecated game-version alias `GAME_TYPE_VANILLA`
+- Minor code adjustments
+
 **v1.36 (2026-09-24)**
 - Changed: Renamed the Classic flag to `GAME_TYPE_CLASSIC`, retaining `GAME_TYPE_VANILLA` for compatibility
 - Removed: Combined game-version flag `GAME_TYPE_MAINLINE`
