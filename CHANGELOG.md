@@ -4,5 +4,5 @@
 
 **Important note: This is an initial test version for World of Warcraft: Forever. Some addon features may not work correctly yet.**
 
-- Changed: Renamed the Classic flag to `GAME_TYPE_CLASSIC`, retaining `GAME_TYPE_VANILLA` for compatibility
-- Removed: Combined game-version flag `GAME_TYPE_MAINLINE`
+- Removed: Deprecated game-version alias `GAME_TYPE_VANILLA`
+- Minor code adjustments

@@ -19,12 +19,10 @@ AWL.ADDON_VERSION = C_AddOns.GetAddOnMetadata(addonName, "Version")
 AWL.ADDON_BUILD_DATE = C_AddOns.GetAddOnMetadata(addonName, "X-BuildDate")
 AWL.ADDON_REVISION = C_AddOns.GetAddOnMetadata(addonName, "X-Revision")
 
-AWL.GAME_VERSION = GetBuildInfo()
-local interfaceVersion = select(4, GetBuildInfo())
+local gameVersion, _, _, interfaceVersion = GetBuildInfo()
+AWL.GAME_VERSION = gameVersion
 
 AWL.GAME_TYPE_CLASSIC = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
--- Compatibility for published addons; new code uses CLASSIC.
-AWL.GAME_TYPE_VANILLA = AWL.GAME_TYPE_CLASSIC
 AWL.GAME_TYPE_TBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
 ---@diagnostic disable-next-line: undefined-global
 AWL.GAME_TYPE_MISTS = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC)
