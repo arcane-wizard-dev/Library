@@ -16,45 +16,35 @@ This library provides pre-built solutions for common addon functionalities.
 
 #### Addon Context
 
-* Registers addon contexts.
-* Provides addon-dependent helpers for settings category opening, minimap buttons, and AddonCompartment handlers.
+Provides a shared starting point for each addon, handling registration and access to its settings, minimap button, and AddonCompartment entry.
 
 #### Frames
 
-* Windows: Provides consistently styled, movable windows with configurable backgrounds, borders, portraits, and close buttons.
-* Window Tabs: Provides bottom text tabs with automatically managed content pages.
-* Popups: Provides compact popups with configurable backgrounds, borders, and close buttons.
+Creates consistently styled, movable windows and compact popups with configurable appearance, plus bottom tabs that manage their associated content pages.
 
 #### Scroll Frames
 
-* Provides scroll areas with transparent, solid, or patterned backgrounds, optional borders, custom vertical scrollbars, and mouse-wheel support across supported game versions.
+Displays longer content in scrollable areas with configurable backgrounds and borders, custom vertical scrollbars, and mouse-wheel support across supported game versions.
 
 #### Controls
 
-* Provides consistently styled action buttons with classic or red styles, checkboxes, option groups, input fields, and dropdown menus across supported game versions.
+Provides reusable buttons, selection controls, and text inputs with consistent styling and behavior across supported game versions.
 
 #### Prebuilt Windows
 
-* Changelog Window: Provides a reusable single-page changelog with a localized button for the addon options menu.
+Provides a ready-to-use changelog window that presents an addon's release history on a single page and includes a localized button to open its settings.
 
 #### Dialogs
 
-* Link Dialog: Shows a popup with an auto-highlighted text field for easy copying.
-* Confirmation Dialog: Displays a standard Yes/No prompt to confirm actions and execute callbacks.
+Handles common interactions through a link popup with preselected text for copying and a Yes/No confirmation dialog that runs the addon's chosen action.
 
 #### Utilities
 
-* Provides helper methods for common addon values, such as character keys and split character/realm values.
-* Includes a deep table copy helper.
+Supplies shared helpers for character identifiers, separate character and realm values, and independent copies of nested tables.
 
 #### Settings API Wrappers
 
-* Adds standard UI elements to the Blizzard options menu.
-* Includes standard Profiles and About sections.
-* Supports buttons and static info text rows with configurable height presets.
-* Supports checkboxes, sliders, and dropdown menus.
-* Supports combined checkbox and slider elements.
-* Supports expandable headers to organize settings sections.
+Builds addon settings within Blizzard's options menu using standard controls, information rows, and reusable Profiles and About sections. Collapsible groups, freely placed horizontal separators, and optional New badges help organize and highlight settings.
 
 ### How to Integrate
 
