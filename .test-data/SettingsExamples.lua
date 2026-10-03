@@ -100,12 +100,21 @@ local healthWarning = AWL.Settings:AddCheckboxSliderCombo(category, layout, {
 AWL.Settings:AddButton(layout, {
 	name = "Warning preview",
 	buttonText = "Test warning",
-	tooltip = "Print the selected health threshold and warning style in chat.",
+	tooltip = "Show a warning popup with Yes/No buttons. Confirm to print the selected health threshold and warning style in chat.",
 	parentInit = healthWarning,
 	parentCondition = function() return values.healthWarning end,
 	shownPredicate = isCombatExpanded,
 	onClick = function()
-		print("Library: Low health below " .. FormatPercent(values.healthThreshold) .. " (" .. values.warningStyle .. ").")
+		local message = "Library: Low health below " .. FormatPercent(values.healthThreshold) .. " (" .. values.warningStyle .. ")."
+		AWL.Dialogs:ShowConfirmDialog(
+			message .. "\n\nRun this test action?",
+			function()
+				print(message)
+			end,
+			function()
+				print("Library: Warning test cancelled.")
+			end
+		)
 	end
 })
 
