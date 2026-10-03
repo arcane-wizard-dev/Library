@@ -1,6 +1,6 @@
 local AWL = ArcaneWizardLibrary
 
-local portraitPath = "Interface\\AddOns\\ArcaneWizardLibrary\\assets\\icon.blp"
+local portraitPath = "Interface\\AddOns\\ArcaneWizardLibrary\\assets\\icon.tga"
 local exampleArea = CreateFrame("Frame", nil, UIParent)
 exampleArea:SetSize(1260, 640)
 exampleArea:SetPoint("CENTER", UIParent, "CENTER", 0, 100)

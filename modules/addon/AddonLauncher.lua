@@ -58,7 +58,7 @@ end
 function AddonLauncher:RegisterMinimapButton(addon, config)
 	config = config or {}
 
-	local iconFileName = config.iconFileName or "icon-round.blp"
+	local iconFileName = config.iconFileName or "icon-round.tga"
 	local dataBroker = LibStub("LibDataBroker-1.1")
 	local dataObject = dataBroker:GetDataObjectByName(addon.name)
 

@@ -46,6 +46,14 @@ local function ApplyInitializerConfig(initializer, config)
 	if config.shownPredicate then
 		initializer:AddShownPredicate(config.shownPredicate)
 	end
+
+	if config.isNew ~= nil then
+		hooksecurefunc(initializer, "InitFrame", function(_, frame)
+			if frame.NewFeature then
+				frame.NewFeature:SetShown(config.isNew)
+			end
+		end)
+	end
 end
 
 local function ApplySettingConfig(setting, config)
@@ -72,7 +80,7 @@ end
 --- Adds a button to the settings layout.
 ---
 --- @param layout table The settings layout.
---- @param config table Button text, callback, tooltip and optional visibility settings.
+--- @param config table Button text, callback, tooltip, optional visibility settings and isNew badge.
 ---
 --- @return table initializer The button initializer.
 function ArcaneWizardLibrary.Settings:AddButton(layout, config)
@@ -114,10 +122,26 @@ function ArcaneWizardLibrary.Settings:AddInfoText(layout, config)
 	return initializer
 end
 
+--- Adds a freely placed horizontal separator to the settings layout.
+---
+--- @param layout table The settings layout.
+---
+--- @return table initializer The separator initializer.
+function ArcaneWizardLibrary.Settings:AddSeparator(layout)
+	local initializer = Settings.CreateElementInitializer("ArcaneWizardLibrary_SettingsSeparatorTemplate", LIB.SETTINGS_SEPARATOR)
+	local line = layout:AddInitializer(initializer)
+
+	function line:GetExtent()
+		return LIB.SETTINGS_SEPARATOR.height
+	end
+
+	return initializer
+end
+
 --- Registers a checkbox in the settings category.
 ---
 --- @param category table The settings category.
---- @param config table Variable binding, label, tooltip, default and optional behavior settings.
+--- @param config table Variable binding, label, tooltip, default, optional behavior settings and isNew badge.
 ---
 --- @return table initializer The checkbox initializer.
 --- @return table setting The registered setting.
@@ -134,7 +158,7 @@ end
 --- Registers a slider in the settings category.
 ---
 --- @param category table The settings category.
---- @param config table Variable binding, label, range, step, default and optional behavior settings.
+--- @param config table Variable binding, label, range, step, default, optional behavior settings and isNew badge.
 ---
 --- @return table initializer The slider initializer.
 --- @return table setting The registered setting.
@@ -158,7 +182,7 @@ end
 ---
 --- @param category table The settings category.
 --- @param layout table The settings layout.
---- @param config table Checkbox and slider bindings, labels, defaults, range and optional visibility settings.
+--- @param config table Checkbox and slider bindings, labels, defaults, range, optional visibility settings and isNew badge.
 ---
 --- @return table initializer The combined initializer.
 --- @return table settingCheckbox The checkbox setting.
@@ -185,7 +209,7 @@ end
 --- Registers a dropdown in the settings category.
 ---
 --- @param category table The settings category.
---- @param config table Variable binding, label, options, default and optional behavior settings.
+--- @param config table Variable binding, label, options, default, optional behavior settings and isNew badge.
 ---
 --- @return table initializer The dropdown initializer.
 --- @return table setting The registered setting.

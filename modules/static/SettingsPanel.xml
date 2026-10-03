@@ -21,6 +21,18 @@
 		</Layers>
 	</Frame>
 
+	<Frame name="ArcaneWizardLibrary_SettingsSeparatorTemplate" mixin="ArcaneWizardLibrary_SettingsSeparatorMixin" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Left"/>
+				<Texture parentKey="LeftLine"/>
+				<Texture parentKey="Center"/>
+				<Texture parentKey="RightLine"/>
+				<Texture parentKey="Right"/>
+			</Layer>
+		</Layers>
+	</Frame>
+
 	<Frame name="ArcaneWizardLibrary_SettingsExpandTemplate" inherits="SettingsExpandableSectionTemplate" mixin="ArcaneWizardLibrary_SettingsExpandMixin" virtual="true">
 		<Size y="30" />
 	</Frame>
