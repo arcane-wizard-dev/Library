@@ -1,3 +1,9 @@
+**v1.38 (2026-10-03)**
+- Added: Freely placeable gray horizontal separators with three centered dots and softly fading ends in the options menu
+- Added: Optional New badges for settings
+- Updated: Logo
+- Updated: Compatibility with the beta client [forever]
+
 **v1.37 (2026-09-27)**
 - Removed: Deprecated game-version alias `GAME_TYPE_VANILLA`
 - Minor code adjustments
