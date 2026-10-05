@@ -23,5 +23,5 @@ LIB.FrameData = {
 		minimumHeight = 48,
 		contentInsets = { left = 10, right = 10, top = 10, bottom = 10 }
 	},
-	tabs = { height = 32, minimumWidth = 72, padding = 24, spacing = 3, x = 12, y = 2 }
+	tabs = { height = 32, minimumWidth = 72, padding = 44, spacing = 3, x = 12, y = 2 }
 }

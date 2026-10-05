@@ -203,6 +203,15 @@ local function LayoutTabGroup(tabGroup)
 	tabGroup:SetSize(math.max(offset, 1), FrameData.tabs.height)
 end
 
+local function ResizeTabButton(button)
+	button.Text:SetWidth(0)
+	local width = math.max(FrameData.tabs.minimumWidth, button.Text:GetStringWidth() + FrameData.tabs.padding)
+	-- Absolute sizes refer to the whole tab in every client.
+	PanelTemplates_TabResize(button, 0, width)
+	-- Classic limits text to the middle piece; this template centers it across the whole tab.
+	button.Text:SetWidth(0)
+end
+
 local function CreateTabButton(tabGroup, id, text)
 	local button = CreateFrame("Button", nil, tabGroup, "PanelTabButtonTemplate")
 	button.tabId = id
@@ -212,8 +221,12 @@ local function CreateTabButton(tabGroup, id, text)
 	button.MiddleDisabled = button.MiddleActive
 	button.RightDisabled = button.RightActive
 	button:SetText(text)
-	PanelTemplates_TabResize(button, FrameData.tabs.padding, nil, FrameData.tabs.minimumWidth)
+	ResizeTabButton(button)
 	button:SetScript("OnClick", function() tabGroup:SelectTab(id) end)
+	button:HookScript("OnShow", ResizeTabButton)
+	button:HookScript("OnEvent", function(self)
+		if self:IsVisible() then ResizeTabButton(self) end
+	end)
 	button:HookScript("OnSizeChanged", function() LayoutTabGroup(tabGroup) end)
 	RefreshTabButton(button)
 	return button, button:GetWidth()
@@ -384,7 +397,7 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 	elseif C_Texture.GetAtlasInfo(data.backgroundAtlas) then
 		frame.background:SetAtlas(data.backgroundAtlas)
 	else
-		frame.background:SetTexture(data.fallbackTexture)
+		frame.background:SetTexture(data.fallbackTexture, "REPEAT", "REPEAT")
 		frame.background:SetHorizTile(true)
 		frame.background:SetVertTile(true)
 	end
