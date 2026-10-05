@@ -20,15 +20,15 @@ Provides a shared starting point for each addon, handling registration and acces
 
 #### Frames
 
-Creates consistently styled, movable windows and compact popups with configurable appearance, plus bottom tabs that manage their associated content pages.
+Creates movable windows, compact popups, insets, and content tabs using Blizzard's native appearance for the current game version. Windows can use a standard, flat, or solid background; insets offer a solid or character-panel background. Close button size and position can be adjusted per window or popup.
 
 #### Scroll Frames
 
-Displays longer content in scrollable areas with configurable backgrounds and borders, custom vertical scrollbars, and mouse-wheel support across supported game versions.
+Displays longer content with Blizzard's native scrollbars and mouse-wheel handling across supported game versions.
 
 #### Controls
 
-Provides reusable buttons, selection controls, and text inputs with consistent styling and behavior across supported game versions.
+Provides buttons, checkboxes, option groups, dropdowns, and text inputs through a shared interface to Blizzard's native controls.
 
 #### Prebuilt Windows
 

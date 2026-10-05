@@ -3,11 +3,8 @@
 	<Script file="static\Utils.lua" />
 	<Script file="static\Dialogs.lua" />
 	<Script file="static\Controls.lua" />
-	<Include file="static\Controls.xml" />
 	<Script file="static\Input.lua" />
-	<Include file="static\Input.xml" />
 	<Script file="static\Dropdown.lua" />
-	<Include file="static\Dropdown.xml" />
 	<Script file="static\ScrollFrames.lua" />
 	<Script file="static\Frames.lua" />
 	<Script file="static\Changelog.lua" />

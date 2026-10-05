@@ -2,17 +2,15 @@ local _, LIB = ...
 
 local FrameData = LIB.FrameData
 local windowFrames = setmetatable({}, { __mode = "k" })
+local popupFrames = setmetatable({}, { __mode = "k" })
 local specialFrameCounter = 0
 
 ---@class ArcaneWizardLibraryWindowFrame: Frame
----@field background Texture Configurable window background.
+---@field background Texture|Frame Configurable window background.
 ---@field content Frame Content area inside the window frame.
 ---@field titleBar Frame Integrated title bar and drag handle.
----@field titleBackground Texture Title bar background.
----@field titleShadowLayers Texture[] Fading shadow below the title transition.
 ---@field titleText FontString Title font string.
 ---@field portraitFrame? Frame Optional portrait frame.
----@field portraitBackground? Texture Optional opaque portrait background.
 ---@field portrait? Texture Optional portrait image.
 ---@field closeButton? Button Optional close button.
 ---@field closeOnEscape boolean Whether pressing Escape hides the window.
@@ -23,28 +21,49 @@ local specialFrameCounter = 0
 ---@field content Frame Content area inside the popup frame.
 ---@field closeButton? Button Optional close button.
 ---@field closeOnEscape boolean Whether pressing Escape hides the popup.
+---@field SetBorderShown fun(self: ArcaneWizardLibraryPopupFrame, shown: boolean) Shows or hides the popup border.
+
+---@class ArcaneWizardLibraryCloseButtonConfig
+---@field size? number Button width and height in pixels; defaults to Blizzard's size.
+---@field point? FramePoint Anchor on the button and its window; defaults to TOPRIGHT.
+---@field x? number Horizontal offset; defaults to 0 when overriding the anchor.
+---@field y? number Vertical offset; defaults to 0 when overriding the anchor.
+
+---@class ArcaneWizardLibraryInsetFrame: Frame
+---@field background Texture Configurable inset background.
+
+---@class ArcaneWizardLibraryInsetConfig
+---@field parent Frame Parent of the inset.
+---@field width number Initial width in pixels.
+---@field height number Initial height in pixels.
+---@field backgroundStyle? "solid"|"character" Black or character-panel background; defaults to solid. Unavailable character atlases use Blizzard's marble texture.
+---@field backgroundAlpha number Background opacity from 0 to 1.
 
 ---@class ArcaneWizardLibraryWindowConfig
 ---@field title string Text displayed in the title bar.
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
----@field backgroundStyle string Background style defined by Arcane Wizard: Library.
+---@field style? "standard"|"flat"|"solid" Native window appearance; defaults to standard. Solid keeps the standard background without top streaks.
+---@field backgroundStyle? string Legacy style accepted for compatibility; Blizzard supplies the appearance.
 ---@field backgroundAlpha number Initial background opacity from 0 to 1.
----@field titleTransitionStyle string Title transition style defined by Arcane Wizard: Library.
----@field borderStyle? "library"|"silver"|"gold" Window border style.
+---@field titleTransitionStyle? string Legacy field; Blizzard supplies the title appearance.
+---@field borderStyle? "library"|"silver"|"gold" Legacy field; Blizzard supplies the border.
 ---@field showPortrait boolean Whether to create a portrait frame.
 ---@field showCloseButton boolean Whether to create a close button.
+---@field closeButton? ArcaneWizardLibraryCloseButtonConfig Optional size and anchor overrides.
 ---@field movable boolean Whether the window can be dragged.
 ---@field closeOnEscape? boolean Whether Escape hides the window.
 
 ---@class ArcaneWizardLibraryPopupConfig
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
----@field backgroundStyle string Background style defined by Arcane Wizard: Library.
+---@field style? "toast"|"tooltip" Native popup appearance; defaults to toast.
+---@field backgroundStyle? string Legacy style accepted for compatibility; Blizzard supplies the appearance.
 ---@field backgroundAlpha number Initial background opacity from 0 to 1.
 ---@field showBorder boolean Whether to create a popup border.
----@field borderStyle? "library"|"silver"|"gold" Popup border style.
+---@field borderStyle? "library"|"silver"|"gold" Legacy field; Blizzard supplies the border.
 ---@field showCloseButton boolean Whether to create a close button.
+---@field closeButton? ArcaneWizardLibraryCloseButtonConfig Optional size and anchor overrides.
 ---@field movable boolean Whether the popup can be dragged.
 ---@field closeOnEscape? boolean Whether Escape hides the popup.
 
@@ -70,391 +89,134 @@ local specialFrameCounter = 0
 --- Local Functions ---
 -----------------------
 
-local function ValidateConfig(config, minimumWidth, minimumHeight, methodName)
-	assert(type(config.width) == "number" and config.width >= minimumWidth, LIB.CommonData.debugPrefix .. methodName .. " width must be at least " .. minimumWidth .. ".")
-	assert(type(config.height) == "number" and config.height >= minimumHeight, LIB.CommonData.debugPrefix .. methodName .. " height must be at least " .. minimumHeight .. ".")
+local function ValidateConfig(config, data, methodName)
+	assert(type(config.width) == "number" and config.width >= data.minimumWidth, LIB.CommonData.debugPrefix .. methodName .. " width is too small.")
+	assert(type(config.height) == "number" and config.height >= data.minimumHeight, LIB.CommonData.debugPrefix .. methodName .. " height is too small.")
 	assert(type(config.showCloseButton) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " showCloseButton must be a boolean.")
-	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. methodName .. " backgroundAlpha must be a number between 0 and 1.")
+	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. methodName .. " backgroundAlpha must be between 0 and 1.")
 	assert(type(config.movable) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " movable must be a boolean.")
 	assert(config.closeOnEscape == nil or type(config.closeOnEscape) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " closeOnEscape must be a boolean or nil.")
-end
-
-local function CreateTexture(frame, texturePath, coordinates, brightness)
-	local texture = frame:CreateTexture(nil, "BACKGROUND")
-	texture:SetTexture(texturePath)
-	texture:SetTexCoord(unpack(coordinates))
-	texture:SetTexelSnappingBias(0)
-	texture:SetSnapToPixelGrid(false)
-	texture:SetVertexColor(brightness, brightness, brightness)
-
-	return texture
-end
-
-local function ApplyNineSlice(frame, textures, data)
-	local sliceSize = textures.sliceSize or data.sliceSize
-	local frameOutsets = data.frameOutsets or {}
-	local rightOutset = frameOutsets.right or 0
-	local bottomOutset = frameOutsets.bottom or 0
-	local brightness = data.frameBrightness
-	local topLeft = CreateTexture(frame, textures.path, textures.coordinates[1], brightness)
-	topLeft:SetSize(sliceSize, sliceSize)
-	topLeft:SetPoint("TOPLEFT")
-
-	local topRight = CreateTexture(frame, textures.path, textures.coordinates[3], brightness)
-	topRight:SetSize(sliceSize, sliceSize)
-	topRight:SetPoint("TOPRIGHT", rightOutset, 0)
-
-	local bottomLeft = CreateTexture(frame, textures.path, textures.coordinates[7], brightness)
-	bottomLeft:SetSize(sliceSize, sliceSize)
-	bottomLeft:SetPoint("BOTTOMLEFT", 0, -bottomOutset)
-
-	local bottomRight = CreateTexture(frame, textures.path, textures.coordinates[9], brightness)
-	bottomRight:SetSize(sliceSize, sliceSize)
-	bottomRight:SetPoint("BOTTOMRIGHT", rightOutset, -bottomOutset)
-
-	local top = CreateTexture(frame, textures.path, textures.coordinates[2], brightness)
-	top:SetPoint("TOPLEFT", topLeft, "TOPRIGHT")
-	top:SetPoint("BOTTOMRIGHT", topRight, "BOTTOMLEFT")
-
-	local bottom = CreateTexture(frame, textures.path, textures.coordinates[8], brightness)
-	bottom:SetPoint("TOPLEFT", bottomLeft, "TOPRIGHT")
-	bottom:SetPoint("BOTTOMRIGHT", bottomRight, "BOTTOMLEFT")
-
-	local left = CreateTexture(frame, textures.path, textures.coordinates[4], brightness)
-	left:SetPoint("TOPLEFT", topLeft, "BOTTOMLEFT")
-	left:SetPoint("BOTTOMRIGHT", bottomLeft, "TOPRIGHT")
-
-	local right = CreateTexture(frame, textures.path, textures.coordinates[6], brightness)
-	right:SetPoint("TOPLEFT", topRight, "BOTTOMLEFT")
-	right:SetPoint("BOTTOMRIGHT", bottomRight, "TOPRIGHT")
-
-	local center = CreateTexture(frame, textures.path, textures.coordinates[5], brightness)
-	center:SetPoint("TOPLEFT", topLeft, "BOTTOMRIGHT")
-	center:SetPoint("BOTTOMRIGHT", bottomRight, "TOPLEFT")
-end
-
-local function ConfigureBackgroundTiling(frame, background, tileSize, insets)
-	local horizontalInsets = insets and insets.left + insets.right or 0
-	local verticalInsets = insets and insets.top + insets.bottom or 0
-
-	local function UpdateTextureCoordinates(_, width, height)
-		background:SetTexCoord(
-			0,
-			(width - horizontalInsets) / tileSize,
-			0,
-			(height - verticalInsets) / tileSize
-		)
+	if config.closeButton ~= nil then
+		local button = config.closeButton
+		assert(type(button) == "table", LIB.CommonData.debugPrefix .. methodName .. " closeButton must be a table.")
+		assert(button.size == nil or type(button.size) == "number" and button.size > 0, LIB.CommonData.debugPrefix .. methodName .. " closeButton.size must be positive.")
+		assert(button.point == nil or FrameData.anchorPoints[button.point], LIB.CommonData.debugPrefix .. methodName .. " closeButton.point is invalid.")
+		assert(button.x == nil or type(button.x) == "number", LIB.CommonData.debugPrefix .. methodName .. " closeButton.x must be a number.")
+		assert(button.y == nil or type(button.y) == "number", LIB.CommonData.debugPrefix .. methodName .. " closeButton.y must be a number.")
 	end
-
-	background:SetHorizTile(true)
-	background:SetVertTile(true)
-	frame:HookScript("OnSizeChanged", UpdateTextureCoordinates)
-	UpdateTextureCoordinates(frame, frame:GetSize())
-end
-
-local function CreateInteriorBackground(frame, backgroundStyle, insets, backgroundAlpha)
-	local background = frame:CreateTexture(nil, "BACKGROUND", nil, -2)
-
-	if backgroundStyle.color then
-		local color = backgroundStyle.color
-		background:SetColorTexture(color.red, color.green, color.blue, 1)
-	else
-		background:SetTexture(backgroundStyle.path, "REPEAT", "REPEAT")
-		background:SetTexelSnappingBias(0)
-		background:SetSnapToPixelGrid(false)
-		ConfigureBackgroundTiling(frame, background, backgroundStyle.tileSize, insets)
-	end
-
-	background:SetAlpha(backgroundAlpha)
-
-	if insets then
-		background:SetPoint("TOPLEFT", insets.left, -insets.top)
-		background:SetPoint("BOTTOMRIGHT", -insets.right, insets.bottom)
-	else
-		background:SetAllPoints()
-	end
-
-	frame.background = background
 end
 
 local function RegisterDragHandle(frame, handle)
+	handle:EnableMouse(true)
 	handle:RegisterForDrag("LeftButton")
-	handle:SetScript("OnDragStart", function()
-		frame:StartMoving()
-	end)
-	handle:SetScript("OnDragStop", function()
-		frame:StopMovingOrSizing()
-	end)
+	handle:SetScript("OnDragStart", function() frame:StartMoving() end)
+	handle:SetScript("OnDragStop", function() frame:StopMovingOrSizing() end)
 end
 
-local function ConfigureMovability(frame, movable)
-	if not movable then
-		return
-	end
-
-	frame:SetMovable(true)
-end
-
-local function CreateContentFrame(frame, insets)
-	local content = CreateFrame("Frame", nil, frame)
-	content:SetPoint("TOPLEFT", insets.left, -insets.top)
-	content:SetPoint("BOTTOMRIGHT", -insets.right, insets.bottom)
-
-	frame.content = content
-end
-
-local function CreateCloseButton(frame, showCloseButton, template, horizontalOffset, verticalOffset)
-	if not showCloseButton then
-		return
-	end
-
-	local closeButton = CreateFrame("Button", nil, frame, template)
-	closeButton:SetPoint("TOPRIGHT", -horizontalOffset, -(verticalOffset or horizontalOffset))
-	closeButton:SetFrameLevel(frame:GetFrameLevel() + 10)
-
-	frame.closeButton = closeButton
-end
-
-local function CreateTitleShadowLayer(frame, data, topOffset, color)
-	local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -1)
-	texture:SetColorTexture(color.red, color.green, color.blue, color.alpha)
-	texture:SetPoint("TOPLEFT", data.leftInset, -topOffset)
-	texture:SetPoint("TOPRIGHT", -data.rightInset, -topOffset)
-	texture:SetHeight(1)
-
-	return texture
-end
-
-local function CreateTitleBar(frame, title, data, transitionStyle)
-	local backgroundData = data.background
-	local titleBackground = frame:CreateTexture(nil, "BACKGROUND", nil, -1)
-	titleBackground:SetTexture(backgroundData.path)
-	titleBackground:SetTexelSnappingBias(0)
-	titleBackground:SetSnapToPixelGrid(false)
-	titleBackground:SetPoint("TOPLEFT", backgroundData.leftInset, -backgroundData.topOffset)
-	titleBackground:SetPoint("TOPRIGHT", -backgroundData.rightInset, -backgroundData.topOffset)
-	titleBackground:SetHeight(backgroundData.height)
-
-	local transitionData = data.transition
-	local titleShadowLayers = {}
-	for index, color in ipairs(transitionStyle.shadowColors) do
-		titleShadowLayers[index] = CreateTitleShadowLayer(
-			frame,
-			transitionData,
-			transitionData.topOffset + index - 1,
-			color
-		)
-	end
-
-	local titleBar = CreateFrame("Frame", nil, frame)
-	titleBar:SetPoint("TOPLEFT", data.horizontalInset, -data.topOffset)
-	titleBar:SetPoint("TOPRIGHT", -data.horizontalInset, -data.topOffset)
-	titleBar:SetHeight(data.height)
-	titleBar:SetFrameLevel(frame:GetFrameLevel() + 5)
-
-	if frame:IsMovable() then
-		titleBar:EnableMouse(true)
-		RegisterDragHandle(frame, titleBar)
-	end
-
-	local titleText = titleBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	titleText:SetPoint("LEFT")
-	titleText:SetPoint("RIGHT")
-	titleText:SetJustifyH("CENTER")
-	titleText:SetWordWrap(false)
-	titleText:SetText(title)
-
-	frame.titleBar = titleBar
-	frame.titleBackground = titleBackground
-	frame.titleShadowLayers = titleShadowLayers
-	frame.titleText = titleText
-end
-
-local function CreatePortrait(frame, showPortrait)
-	if not showPortrait then
-		return
-	end
-
-	local data = FrameData.portrait
-	local portraitFrame = CreateFrame("Frame", nil, frame)
-	portraitFrame:SetSize(data.size, data.size)
-	portraitFrame:SetPoint("CENTER", frame, "TOPLEFT", data.offsetX, data.offsetY)
-	portraitFrame:SetFrameLevel(frame:GetFrameLevel() + 8)
-
-	local backgroundColor = data.backgroundColor
-	local portraitBackground = portraitFrame:CreateTexture(nil, "BACKGROUND")
-	portraitBackground:SetSize(data.imageSize, data.imageSize)
-	portraitBackground:SetPoint("CENTER")
-	portraitBackground:SetColorTexture(backgroundColor.red, backgroundColor.green, backgroundColor.blue, 1)
-
-	local backgroundMask = portraitFrame:CreateMaskTexture(nil, "BACKGROUND")
-	backgroundMask:SetTexture(data.maskPath)
-	backgroundMask:SetAllPoints(portraitBackground)
-	portraitBackground:AddMaskTexture(backgroundMask)
-
-	local portrait = portraitFrame:CreateTexture(nil, "ARTWORK")
-	portrait:SetSize(data.imageSize, data.imageSize)
-	portrait:SetPoint("CENTER")
-
-	local mask = portraitFrame:CreateMaskTexture(nil, "ARTWORK")
-	mask:SetTexture(data.maskPath)
-	mask:SetAllPoints(portrait)
-	portrait:AddMaskTexture(mask)
-
-	local border = portraitFrame:CreateTexture(nil, "OVERLAY")
-	border:SetTexture(data.borderPath)
-	border:SetAllPoints()
-
-	frame.portraitFrame = portraitFrame
-	frame.portraitBackground = portraitBackground
-	frame.portrait = portrait
-end
-
-local function CreateBaseFrame(width, height, movable, closeOnEscape)
+local function CreateBaseFrame(config, template)
 	local frameName
-
-	if closeOnEscape then
+	if config.closeOnEscape then
 		specialFrameCounter = specialFrameCounter + 1
 		frameName = "ArcaneWizardLibrarySpecialFrame" .. specialFrameCounter
 	end
 
-	local frame = CreateFrame("Frame", frameName, UIParent)
-	frame:SetSize(width, height)
+	local frame = CreateFrame("Frame", frameName, UIParent, template)
+	frame:SetSize(config.width, config.height)
 	frame:SetPoint("CENTER")
 	frame:SetFrameStrata("MEDIUM")
 	frame:SetToplevel(true)
 	frame:SetClampedToScreen(true)
 	frame:EnableMouse(true)
-	frame.closeOnEscape = closeOnEscape == true
-	ConfigureMovability(frame, movable)
-	frame:HookScript("OnShow", function(self)
-		self:Raise()
-	end)
-
-	if closeOnEscape then
-		table.insert(UISpecialFrames, frameName)
-	end
-
+	frame:SetMovable(config.movable)
+	frame.closeOnEscape = config.closeOnEscape == true
+	frame:HookScript("OnShow", function(self) self:Raise() end)
+	if frameName then table.insert(UISpecialFrames, frameName) end
 	return frame
 end
 
-local function CreateTabBackground(button)
-	local placement = FrameData.tabs.placement
-
-	local left = button:CreateTexture(nil, "BACKGROUND")
-	left:SetPoint("TOPLEFT")
-	left:SetPoint("BOTTOMLEFT")
-	left:SetWidth(placement.capWidth)
-	left:SetTexCoord(0, 0.25, 0, 1)
-
-	local center = button:CreateTexture(nil, "BACKGROUND")
-	center:SetPoint("TOPLEFT", left, "TOPRIGHT")
-	center:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -placement.capWidth, 0)
-	center:SetTexCoord(0.25, 0.75, 0, 1)
-
-	local right = button:CreateTexture(nil, "BACKGROUND")
-	right:SetPoint("TOPRIGHT")
-	right:SetPoint("BOTTOMRIGHT")
-	right:SetWidth(placement.capWidth)
-	right:SetTexCoord(0.75, 1, 0, 1)
-
-	button.backgroundTextures = { left, center, right }
+local function CreateContentFrame(frame, insets)
+	frame.content = CreateFrame("Frame", nil, frame)
+	frame.content:SetPoint("TOPLEFT", insets.left, -insets.top)
+	frame.content:SetPoint("BOTTOMRIGHT", -insets.right, insets.bottom)
 end
 
-local function SetTabButtonState(button, state)
-	local data = FrameData.tabs
-	local stateData = data.states[state]
-	local texturePath = data.placement.textures[state]
-
-	for _, texture in ipairs(button.backgroundTextures) do
-		texture:SetTexture(texturePath)
-		texture:SetTexelSnappingBias(0)
-		texture:SetSnapToPixelGrid(false)
+local function ConfigureCloseButton(frame, config)
+	if config.showCloseButton then
+		frame.closeButton = frame.CloseButton or CreateFrame("Button", nil, frame, "UIPanelCloseButtonDefaultAnchors")
+		local button = config.closeButton
+		if button then
+			if button.size then frame.closeButton:SetSize(button.size, button.size) end
+			if button.point or button.x or button.y then
+				frame.closeButton:ClearAllPoints()
+				frame.closeButton:SetPoint(button.point or "TOPRIGHT", frame, button.point or "TOPRIGHT", button.x or 0, button.y or 0)
+			end
+		end
+	elseif frame.CloseButton then
+		frame.CloseButton:Hide()
 	end
+end
 
-	button.label:ClearAllPoints()
-	button.label:SetPoint("CENTER", 0, stateData.textOffset)
-	button.label:SetTextColor(unpack(stateData.text))
+--- Shows or hides the popup border, preserving background opacity.
+---
+--- @param frame ArcaneWizardLibraryPopupFrame The popup frame.
+--- @param shown boolean Whether to show the border.
+local function SetPopupBorderShown(frame, shown)
+	assert(type(shown) == "boolean", LIB.CommonData.debugPrefix .. "SetBorderShown shown must be a boolean.")
+	local state = popupFrames[frame]
+	if state.shown == shown then return end
+
+	if frame.NineSlice then
+		local color = state.borderColor
+		frame:SetBackdropBorderColor(color[1], color[2], color[3], shown and color[4] or 0)
+	else
+		local alpha = frame.background and frame.background:GetAlpha() or 1
+		local backdrop = CopyTable(BACKDROP_TOAST_12_12)
+		if not shown then
+			backdrop.edgeFile = nil
+			backdrop.insets = nil
+		end
+		frame:SetBackdrop(backdrop)
+		frame.background = frame.Center
+		frame.background:SetAlpha(alpha)
+	end
+	state.shown = shown
 end
 
 local function RefreshTabButton(button)
-	if not button:IsEnabled() then
-		SetTabButtonState(button, "disabled")
+	-- Classic's panel helpers use the old field names with the shared tab template.
+	if button.isDisabled then
+		PanelTemplates_SetDisabledTabState(button)
 	elseif button.tabGroup.selectedTabId == button.tabId then
-		SetTabButtonState(button, "selected")
-	elseif button.mouseDown then
-		SetTabButtonState(button, "pushed")
-	elseif button.mouseOver then
-		SetTabButtonState(button, "highlight")
+		PanelTemplates_SelectTab(button)
 	else
-		SetTabButtonState(button, "normal")
+		PanelTemplates_DeselectTab(button)
 	end
 end
 
 local function LayoutTabGroup(tabGroup)
-	local placement = FrameData.tabs.placement
 	local offset = 0
 	for _, entry in ipairs(tabGroup.tabEntries) do
-		local height = tabGroup.selectedTabId == entry.id and placement.selectedHeight or placement.height
 		entry.button:ClearAllPoints()
 		entry.button:SetPoint("TOPLEFT", tabGroup, "TOPLEFT", offset, 0)
-		entry.button:SetSize(entry.width, height)
-		offset = offset + entry.width + placement.spacing
+		offset = offset + entry.button:GetWidth() + FrameData.tabs.spacing
 	end
-
-	tabGroup:SetSize(math.max(offset - placement.spacing, 1), placement.selectedHeight)
+	tabGroup:SetSize(math.max(offset, 1), FrameData.tabs.height)
 end
 
 local function CreateTabButton(tabGroup, id, text)
-	local placement = FrameData.tabs.placement
-	local button = CreateFrame("Button", nil, tabGroup)
-	button:SetSize(placement.minimumWidth, placement.height)
-	button:SetFrameLevel(tabGroup:GetFrameLevel() + 1)
-	button:RegisterForClicks("LeftButtonUp")
+	local button = CreateFrame("Button", nil, tabGroup, "PanelTabButtonTemplate")
 	button.tabId = id
 	button.tabGroup = tabGroup
-
-	CreateTabBackground(button)
-
-	local label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	label:SetPoint("CENTER")
-	label:SetWordWrap(false)
-	label:SetText(text)
-	button.label = label
-
-	button:SetScript("OnEnter", function(self)
-		self.mouseOver = true
-		RefreshTabButton(self)
-	end)
-	button:SetScript("OnLeave", function(self)
-		self.mouseOver = false
-		self.mouseDown = false
-		RefreshTabButton(self)
-	end)
-	button:SetScript("OnMouseDown", function(self, mouseButton)
-		if mouseButton == "LeftButton" then
-			self.mouseDown = true
-			RefreshTabButton(self)
-		end
-	end)
-	button:SetScript("OnMouseUp", function(self, mouseButton)
-		if mouseButton == "LeftButton" then
-			self.mouseDown = false
-			RefreshTabButton(self)
-		end
-	end)
-	button:SetScript("OnClick", function(self)
-		self.tabGroup:SelectTab(self.tabId)
-	end)
-	button:SetScript("OnEnable", RefreshTabButton)
-	button:SetScript("OnDisable", RefreshTabButton)
-
+	button.label = button.Text
+	button.LeftDisabled = button.LeftActive
+	button.MiddleDisabled = button.MiddleActive
+	button.RightDisabled = button.RightActive
+	button:SetText(text)
+	PanelTemplates_TabResize(button, FrameData.tabs.padding, nil, FrameData.tabs.minimumWidth)
+	button:SetScript("OnClick", function() tabGroup:SelectTab(id) end)
+	button:HookScript("OnSizeChanged", function() LayoutTabGroup(tabGroup) end)
 	RefreshTabButton(button)
-
-	return button, math.max(
-		placement.minimumWidth,
-		math.ceil(button.label:GetStringWidth()) + placement.horizontalPadding * 2
-	)
+	return button, button:GetWidth()
 end
 
 --- Adds a tab and its content page; selects the first tab automatically.
@@ -501,7 +263,7 @@ end
 local function SelectTab(tabGroup, id)
 	local entry = tabGroup.tabsById[id]
 	assert(entry, LIB.CommonData.debugPrefix .. "SelectTab id is not registered.")
-	assert(entry.button:IsEnabled(), LIB.CommonData.debugPrefix .. "SelectTab cannot select a disabled tab.")
+	assert(not entry.button.isDisabled, LIB.CommonData.debugPrefix .. "SelectTab cannot select a disabled tab.")
 
 	if tabGroup.selectedTabId == id then
 		return entry.page
@@ -554,14 +316,16 @@ local function SetTabEnabled(tabGroup, id, enabled)
 	assert(type(enabled) == "boolean", LIB.CommonData.debugPrefix .. "SetTabEnabled enabled must be a boolean.")
 
 	if enabled then
-		entry.button:Enable()
+		entry.button.isDisabled = false
+		RefreshTabButton(entry.button)
 		if not tabGroup.selectedTabId then
 			tabGroup:SelectTab(id)
 		end
 		return
 	end
 
-	entry.button:Disable()
+	entry.button.isDisabled = true
+	RefreshTabButton(entry.button)
 	if tabGroup.selectedTabId ~= id then
 		return
 	end
@@ -569,7 +333,7 @@ local function SetTabEnabled(tabGroup, id, enabled)
 	entry.page:Hide()
 	tabGroup.selectedTabId = nil
 	for _, replacement in ipairs(tabGroup.tabEntries) do
-		if replacement.button:IsEnabled() then
+		if not replacement.button.isDisabled then
 			tabGroup:SelectTab(replacement.id)
 			return
 		end
@@ -595,124 +359,132 @@ end
 --- Public Functions ---
 ------------------------
 
---- Creates a hidden, centered window with a title bar and frame.content.
+--- Creates a Blizzard inset with a separately configurable background.
+---
+--- @param config ArcaneWizardLibraryInsetConfig Inset configuration.
+---
+--- @return ArcaneWizardLibraryInsetFrame frame The created inset.
+function ArcaneWizardLibrary.Frames:CreateInset(config)
+	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateInset config must be a table.")
+	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateInset parent is required.")
+	assert(type(config.width) == "number" and config.width > 0, LIB.CommonData.debugPrefix .. "CreateInset width must be positive.")
+	assert(type(config.height) == "number" and config.height > 0, LIB.CommonData.debugPrefix .. "CreateInset height must be positive.")
+	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. "CreateInset backgroundAlpha must be between 0 and 1.")
+	local style = config.backgroundStyle or "solid"
+	assert(style == "solid" or style == "character", LIB.CommonData.debugPrefix .. "CreateInset backgroundStyle must be solid or character.")
+
+	local data = FrameData.inset
+	local frame = CreateFrame("Frame", nil, config.parent, data.template)
+	frame:SetFrameLevel(config.parent:GetFrameLevel())
+	frame:SetSize(config.width, config.height)
+	frame.background = frame:CreateTexture(nil, "BACKGROUND")
+	frame.background:SetAllPoints(frame)
+	if style == "solid" then
+		frame.background:SetColorTexture(unpack(data.backgroundColor))
+	elseif C_Texture.GetAtlasInfo(data.backgroundAtlas) then
+		frame.background:SetAtlas(data.backgroundAtlas)
+	else
+		frame.background:SetTexture(data.fallbackTexture)
+		frame.background:SetHorizTile(true)
+		frame.background:SetVertTile(true)
+	end
+	frame.background:SetAlpha(config.backgroundAlpha)
+	return frame
+end
+
+--- Creates a hidden Blizzard window with a title bar and frame.content.
 ---
 --- @param config ArcaneWizardLibraryWindowConfig Window configuration.
 ---
 --- @return ArcaneWizardLibraryWindowFrame frame The created window.
 function ArcaneWizardLibrary.Frames:CreateWindow(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateWindow config must be a table.")
-
-	local data = FrameData.window
 	assert(type(config.title) == "string", LIB.CommonData.debugPrefix .. "CreateWindow title must be a string.")
 	assert(type(config.showPortrait) == "boolean", LIB.CommonData.debugPrefix .. "CreateWindow showPortrait must be a boolean.")
+	ValidateConfig(config, config.showPortrait and FrameData.portrait or FrameData.window, "CreateWindow")
+	local style = config.style or "standard"
+	assert(style == "standard" or style == "flat" or style == "solid", LIB.CommonData.debugPrefix .. "CreateWindow style must be standard, flat or solid.")
 
-	local minimumWidth = config.showPortrait and data.portraitMinimumWidth or data.minimumWidth
-	local minimumHeight = config.showPortrait and data.portraitMinimumHeight or data.minimumHeight
-	ValidateConfig(config, minimumWidth, minimumHeight, "CreateWindow")
-
-	local background = FrameData.backgroundStyles[config.backgroundStyle]
-	local titleTransition = FrameData.titleTransitionStyles[config.titleTransitionStyle]
-	local border = FrameData.windowBorderStyles[config.borderStyle or "library"]
-	assert(background, LIB.CommonData.debugPrefix .. "CreateWindow backgroundStyle is not defined.")
-	assert(titleTransition, LIB.CommonData.debugPrefix .. "CreateWindow titleTransitionStyle is not defined.")
-	assert(border, LIB.CommonData.debugPrefix .. "CreateWindow borderStyle is not defined.")
-
-	local frame = CreateBaseFrame(config.width, config.height, config.movable, config.closeOnEscape)
-	ApplyNineSlice(frame, border, data)
-	CreateInteriorBackground(frame, background, data.backgroundInsets, config.backgroundAlpha)
-	CreateContentFrame(frame, data.contentInsets)
-	CreateTitleBar(frame, config.title, data.title, titleTransition)
-	CreatePortrait(frame, config.showPortrait)
-	CreateCloseButton(
-		frame,
-		config.showCloseButton,
-		data.closeButton.template,
-		data.closeButton.horizontalOffset,
-		data.closeButton.verticalOffset
-	)
+	local template = style == "flat" and "DefaultPanelFlatTemplate" or "DefaultPanelTemplate"
+	local frame = CreateBaseFrame(config, config.showPortrait and "PortraitFrameTemplate" or template)
+	frame.titleBar = frame.TitleContainer
+	frame.titleText = frame.TitleText or frame.TitleContainer.TitleText
+	frame.titleText:SetText(config.title)
+	frame.background = frame.Bg
+	if config.showPortrait and style == "flat" then
+		-- Classic has no flat portrait template; reuse Blizzard's shared background.
+		frame.Bg:Hide()
+		frame.background = CreateFrame("Frame", nil, frame, "FlatPanelBackgroundTemplate")
+		frame.background:SetFrameLevel(0)
+		frame.background:SetAllPoints(frame.Bg)
+	end
+	frame.background:SetAlpha(config.backgroundAlpha)
+	if frame.TopTileStreaks then
+		frame.TopTileStreaks:SetShown(style == "standard")
+		frame.TopTileStreaks:SetAlpha(config.backgroundAlpha)
+	end
+	if config.showPortrait then
+		frame.portrait = frame.portrait or frame.PortraitContainer.portrait
+		frame.portraitFrame = frame.PortraitContainer
+	end
+	ConfigureCloseButton(frame, config)
+	CreateContentFrame(frame, FrameData.window.contentInsets)
+	if config.movable then RegisterDragHandle(frame, frame.titleBar) end
 	windowFrames[frame] = true
 	frame:Hide()
-
 	return frame
 end
 
---- Creates a hidden, centered popup with frame.content and an optional border.
+--- Creates a compact Blizzard backdrop with frame.content and an optional border.
 ---
 --- @param config ArcaneWizardLibraryPopupConfig Popup configuration.
 ---
 --- @return ArcaneWizardLibraryPopupFrame frame The created popup.
 function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreatePopup config must be a table.")
-
-	local data = FrameData.popup
-	ValidateConfig(config, data.minimumWidth, data.minimumHeight, "CreatePopup")
+	ValidateConfig(config, FrameData.popup, "CreatePopup")
 	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreatePopup showBorder must be a boolean.")
+	local style = config.style or "toast"
+	assert(style == "toast" or style == "tooltip", LIB.CommonData.debugPrefix .. "CreatePopup style must be toast or tooltip.")
 
-	local background = FrameData.backgroundStyles[config.backgroundStyle]
-	local border = FrameData.popupBorderStyles[config.borderStyle or "library"]
-	assert(background, LIB.CommonData.debugPrefix .. "CreatePopup backgroundStyle is not defined.")
-	assert(border, LIB.CommonData.debugPrefix .. "CreatePopup borderStyle is not defined.")
-
-	local frame = CreateBaseFrame(config.width, config.height, config.movable, config.closeOnEscape)
-	if config.movable then
-		RegisterDragHandle(frame, frame)
+	local frame = CreateBaseFrame(config, style == "tooltip" and "TooltipBackdropTemplate" or "BackdropTemplate")
+	popupFrames[frame] = {}
+	if style == "tooltip" then
+		frame.background = frame.NineSlice.Center
+		popupFrames[frame].borderColor = { frame:GetBackdropBorderColor() }
 	end
-
-	if config.showBorder then
-		ApplyNineSlice(frame, border, data)
-	end
-	CreateInteriorBackground(
-		frame,
-		background,
-		config.showBorder and (border.backgroundInsets or data.backgroundInsets) or nil,
-		config.backgroundAlpha
-	)
-	CreateContentFrame(frame, data.contentInsets)
-	local closeButtonPosition = config.showBorder and data.closeButton.border or data.closeButton.borderless
-	CreateCloseButton(
-		frame,
-		config.showCloseButton,
-		data.closeButton.template,
-		closeButtonPosition.horizontalOffset,
-		closeButtonPosition.verticalOffset
-	)
+	frame.SetBorderShown = SetPopupBorderShown
+	frame:SetBorderShown(config.showBorder)
+	frame.background:SetAlpha(config.backgroundAlpha)
+	CreateContentFrame(frame, FrameData.popup.contentInsets)
+	ConfigureCloseButton(frame, config)
+	if config.movable then RegisterDragHandle(frame, frame) end
 	frame:Hide()
-
 	return frame
 end
 
---- Creates window tabs whose pages fill window.content; the first added tab is selected.
+--- Creates native window tabs whose pages fill window.content.
 ---
 --- @param window ArcaneWizardLibraryWindowFrame The owning window.
 ---
 --- @return ArcaneWizardLibraryTabGroup tabGroup The created tab group.
 function ArcaneWizardLibrary.Frames:CreateTabGroup(window)
-	local placement = FrameData.tabs.placement
-
 	assert(windowFrames[window], LIB.CommonData.debugPrefix .. "CreateTabGroup window must be a Library window.")
 	assert(not window.tabGroup, LIB.CommonData.debugPrefix .. "CreateTabGroup window already has a tab group.")
 
 	local tabGroup = CreateFrame("Frame", nil, window)
-	tabGroup:SetPoint(
-		placement.anchorPoint,
-		window,
-		placement.relativePoint,
-		placement.offsetX,
-		placement.offsetY
-	)
-	tabGroup:SetSize(1, placement.selectedHeight)
-	tabGroup:SetFrameLevel(window:GetFrameLevel() + 8)
+	tabGroup:SetPoint("TOPLEFT", window, "BOTTOMLEFT", FrameData.tabs.x, FrameData.tabs.y)
+	tabGroup:SetSize(1, FrameData.tabs.height)
 	tabGroup.window = window
 	tabGroup.tabEntries = {}
 	tabGroup.tabsById = {}
+	tabGroup.tabPadding = FrameData.tabs.padding
+	tabGroup.minTabWidth = FrameData.tabs.minimumWidth
 	tabGroup.AddTab = AddTab
 	tabGroup.SelectTab = SelectTab
 	tabGroup.GetSelectedTab = GetSelectedTab
 	tabGroup.SetTabEnabled = SetTabEnabled
 	tabGroup.SetOnTabChanged = SetOnTabChanged
-
 	window.tabGroup = tabGroup
-
 	return tabGroup
 end

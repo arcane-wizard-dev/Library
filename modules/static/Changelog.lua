@@ -39,7 +39,7 @@ local function CreateChangelogRow(state)
 end
 
 local function AddChangelogRow(state, rowCount, text, isBullet, rowWidth, offset)
-	local padding = ChangelogData.contentPadding
+	local padding = ChangelogData.contentPadding.x
 	local spacing = ChangelogData.lineSpacing
 	local textInset = isBullet and ChangelogData.bulletWidth + ChangelogData.bulletSpacing or 0
 
@@ -75,8 +75,8 @@ end
 local function RenderChangelog(state, versions)
 	local padding = ChangelogData.contentPadding
 	local spacing = ChangelogData.lineSpacing
-	local rowWidth = math.max(1, state.scrollArea.content:GetWidth() - padding * 2)
-	local offset = padding
+	local rowWidth = math.max(1, state.scrollArea.content:GetWidth() - padding.x * 2)
+	local offset = padding.y
 	local rowCount = 0
 
 	for versionIndex, versionData in ipairs(versions) do
@@ -103,7 +103,7 @@ local function RenderChangelog(state, versions)
 		state.rows[index]:Hide()
 	end
 
-	state.scrollArea:SetContentHeight(math.ceil(offset - spacing + padding))
+	state.scrollArea:SetContentHeight(math.ceil(offset - spacing + padding.y))
 end
 
 local function FinishChangelogLayout(frame)
@@ -142,31 +142,18 @@ local function CreateChangelogWindow(addonName)
 	local windowData = ChangelogData.window
 	local frame = AWL.Frames:CreateWindow({
 		title = "",
+		style = windowData.style,
 		width = windowData.width,
 		height = windowData.height,
-		backgroundStyle = windowData.backgroundStyle,
 		backgroundAlpha = windowData.backgroundAlpha,
-		titleTransitionStyle = windowData.titleTransitionStyle,
 		showPortrait = false,
 		showCloseButton = true,
 		movable = true,
 		closeOnEscape = true
 	})
-	local scrollData = ChangelogData.scrollFrame
-	local contentWidth = math.max(frame.content:GetWidth() - ChangelogData.outerInset * 2, 96)
-	local contentHeight = math.max(frame.content:GetHeight() - ChangelogData.footerHeight, 72)
-
-	local scrollArea = AWL.ScrollFrames:CreateScrollFrame({
-		parent = frame.content,
-		width = contentWidth,
-		height = contentHeight,
-		backgroundStyle = scrollData.backgroundStyle,
-		backgroundAlpha = scrollData.backgroundAlpha,
-		showBorder = scrollData.showBorder
-	})
-	scrollArea:SetPoint("TOPLEFT", ChangelogData.outerInset, 0)
-	scrollArea:SetPoint("BOTTOMRIGHT", -ChangelogData.outerInset, ChangelogData.footerHeight)
-
+	frame:SetFrameStrata("DIALOG")
+	local insets = ChangelogData.insets
+	local buttonInset = ChangelogData.buttonInset
 	local closeButton = AWL.Controls:CreateButton({
 		parent = frame.content,
 		width = ChangelogData.closeButtonWidth,
@@ -175,7 +162,30 @@ local function CreateChangelogWindow(addonName)
 			frame:Hide()
 		end
 	})
-	closeButton:SetPoint("BOTTOMRIGHT", -ChangelogData.outerInset, ChangelogData.outerInset)
+	closeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight())
+
+	local scrollData = ChangelogData.scrollFrame
+	local contentWidth = math.max(frame:GetWidth() - insets.left - insets.right, 96)
+	local contentHeight = math.max(frame:GetHeight() - insets.top - insets.bottom, 72)
+
+	local scrollArea = AWL.ScrollFrames:CreateScrollFrame({
+		parent = frame.content,
+		width = contentWidth,
+		height = contentHeight,
+		backgroundAlpha = scrollData.backgroundAlpha,
+		showBorder = scrollData.showBorder,
+		contentInsets = scrollData.contentInsets
+	})
+	scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", insets.left, -insets.top)
+	scrollArea:SetPoint("BOTTOMRIGHT", closeButton, "TOPRIGHT", buttonInset, buttonInset)
+	local inset = AWL.Frames:CreateInset({
+		parent = scrollArea,
+		width = contentWidth,
+		height = contentHeight,
+		backgroundStyle = scrollData.insetBackgroundStyle,
+		backgroundAlpha = scrollData.insetBackgroundAlpha
+	})
+	inset:SetAllPoints(scrollArea)
 
 	local state = {
 		frame = frame,
