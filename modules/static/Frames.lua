@@ -1,9 +1,13 @@
 local _, LIB = ...
 
 local FrameData = LIB.FrameData
+local classicTabs = ArcaneWizardLibrary.GAME_TYPE_CLASSIC or ArcaneWizardLibrary.GAME_TYPE_TBC or ArcaneWizardLibrary.GAME_TYPE_MISTS
+local TabData = classicTabs and FrameData.tabs.classic or FrameData.tabs.standard
+local tabSpacing = ArcaneWizardLibrary.GAME_TYPE_CLASSIC and TabData.eraSpacing or TabData.spacing
 local windowFrames = setmetatable({}, { __mode = "k" })
 local popupFrames = setmetatable({}, { __mode = "k" })
 local specialFrameCounter = 0
+local tabButtonCounter = 0
 
 ---@class ArcaneWizardLibraryWindowFrame: Frame
 ---@field background Texture|Frame Configurable window background.
@@ -183,7 +187,6 @@ local function SetPopupBorderShown(frame, shown)
 end
 
 local function RefreshTabButton(button)
-	-- Classic's panel helpers use the old field names with the shared tab template.
 	if button.isDisabled then
 		PanelTemplates_SetDisabledTabState(button)
 	elseif button.tabGroup.selectedTabId == button.tabId then
@@ -195,40 +198,54 @@ end
 
 local function LayoutTabGroup(tabGroup)
 	local offset = 0
-	for _, entry in ipairs(tabGroup.tabEntries) do
+	for index, entry in ipairs(tabGroup.tabEntries) do
+		if index > 1 then offset = offset + tabSpacing end
 		entry.button:ClearAllPoints()
 		entry.button:SetPoint("TOPLEFT", tabGroup, "TOPLEFT", offset, 0)
-		offset = offset + entry.button:GetWidth() + FrameData.tabs.spacing
+		offset = offset + entry.button:GetWidth()
 	end
 	tabGroup:SetSize(math.max(offset, 1), FrameData.tabs.height)
 end
 
 local function ResizeTabButton(button)
+	if classicTabs then
+		PanelTemplates_TabResize(button, 0, nil, TabData.minimumWidth, TabData.maximumWidth)
+		return
+	end
 	button.Text:SetWidth(0)
-	local width = math.max(FrameData.tabs.minimumWidth, button.Text:GetStringWidth() + FrameData.tabs.padding)
-	-- Absolute sizes refer to the whole tab in every client.
+	local width = math.max(TabData.minimumWidth, button.Text:GetStringWidth() + TabData.padding)
 	PanelTemplates_TabResize(button, 0, width)
-	-- Classic limits text to the middle piece; this template centers it across the whole tab.
 	button.Text:SetWidth(0)
 end
 
 local function CreateTabButton(tabGroup, id, text)
-	local button = CreateFrame("Button", nil, tabGroup, "PanelTabButtonTemplate")
+	local name
+	local groupShown = tabGroup:IsShown()
+	if classicTabs then
+		-- Keep the native OnShow from touching CharacterFrame during creation.
+		tabGroup:Hide()
+		tabButtonCounter = tabButtonCounter + 1
+		name = "ArcaneWizardLibraryTabButton" .. tabButtonCounter
+	end
+	local button = CreateFrame("Button", name, tabGroup, TabData.template)
 	button.tabId = id
 	button.tabGroup = tabGroup
+	button.Text = button:GetFontString()
 	button.label = button.Text
-	button.LeftDisabled = button.LeftActive
-	button.MiddleDisabled = button.MiddleActive
-	button.RightDisabled = button.RightActive
 	button:SetText(text)
 	ResizeTabButton(button)
 	button:SetScript("OnClick", function() tabGroup:SelectTab(id) end)
-	button:HookScript("OnShow", ResizeTabButton)
-	button:HookScript("OnEvent", function(self)
-		if self:IsVisible() then ResizeTabButton(self) end
-	end)
+	if classicTabs then
+		button:SetScript("OnShow", ResizeTabButton)
+	else
+		button:HookScript("OnShow", ResizeTabButton)
+		button:HookScript("OnEvent", function(self)
+			if self:IsVisible() then ResizeTabButton(self) end
+		end)
+	end
 	button:HookScript("OnSizeChanged", function() LayoutTabGroup(tabGroup) end)
 	RefreshTabButton(button)
+	if classicTabs and groupShown then tabGroup:Show() end
 	return button, button:GetWidth()
 end
 
@@ -486,13 +503,14 @@ function ArcaneWizardLibrary.Frames:CreateTabGroup(window)
 	assert(not window.tabGroup, LIB.CommonData.debugPrefix .. "CreateTabGroup window already has a tab group.")
 
 	local tabGroup = CreateFrame("Frame", nil, window)
-	tabGroup:SetPoint("TOPLEFT", window, "BOTTOMLEFT", FrameData.tabs.x, FrameData.tabs.y)
+	tabGroup:SetPoint("TOPLEFT", window, "BOTTOMLEFT", TabData.x, TabData.y)
 	tabGroup:SetSize(1, FrameData.tabs.height)
 	tabGroup.window = window
 	tabGroup.tabEntries = {}
 	tabGroup.tabsById = {}
-	tabGroup.tabPadding = FrameData.tabs.padding
-	tabGroup.minTabWidth = FrameData.tabs.minimumWidth
+	tabGroup.tabPadding = TabData.padding
+	tabGroup.minTabWidth = TabData.minimumWidth
+	tabGroup.maxTabWidth = TabData.maximumWidth
 	tabGroup.AddTab = AddTab
 	tabGroup.SelectTab = SelectTab
 	tabGroup.GetSelectedTab = GetSelectedTab

@@ -23,5 +23,10 @@ LIB.FrameData = {
 		minimumHeight = 48,
 		contentInsets = { left = 10, right = 10, top = 10, bottom = 10 }
 	},
-	tabs = { height = 32, minimumWidth = 72, padding = 44, spacing = 3, x = 12, y = 2 }
+	tabs = {
+		height = 32,
+		standard = { template = "PanelTabButtonTemplate", minimumWidth = 72, padding = 44, spacing = 3, x = 12, y = 2 },
+		-- Classic's width limits apply to the middle texture.
+		classic = { template = "CharacterFrameTabButtonTemplate", minimumWidth = 36, maximumWidth = 88, spacing = -15, eraSpacing = -16, x = 11, y = 2 }
+	}
 }
