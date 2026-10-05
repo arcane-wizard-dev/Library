@@ -1,3 +1,6 @@
+**v1.39 (2026-10-05)**
+- Changed: Windows, popups, and controls now use native Blizzard UI templates, with selectable window styles and inset backgrounds, configurable close buttons, and optional tooltip borders for popups
+
 **v1.38 (2026-10-03)**
 - Added: Freely placeable gray horizontal separators with three centered dots and softly fading ends in the options menu
 - Added: Optional New badges for settings
