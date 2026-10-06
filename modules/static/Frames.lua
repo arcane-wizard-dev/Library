@@ -48,10 +48,7 @@ local tabButtonCounter = 0
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
 ---@field style? "standard"|"flat"|"solid" Native window appearance; defaults to standard. Solid keeps the standard background without top streaks.
----@field backgroundStyle? string Legacy style accepted for compatibility; Blizzard supplies the appearance.
 ---@field backgroundAlpha number Initial background opacity from 0 to 1.
----@field titleTransitionStyle? string Legacy field; Blizzard supplies the title appearance.
----@field borderStyle? "library"|"silver"|"gold" Legacy field; Blizzard supplies the border.
 ---@field showPortrait boolean Whether to create a portrait frame.
 ---@field showCloseButton boolean Whether to create a close button.
 ---@field closeButton? ArcaneWizardLibraryCloseButtonConfig Optional size and anchor overrides.
@@ -62,10 +59,8 @@ local tabButtonCounter = 0
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
 ---@field style? "toast"|"tooltip" Native popup appearance; defaults to toast.
----@field backgroundStyle? string Legacy style accepted for compatibility; Blizzard supplies the appearance.
 ---@field backgroundAlpha number Initial background opacity from 0 to 1.
 ---@field showBorder boolean Whether to create a popup border.
----@field borderStyle? "library"|"silver"|"gold" Legacy field; Blizzard supplies the border.
 ---@field showCloseButton boolean Whether to create a close button.
 ---@field closeButton? ArcaneWizardLibraryCloseButtonConfig Optional size and anchor overrides.
 ---@field movable boolean Whether the popup can be dragged.
@@ -100,6 +95,7 @@ local function ValidateConfig(config, data, methodName)
 	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. methodName .. " backgroundAlpha must be between 0 and 1.")
 	assert(type(config.movable) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " movable must be a boolean.")
 	assert(config.closeOnEscape == nil or type(config.closeOnEscape) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " closeOnEscape must be a boolean or nil.")
+
 	if config.closeButton ~= nil then
 		local button = config.closeButton
 		assert(type(button) == "table", LIB.CommonData.debugPrefix .. methodName .. " closeButton must be a table.")
@@ -113,12 +109,19 @@ end
 local function RegisterDragHandle(frame, handle)
 	handle:EnableMouse(true)
 	handle:RegisterForDrag("LeftButton")
-	handle:SetScript("OnDragStart", function() frame:StartMoving() end)
-	handle:SetScript("OnDragStop", function() frame:StopMovingOrSizing() end)
+
+	handle:SetScript("OnDragStart", function()
+		frame:StartMoving()
+	end)
+
+	handle:SetScript("OnDragStop", function()
+		frame:StopMovingOrSizing()
+	end)
 end
 
 local function CreateBaseFrame(config, template)
 	local frameName
+
 	if config.closeOnEscape then
 		specialFrameCounter = specialFrameCounter + 1
 		frameName = "ArcaneWizardLibrarySpecialFrame" .. specialFrameCounter
@@ -133,8 +136,15 @@ local function CreateBaseFrame(config, template)
 	frame:EnableMouse(true)
 	frame:SetMovable(config.movable)
 	frame.closeOnEscape = config.closeOnEscape == true
-	frame:HookScript("OnShow", function(self) self:Raise() end)
-	if frameName then table.insert(UISpecialFrames, frameName) end
+
+	frame:HookScript("OnShow", function(self)
+		self:Raise()
+	end)
+
+	if frameName then
+		table.insert(UISpecialFrames, frameName)
+	end
+
 	return frame
 end
 
@@ -148,8 +158,12 @@ local function ConfigureCloseButton(frame, config)
 	if config.showCloseButton then
 		frame.closeButton = frame.CloseButton or CreateFrame("Button", nil, frame, "UIPanelCloseButtonDefaultAnchors")
 		local button = config.closeButton
+
 		if button then
-			if button.size then frame.closeButton:SetSize(button.size, button.size) end
+			if button.size then
+				frame.closeButton:SetSize(button.size, button.size)
+			end
+
 			if button.point or button.x or button.y then
 				frame.closeButton:ClearAllPoints()
 				frame.closeButton:SetPoint(button.point or "TOPRIGHT", frame, button.point or "TOPRIGHT", button.x or 0, button.y or 0)
@@ -175,14 +189,17 @@ local function SetPopupBorderShown(frame, shown)
 	else
 		local alpha = frame.background and frame.background:GetAlpha() or 1
 		local backdrop = CopyTable(BACKDROP_TOAST_12_12)
+
 		if not shown then
 			backdrop.edgeFile = nil
 			backdrop.insets = nil
 		end
+
 		frame:SetBackdrop(backdrop)
 		frame.background = frame.Center
 		frame.background:SetAlpha(alpha)
 	end
+
 	state.shown = shown
 end
 
@@ -198,20 +215,27 @@ end
 
 local function LayoutTabGroup(tabGroup)
 	local offset = 0
+
 	for index, entry in ipairs(tabGroup.tabEntries) do
-		if index > 1 then offset = offset + tabSpacing end
+		if index > 1 then
+			offset = offset + tabSpacing
+		end
+
 		entry.button:ClearAllPoints()
 		entry.button:SetPoint("TOPLEFT", tabGroup, "TOPLEFT", offset, 0)
 		offset = offset + entry.button:GetWidth()
 	end
+
 	tabGroup:SetSize(math.max(offset, 1), FrameData.tabs.height)
 end
 
 local function ResizeTabButton(button)
 	if classicTabs then
 		PanelTemplates_TabResize(button, 0, nil, TabData.minimumWidth, TabData.maximumWidth)
+
 		return
 	end
+
 	button.Text:SetWidth(0)
 	local width = math.max(TabData.minimumWidth, button.Text:GetStringWidth() + TabData.padding)
 	PanelTemplates_TabResize(button, 0, width)
@@ -221,12 +245,13 @@ end
 local function CreateTabButton(tabGroup, id, text)
 	local name
 	local groupShown = tabGroup:IsShown()
+
 	if classicTabs then
-		-- Keep the native OnShow from touching CharacterFrame during creation.
 		tabGroup:Hide()
 		tabButtonCounter = tabButtonCounter + 1
 		name = "ArcaneWizardLibraryTabButton" .. tabButtonCounter
 	end
+
 	local button = CreateFrame("Button", name, tabGroup, TabData.template)
 	button.tabId = id
 	button.tabGroup = tabGroup
@@ -234,18 +259,33 @@ local function CreateTabButton(tabGroup, id, text)
 	button.label = button.Text
 	button:SetText(text)
 	ResizeTabButton(button)
-	button:SetScript("OnClick", function() tabGroup:SelectTab(id) end)
+
+	button:SetScript("OnClick", function()
+		tabGroup:SelectTab(id)
+	end)
+
 	if classicTabs then
 		button:SetScript("OnShow", ResizeTabButton)
 	else
 		button:HookScript("OnShow", ResizeTabButton)
+
 		button:HookScript("OnEvent", function(self)
-			if self:IsVisible() then ResizeTabButton(self) end
+			if self:IsVisible() then
+				ResizeTabButton(self)
+			end
 		end)
 	end
-	button:HookScript("OnSizeChanged", function() LayoutTabGroup(tabGroup) end)
+
+	button:HookScript("OnSizeChanged", function()
+		LayoutTabGroup(tabGroup)
+	end)
+
 	RefreshTabButton(button)
-	if classicTabs and groupShown then tabGroup:Show() end
+
+	if classicTabs and groupShown then
+		tabGroup:Show()
+	end
+
 	return button, button:GetWidth()
 end
 
@@ -300,6 +340,7 @@ local function SelectTab(tabGroup, id)
 	end
 
 	local previousEntry = tabGroup.selectedTabId and tabGroup.tabsById[tabGroup.selectedTabId]
+
 	if previousEntry then
 		previousEntry.page:Hide()
 	end
@@ -310,6 +351,7 @@ local function SelectTab(tabGroup, id)
 	if previousEntry then
 		RefreshTabButton(previousEntry.button)
 	end
+
 	RefreshTabButton(entry.button)
 	LayoutTabGroup(tabGroup)
 
@@ -348,9 +390,11 @@ local function SetTabEnabled(tabGroup, id, enabled)
 	if enabled then
 		entry.button.isDisabled = false
 		RefreshTabButton(entry.button)
+
 		if not tabGroup.selectedTabId then
 			tabGroup:SelectTab(id)
 		end
+
 		return
 	end
 
@@ -362,15 +406,18 @@ local function SetTabEnabled(tabGroup, id, enabled)
 
 	entry.page:Hide()
 	tabGroup.selectedTabId = nil
+
 	for _, replacement in ipairs(tabGroup.tabEntries) do
 		if not replacement.button.isDisabled then
 			tabGroup:SelectTab(replacement.id)
+
 			return
 		end
 	end
 
 	RefreshTabButton(entry.button)
 	LayoutTabGroup(tabGroup)
+
 	if tabGroup.onTabChanged then
 		tabGroup.onTabChanged(nil, nil)
 	end
@@ -409,6 +456,7 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 	frame:SetSize(config.width, config.height)
 	frame.background = frame:CreateTexture(nil, "BACKGROUND")
 	frame.background:SetAllPoints(frame)
+
 	if style == "solid" then
 		frame.background:SetColorTexture(unpack(data.backgroundColor))
 	elseif C_Texture.GetAtlasInfo(data.backgroundAtlas) then
@@ -418,7 +466,9 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 		frame.background:SetHorizTile(true)
 		frame.background:SetVertTile(true)
 	end
+
 	frame.background:SetAlpha(config.backgroundAlpha)
+
 	return frame
 end
 
@@ -432,36 +482,48 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 	assert(type(config.title) == "string", LIB.CommonData.debugPrefix .. "CreateWindow title must be a string.")
 	assert(type(config.showPortrait) == "boolean", LIB.CommonData.debugPrefix .. "CreateWindow showPortrait must be a boolean.")
 	ValidateConfig(config, config.showPortrait and FrameData.portrait or FrameData.window, "CreateWindow")
+
 	local style = config.style or "standard"
 	assert(style == "standard" or style == "flat" or style == "solid", LIB.CommonData.debugPrefix .. "CreateWindow style must be standard, flat or solid.")
 
 	local template = style == "flat" and "DefaultPanelFlatTemplate" or "DefaultPanelTemplate"
 	local frame = CreateBaseFrame(config, config.showPortrait and "PortraitFrameTemplate" or template)
+
 	frame.titleBar = frame.TitleContainer
 	frame.titleText = frame.TitleText or frame.TitleContainer.TitleText
 	frame.titleText:SetText(config.title)
+
 	frame.background = frame.Bg
+
 	if config.showPortrait and style == "flat" then
-		-- Classic has no flat portrait template; reuse Blizzard's shared background.
 		frame.Bg:Hide()
 		frame.background = CreateFrame("Frame", nil, frame, "FlatPanelBackgroundTemplate")
 		frame.background:SetFrameLevel(0)
 		frame.background:SetAllPoints(frame.Bg)
 	end
+
 	frame.background:SetAlpha(config.backgroundAlpha)
+
 	if frame.TopTileStreaks then
 		frame.TopTileStreaks:SetShown(style == "standard")
 		frame.TopTileStreaks:SetAlpha(config.backgroundAlpha)
 	end
+
 	if config.showPortrait then
 		frame.portrait = frame.portrait or frame.PortraitContainer.portrait
 		frame.portraitFrame = frame.PortraitContainer
 	end
+
 	ConfigureCloseButton(frame, config)
 	CreateContentFrame(frame, FrameData.window.contentInsets)
-	if config.movable then RegisterDragHandle(frame, frame.titleBar) end
+
+	if config.movable then
+		RegisterDragHandle(frame, frame.titleBar)
+	end
+
 	windowFrames[frame] = true
 	frame:Hide()
+
 	return frame
 end
 
@@ -474,22 +536,31 @@ function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreatePopup config must be a table.")
 	ValidateConfig(config, FrameData.popup, "CreatePopup")
 	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreatePopup showBorder must be a boolean.")
+
 	local style = config.style or "toast"
 	assert(style == "toast" or style == "tooltip", LIB.CommonData.debugPrefix .. "CreatePopup style must be toast or tooltip.")
 
 	local frame = CreateBaseFrame(config, style == "tooltip" and "TooltipBackdropTemplate" or "BackdropTemplate")
 	popupFrames[frame] = {}
+
 	if style == "tooltip" then
 		frame.background = frame.NineSlice.Center
 		popupFrames[frame].borderColor = { frame:GetBackdropBorderColor() }
 	end
+
 	frame.SetBorderShown = SetPopupBorderShown
 	frame:SetBorderShown(config.showBorder)
 	frame.background:SetAlpha(config.backgroundAlpha)
+
 	CreateContentFrame(frame, FrameData.popup.contentInsets)
 	ConfigureCloseButton(frame, config)
-	if config.movable then RegisterDragHandle(frame, frame) end
+
+	if config.movable then
+		RegisterDragHandle(frame, frame)
+	end
+
 	frame:Hide()
+
 	return frame
 end
 
@@ -517,5 +588,6 @@ function ArcaneWizardLibrary.Frames:CreateTabGroup(window)
 	tabGroup.SetTabEnabled = SetTabEnabled
 	tabGroup.SetOnTabChanged = SetOnTabChanged
 	window.tabGroup = tabGroup
+
 	return tabGroup
 end

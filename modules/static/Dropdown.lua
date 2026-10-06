@@ -32,6 +32,7 @@ local DropdownData = LIB.ControlData.dropdown
 
 local function IsDropdownValue(value)
 	local valueType = type(value)
+
 	return valueType == "string" or valueType == "number" or valueType == "boolean"
 end
 
@@ -53,6 +54,7 @@ local function ValidateDropdownOptions(options, values, path)
 
 			if option.textColor then
 				assert(type(option.textColor) == "table" and #option.textColor >= 3, LIB.CommonData.debugPrefix .. optionPath .. " textColor must contain at least red, green, and blue values.")
+
 				for colorIndex = 1, math.min(#option.textColor, 4) do
 					local colorValue = option.textColor[colorIndex]
 					assert(type(colorValue) == "number" and colorValue >= 0 and colorValue <= 1, LIB.CommonData.debugPrefix .. optionPath .. " textColor values must be numbers between 0 and 1.")
@@ -86,36 +88,58 @@ end
 
 local function ResolveOptions(dropdown)
 	local options = dropdown.optionsSource
-	if type(options) == "function" then options = options() end
+
+	if type(options) == "function" then
+		options = options()
+	end
+
 	ValidateDropdownOptions(options, {}, "CreateDropdown options")
+
 	return options
 end
 
 local function PopulateMenu(dropdown, root, options)
 	root:SetScrollMode(DropdownData.menuMaximumHeight)
+
 	for _, option in ipairs(options) do
 		if option.divider then
 			root:CreateDivider()
 		else
 			local entry
+
 			if option.children then
 				entry = root:CreateButton(option.label)
 				PopulateMenu(dropdown, entry, option.children)
 			else
 				entry = root:CreateRadio(option.label, function() return dropdown.value == option.value end, function()
 					dropdown.value = option.value
-					if dropdown.onValueChanged then dropdown.onValueChanged(option.value, option, dropdown) end
+
+					if dropdown.onValueChanged then
+						dropdown.onValueChanged(option.value, option, dropdown)
+					end
 				end)
 			end
+
 			entry:SetEnabled(not option.disabled)
+
 			if option.icon or option.atlas or option.textColor then
 				entry:AddInitializer(function(button)
-					if option.textColor then button.fontString:SetTextColor(unpack(option.textColor)) end
+					if option.textColor then
+						button.fontString:SetTextColor(unpack(option.textColor))
+					end
+
 					if option.icon or option.atlas then
 						local icon = button:AttachTexture()
-						if option.atlas then icon:SetAtlas(option.atlas) else icon:SetTexture(option.icon) end
+
+						if option.atlas then
+							icon:SetAtlas(option.atlas)
+						else
+							icon:SetTexture(option.icon)
+						end
+
 						icon:SetSize(DropdownData.menuIconSize, DropdownData.menuIconSize)
 						icon:SetPoint("LEFT", button.fontString, "RIGHT", DropdownData.menuIconSpacing, 0)
+
 						return button.fontString:GetUnboundedStringWidth() + DropdownData.menuIconWidth, DropdownData.menuRowHeight
 					end
 				end)
@@ -140,7 +164,6 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	assert(type(config.options) == "table" or type(config.options) == "function", LIB.CommonData.debugPrefix .. "CreateDropdown options must be a table or function.")
 	assert(config.selectedValue == nil or IsDropdownValue(config.selectedValue), LIB.CommonData.debugPrefix .. "CreateDropdown selectedValue must be a string, number, boolean, or nil.")
 	assert(config.onValueChanged == nil or type(config.onValueChanged) == "function", LIB.CommonData.debugPrefix .. "CreateDropdown onValueChanged must be a function or nil.")
-
 
 	local dropdown = CreateFrame("DropdownButton", nil, config.parent, "WowStyle1DropdownTemplate")
 	dropdown:SetWidth(config.width)
@@ -191,15 +214,27 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 
 	dropdown:SetupMenu(function(owner, root)
 		local options = ResolveOptions(owner)
-		if owner.value ~= nil and not FindDropdownOption(options, owner.value) then owner.value = nil end
+
+		if owner.value ~= nil and not FindDropdownOption(options, owner.value) then
+			owner.value = nil
+		end
+
 		if #options == 0 then
 			root:CreateButton(owner.emptyText):SetEnabled(false)
 		else
 			PopulateMenu(owner, root, options)
 		end
 	end)
-	dropdown:HookScript("OnHide", function(self) self:CloseMenu() end)
-	dropdown:HookScript("OnDisable", function(self) self:CloseMenu() end)
+
+	dropdown:HookScript("OnHide", function(self)
+		self:CloseMenu()
+	end)
+
+	dropdown:HookScript("OnDisable", function(self)
+		self:CloseMenu()
+	end)
+
 	dropdown:SetValue(config.selectedValue)
+
 	return dropdown
 end

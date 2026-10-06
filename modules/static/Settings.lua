@@ -219,11 +219,13 @@ function ArcaneWizardLibrary.Settings:AddDropdown(category, config)
 
 	local function GetOptions()
 		local container = Settings.CreateControlTextContainer()
+
 		if config.options then
 			for _, opt in ipairs(config.options) do
 				container:Add(opt.value, opt.label)
 			end
 		end
+
 		return container:GetData()
 	end
 
@@ -268,6 +270,7 @@ function ArcaneWizardLibrary.Settings:AddProfilesSection(layout, config)
 		switchButtonText = L["settings.profiles.switch.button.account-to-character"]
 	else
 		local characterName = UnitName("player")
+
 		if characterName and characterName ~= "" then
 			profileModeText = profileModeText .. " (" .. characterName .. ")"
 		end

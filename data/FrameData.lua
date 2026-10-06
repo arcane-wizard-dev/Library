@@ -2,9 +2,15 @@ local _, LIB = ...
 
 LIB.FrameData = {
 	anchorPoints = {
-		TOPLEFT = true, TOP = true, TOPRIGHT = true,
-		LEFT = true, CENTER = true, RIGHT = true,
-		BOTTOMLEFT = true, BOTTOM = true, BOTTOMRIGHT = true
+		TOPLEFT = true,
+		TOP = true,
+		TOPRIGHT = true,
+		LEFT = true,
+		CENTER = true,
+		RIGHT = true,
+		BOTTOMLEFT = true,
+		BOTTOM = true,
+		BOTTOMRIGHT = true
 	},
 	window = {
 		minimumWidth = 128,
@@ -25,8 +31,22 @@ LIB.FrameData = {
 	},
 	tabs = {
 		height = 32,
-		standard = { template = "PanelTabButtonTemplate", minimumWidth = 72, padding = 44, spacing = 3, x = 12, y = 2 },
-		-- Classic's width limits apply to the middle texture.
-		classic = { template = "CharacterFrameTabButtonTemplate", minimumWidth = 36, maximumWidth = 88, spacing = -15, eraSpacing = -16, x = 11, y = 2 }
+		standard = {
+			template = "PanelTabButtonTemplate",
+			minimumWidth = 72,
+			padding = 44,
+			spacing = 3,
+			x = 12,
+			y = 2
+		},
+		classic = {
+			template = "CharacterFrameTabButtonTemplate",
+			minimumWidth = 36,
+			maximumWidth = 88,
+			spacing = -15,
+			eraSpacing = -16,
+			x = 11,
+			y = 2
+		}
 	}
 }

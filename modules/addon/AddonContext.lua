@@ -30,6 +30,7 @@ local addonOptions = {}
 local function GetOptions(context)
 	local options = addonOptions[context]
 	assert(options, LIB.CommonData.debugPrefix .. "Options are not initialized for " .. tostring(context.name) .. ".")
+
 	return options
 end
 
@@ -104,6 +105,7 @@ function AddonContextMixin:InitializeOptions(config)
 
 	if not characterGUID or config.requireCharacterRealmKey and not Utils:GetCharacterRealmKey() then
 		addonOptions[self] = nil
+
 		return nil
 	end
 
@@ -126,9 +128,11 @@ function AddonContextMixin:InitializeOptions(config)
 	if createdAccount then
 		database.account = Utils:CopyTable(defaults)
 	end
+
 	if createdGlobal then
 		database.global = Utils:CopyTable(globalDefaults)
 	end
+
 	database.profiles = database.profiles or {}
 	database.profileKeys = database.profileKeys or {}
 
@@ -142,10 +146,12 @@ function AddonContextMixin:InitializeOptions(config)
 			SyncOptions(database.global, globalDefaults, "version")
 			cleanedOptions = true
 		end
+
 		if not createdAccount then
 			SyncOptions(database.account, defaults)
 			cleanedOptions = true
 		end
+
 		for guid, profile in pairs(database.profiles) do
 			if guid ~= characterGUID or not createdProfile then
 				SyncOptions(profile, defaults)
@@ -168,6 +174,7 @@ function AddonContextMixin:InitializeOptions(config)
 	}
 
 	local useAccountProfile = database.profileKeys[characterGUID]["use-account"]
+
 	if self.version then
 		database.global.version = self.version
 	end
@@ -188,6 +195,7 @@ end
 --- @return boolean useAccountProfile Whether the account profile is selected.
 function AddonContextMixin:IsAccountProfile()
 	local options = GetOptions(self)
+
 	return options.database.profileKeys[options.characterGUID]["use-account"]
 end
 
@@ -200,14 +208,17 @@ function AddonContextMixin:OpenSettingsOnLoading()
 	if not profileKey["open-settings"] then return false end
 
 	local opened
+
 	if options.onOpenSettings then
 		opened = options.onOpenSettings()
 	else
 		opened = self:OpenCategory()
 	end
+
 	if not opened then return false end
 
 	profileKey["open-settings"] = false
+
 	return true
 end
 
@@ -251,6 +262,7 @@ function AddonContextMixin:OpenCategory()
 
 	if not InCombatLockdown() then
 		Settings.OpenToCategory(categoryId)
+
 		return true
 	end
 

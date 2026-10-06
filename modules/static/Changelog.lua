@@ -154,6 +154,7 @@ local function CreateChangelogWindow(addonName)
 	frame:SetFrameStrata("DIALOG")
 	local insets = ChangelogData.insets
 	local buttonInset = ChangelogData.buttonInset
+
 	local closeButton = AWL.Controls:CreateButton({
 		parent = frame.content,
 		width = ChangelogData.closeButtonWidth,
@@ -162,6 +163,7 @@ local function CreateChangelogWindow(addonName)
 			frame:Hide()
 		end
 	})
+
 	closeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight())
 
 	local scrollData = ChangelogData.scrollFrame

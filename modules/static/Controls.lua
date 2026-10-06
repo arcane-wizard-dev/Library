@@ -4,14 +4,11 @@ local ControlData = LIB.ControlData
 local ButtonData = ControlData.button
 local SelectionData = ControlData.selection
 
----@alias ArcaneWizardLibraryButtonStyle "classic"|"red"
-
 ---@class ArcaneWizardLibraryButtonConfig
 ---@field parent Frame Parent frame for the button.
 ---@field width number Button width in pixels.
 ---@field label string Displayed button label.
 ---@field onClick? fun(button: ArcaneWizardLibraryActionButton, mouseButton: string, down: boolean) Called when the button is clicked.
----@field buttonStyle? ArcaneWizardLibraryButtonStyle Legacy field; Blizzard supplies the button appearance.
 
 ---@class ArcaneWizardLibraryCheckboxConfig
 ---@field parent Frame Parent frame for the checkbox.
@@ -81,25 +78,29 @@ end
 local function CreateSelectionControl(config, template)
 	local button = CreateFrame("CheckButton", nil, config.parent, template)
 	button:SetSize(config.width, SelectionData.height)
+
 	button.Text = button.Text or button.text
 	button.Text:ClearAllPoints()
 	button.Text:SetPoint("LEFT", SelectionData.textOffset, 0)
 	button.Text:SetPoint("RIGHT")
 	button.Text:SetJustifyH("LEFT")
+
 	button:SetFontString(button.Text)
 	button:SetText(config.label)
 	button:SetNormalFontObject(GameFontNormalSmall)
 	button:SetHighlightFontObject(GameFontHighlightSmall)
 	button:SetDisabledFontObject(GameFontDisableSmall)
-	-- Keep the native icon square while the label remains clickable across the row.
+
 	for _, getter in ipairs(SelectionData.textureGetters) do
 		local texture = button[getter](button)
+
 		if texture then
 			texture:ClearAllPoints()
 			texture:SetSize(SelectionData.iconSize, SelectionData.iconSize)
 			texture:SetPoint("LEFT")
 		end
 	end
+
 	return button
 end
 
@@ -187,6 +188,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 		assert(selectedButton ~= nil, LIB.CommonData.debugPrefix .. "OptionGroup SetValue value must match an option value.")
 
 		self.value = value
+
 		for _, button in ipairs(self.buttons) do
 			button:SetChecked(button == selectedButton)
 		end
@@ -199,6 +201,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 		assert(type(enabled) == "boolean", LIB.CommonData.debugPrefix .. "OptionGroup SetEnabled enabled must be a boolean.")
 
 		self.enabled = enabled
+
 		for _, button in ipairs(self.buttons) do
 			if enabled then
 				button:Enable()
@@ -212,13 +215,16 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 		local button = CreateSelectionControl({ parent = group, width = config.width, label = option.label }, "UIRadioButtonTemplate")
 		button:SetPoint("TOPLEFT", 0, -(index - 1) * (SelectionData.height + SelectionData.optionSpacing))
 		button.value = option.value
+
 		button:SetScript("OnClick", function(clickedButton)
 			if group.value == clickedButton.value then
 				clickedButton:SetChecked(true)
+
 				return
 			end
 
 			group:SetValue(clickedButton.value)
+
 			if config.onValueChanged then
 				config.onValueChanged(clickedButton.value, clickedButton, group)
 			end

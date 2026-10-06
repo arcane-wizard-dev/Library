@@ -14,5 +14,12 @@ LIB.ControlData = {
 		}
 	},
 	input = { height = 22, minimumWidth = 80, textLeftInset = 8, textRightInset = 22 },
-	dropdown = { minimumWidth = 80, menuIconSize = 16, menuIconSpacing = 8, menuIconWidth = 56, menuRowHeight = 20, menuMaximumHeight = 300 }
+	dropdown = {
+		minimumWidth = 80,
+		menuIconSize = 16,
+		menuIconSpacing = 8,
+		menuIconWidth = 56,
+		menuRowHeight = 20,
+		menuMaximumHeight = 300
+	}
 }

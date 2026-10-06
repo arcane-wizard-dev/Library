@@ -4,4 +4,5 @@
 
 **Important note: This is an initial test version for World of Warcraft: Forever. Some addon features may not work correctly yet.**
 
-- Changed: Windows, popups, and controls now use native Blizzard UI templates, with selectable window styles and inset backgrounds, configurable close buttons, and optional tooltip borders for popups
+- Minor code adjustments
+- Removed obsolete code for better maintainability

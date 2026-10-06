@@ -19,7 +19,7 @@ AWL.ADDON_VERSION = C_AddOns.GetAddOnMetadata(addonName, "Version")
 AWL.ADDON_BUILD_DATE = C_AddOns.GetAddOnMetadata(addonName, "X-BuildDate")
 AWL.ADDON_REVISION = C_AddOns.GetAddOnMetadata(addonName, "X-Revision")
 
-local gameVersion, _, _, interfaceVersion = GetBuildInfo()
+local gameVersion = GetBuildInfo()
 AWL.GAME_VERSION = gameVersion
 
 AWL.GAME_TYPE_CLASSIC = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)

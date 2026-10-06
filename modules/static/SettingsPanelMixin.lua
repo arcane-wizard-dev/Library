@@ -10,8 +10,8 @@ ArcaneWizardLibrary_SettingsSeparatorMixin = {}
 
 function ArcaneWizardLibrary_SettingsSeparatorMixin:Init(initializer)
 	local data = initializer:GetData()
-	-- Keep texture filtering inside each atlas slice, away from transparent neighbors.
 	local inset = data.texCoordInset
+
 	for _, texture in ipairs({ self.Left, self.LeftLine, self.Center, self.RightLine, self.Right }) do
 		texture:ClearAllPoints()
 		texture:SetTexture(data.texture)

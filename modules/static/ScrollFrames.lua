@@ -16,7 +16,6 @@ local ScrollFrameData = LIB.ScrollFrameData
 ---@field parent Frame Parent frame for the scroll area.
 ---@field width number Scroll area width in pixels.
 ---@field height number Scroll area height in pixels.
----@field backgroundStyle? "transparent"|"solid-black"|"solid-dark"|"solid-library"|"pattern" Legacy background style; transparent hides the native background.
 ---@field backgroundAlpha number Background opacity from 0 to 1.
 ---@field showBorder boolean Whether to create the outer border.
 ---@field contentInsets? {left: number, right: number, top: number, bottom: number} Non-negative viewport margins; defaults to the Library margins.
@@ -29,7 +28,6 @@ local function UpdateScrollRange(frame)
 	local scroll = frame.scrollFrame
 	local range = scroll:GetVerticalScrollRange()
 	scroll:SetVerticalScroll(math.min(scroll:GetVerticalScroll(), range))
-	-- Refresh the native thumb and arrow step when content or viewport sizes change.
 	scroll:GetScript("OnScrollRangeChanged")(scroll, 0, range)
 end
 
@@ -59,18 +57,27 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. "CreateScrollFrame backgroundAlpha must be between 0 and 1.")
 	local insets = config.contentInsets or ScrollFrameData.contentInsets
 	assert(type(insets) == "table", LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets must be a table.")
+
 	for _, side in ipairs({"left", "right", "top", "bottom"}) do
 		assert(type(insets[side]) == "number" and insets[side] >= 0, LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets." .. side .. " must be non-negative.")
 	end
+
 	assert(insets.left + insets.right < config.width and insets.top + insets.bottom < config.height, LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets leave no content area.")
 
 	local frame = CreateFrame("Frame", nil, config.parent, "BackdropTemplate")
 	frame:SetSize(config.width, config.height)
+
 	local backdrop = CopyTable(BACKDROP_TOAST_12_12)
-	if not config.showBorder then backdrop.edgeFile = nil; backdrop.insets = nil end
+
+	if not config.showBorder then
+		backdrop.edgeFile = nil
+		backdrop.insets = nil
+	end
+
 	frame:SetBackdrop(backdrop)
 	frame.background = frame.Center
-	frame.background:SetAlpha(config.backgroundStyle == "transparent" and 0 or config.backgroundAlpha)
+	frame.background:SetAlpha(config.backgroundAlpha)
+
 	frame.scrollStep = ScrollFrameData.wheelStep
 	frame.requestedContentHeight = 1
 
@@ -79,6 +86,7 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	scroll:SetPoint("BOTTOMRIGHT", -insets.right, insets.bottom)
 	scroll:EnableMouseWheel(true)
 	frame.scrollFrame = scroll
+
 	frame.content = CreateFrame("Frame", nil, scroll)
 	frame.content:SetSize(1, 1)
 	scroll:SetScrollChild(frame.content)
@@ -136,8 +144,15 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 		self:SetVerticalScroll(self.scrollFrame:GetVerticalScrollRange())
 	end
 
-	scroll:HookScript("OnSizeChanged", function() UpdateContentSize(frame) end)
-	frame:HookScript("OnShow", function() UpdateContentSize(frame) end)
+	scroll:HookScript("OnSizeChanged", function()
+		UpdateContentSize(frame)
+	end)
+
+	frame:HookScript("OnShow", function()
+		UpdateContentSize(frame)
+	end)
+
 	UpdateContentSize(frame)
+
 	return frame
 end

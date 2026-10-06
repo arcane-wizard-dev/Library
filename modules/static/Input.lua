@@ -46,12 +46,15 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	assert(config.maxLetters == nil or type(config.maxLetters) == "number" and config.maxLetters >= 0 and config.maxLetters == math.floor(config.maxLetters), LIB.CommonData.debugPrefix .. "CreateInput maxLetters must be a non-negative integer or nil.")
 	assert(config.onTextChanged == nil or type(config.onTextChanged) == "function", LIB.CommonData.debugPrefix .. "CreateInput onTextChanged must be a function or nil.")
 	assert(config.onEnterPressed == nil or type(config.onEnterPressed) == "function", LIB.CommonData.debugPrefix .. "CreateInput onEnterPressed must be a function or nil.")
+
 	local input = CreateFrame("EditBox", nil, config.parent, "SearchBoxTemplate")
 	input:SetSize(config.width, InputData.height)
 	input:SetAutoFocus(false)
+
 	input.Placeholder = input.Instructions
 	input.ClearButton = input.clearButton
 	input.searchIcon:Hide()
+
 	input:SetTextInsets(InputData.textLeftInset, InputData.textRightInset, 0, 0)
 	input.Placeholder:ClearAllPoints()
 	input.Placeholder:SetPoint("LEFT", InputData.textLeftInset, 0)
@@ -62,6 +65,7 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	--- @param text string The placeholder text.
 	function input:SetPlaceholder(text)
 		assert(type(text) == "string", LIB.CommonData.debugPrefix .. "Input SetPlaceholder text must be a string.")
+
 		self.placeholderText = text
 		self.Placeholder:SetText(text)
 		UpdateInput(self)
@@ -75,30 +79,48 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	end
 
 	input:SetPlaceholder(config.placeholder)
-	if config.maxLetters then input:SetMaxLetters(config.maxLetters) end
+
+	if config.maxLetters then
+		input:SetMaxLetters(config.maxLetters)
+	end
+
 	input:SetText(config.text)
 	input.onTextChanged = config.onTextChanged
 	input.onEnterPressed = config.onEnterPressed
+
 	input:HookScript("OnTextChanged", function(self, userInput)
 		UpdateInput(self)
+
 		if self.onTextChanged then
 			self.onTextChanged(self:GetText(), not not (userInput or self.isClearButtonChange), self)
 		end
 	end)
+
 	input:SetScript("OnEnterPressed", function(self)
-		if self.onEnterPressed then self.onEnterPressed(self:GetText(), self) end
+		if self.onEnterPressed then
+			self.onEnterPressed(self:GetText(), self)
+		end
+
 		self:ClearFocus()
 	end)
+
 	input.ClearButton:SetScript("OnClick", function()
 		input.isClearButtonChange = true
 		input:SetText("")
 		input.isClearButtonChange = false
 		input:SetFocus()
 	end)
+
 	input:HookScript("OnEditFocusGained", UpdateInput)
 	input:HookScript("OnEditFocusLost", UpdateInput)
 	input:HookScript("OnEnable", UpdateInput)
-	input:HookScript("OnDisable", function(self) self:ClearFocus(); UpdateInput(self) end)
+
+	input:HookScript("OnDisable", function(self)
+		self:ClearFocus()
+		UpdateInput(self)
+	end)
+
 	UpdateInput(input)
+
 	return input
 end

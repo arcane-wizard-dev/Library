@@ -64,9 +64,11 @@ function AddonLauncher:RegisterMinimapButton(addon, config)
 
 	local text = addon.name
 	local icon = addon:GetMediaPath(iconFileName)
+
 	local onClick = function(_, button)
 		HandleClick(addon, config, button)
 	end
+
 	local onTooltipShow = function(tooltip)
 		ShowTooltip(addon, config, tooltip)
 	end
@@ -91,6 +93,7 @@ function AddonLauncher:RegisterMinimapButton(addon, config)
 
 	if minimapButton:IsRegistered(addon.name) then
 		minimapButton:Refresh(addon.name, config.db)
+
 		return minimapButton
 	end
 
