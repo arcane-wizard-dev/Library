@@ -92,7 +92,10 @@ local function ValidateConfig(config, data, methodName)
 	assert(type(config.width) == "number" and config.width >= data.minimumWidth, LIB.CommonData.debugPrefix .. methodName .. " width is too small.")
 	assert(type(config.height) == "number" and config.height >= data.minimumHeight, LIB.CommonData.debugPrefix .. methodName .. " height is too small.")
 	assert(type(config.showCloseButton) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " showCloseButton must be a boolean.")
-	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. methodName .. " backgroundAlpha must be between 0 and 1.")
+	assert(
+		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
+		LIB.CommonData.debugPrefix .. methodName .. " backgroundAlpha must be between 0 and 1."
+	)
 	assert(type(config.movable) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " movable must be a boolean.")
 	assert(config.closeOnEscape == nil or type(config.closeOnEscape) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " closeOnEscape must be a boolean or nil.")
 
@@ -446,7 +449,10 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateInset parent is required.")
 	assert(type(config.width) == "number" and config.width > 0, LIB.CommonData.debugPrefix .. "CreateInset width must be positive.")
 	assert(type(config.height) == "number" and config.height > 0, LIB.CommonData.debugPrefix .. "CreateInset height must be positive.")
-	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. "CreateInset backgroundAlpha must be between 0 and 1.")
+	assert(
+		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
+		LIB.CommonData.debugPrefix .. "CreateInset backgroundAlpha must be between 0 and 1."
+	)
 	local style = config.backgroundStyle or "solid"
 	assert(style == "solid" or style == "character", LIB.CommonData.debugPrefix .. "CreateInset backgroundStyle must be solid or character.")
 

@@ -48,16 +48,25 @@ local function ValidateDropdownOptions(options, values, path)
 		else
 			assert(type(option.label) == "string" and option.label ~= "", LIB.CommonData.debugPrefix .. optionPath .. " label must be a non-empty string.")
 			assert(option.disabled == nil or type(option.disabled) == "boolean", LIB.CommonData.debugPrefix .. optionPath .. " disabled must be a boolean or nil.")
-			assert(option.icon == nil or type(option.icon) == "string" or type(option.icon) == "number", LIB.CommonData.debugPrefix .. optionPath .. " icon must be a texture path, file ID, or nil.")
+			assert(
+				option.icon == nil or type(option.icon) == "string" or type(option.icon) == "number",
+				LIB.CommonData.debugPrefix .. optionPath .. " icon must be a texture path, file ID, or nil."
+			)
 			assert(option.atlas == nil or type(option.atlas) == "string", LIB.CommonData.debugPrefix .. optionPath .. " atlas must be a string or nil.")
 			assert(not (option.icon and option.atlas), LIB.CommonData.debugPrefix .. optionPath .. " cannot define both icon and atlas.")
 
 			if option.textColor then
-				assert(type(option.textColor) == "table" and #option.textColor >= 3, LIB.CommonData.debugPrefix .. optionPath .. " textColor must contain at least red, green, and blue values.")
+				assert(
+					type(option.textColor) == "table" and #option.textColor >= 3,
+					LIB.CommonData.debugPrefix .. optionPath .. " textColor must contain at least red, green, and blue values."
+				)
 
 				for colorIndex = 1, math.min(#option.textColor, 4) do
 					local colorValue = option.textColor[colorIndex]
-					assert(type(colorValue) == "number" and colorValue >= 0 and colorValue <= 1, LIB.CommonData.debugPrefix .. optionPath .. " textColor values must be numbers between 0 and 1.")
+					assert(
+						type(colorValue) == "number" and colorValue >= 0 and colorValue <= 1,
+						LIB.CommonData.debugPrefix .. optionPath .. " textColor values must be numbers between 0 and 1."
+					)
 				end
 			end
 
@@ -160,10 +169,19 @@ end
 function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateDropdown config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateDropdown parent is required.")
-	assert(type(config.width) == "number" and config.width >= DropdownData.minimumWidth, LIB.CommonData.debugPrefix .. "CreateDropdown width must be at least " .. DropdownData.minimumWidth .. ".")
+	assert(
+		type(config.width) == "number" and config.width >= DropdownData.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateDropdown width must be at least " .. DropdownData.minimumWidth .. "."
+	)
 	assert(type(config.options) == "table" or type(config.options) == "function", LIB.CommonData.debugPrefix .. "CreateDropdown options must be a table or function.")
-	assert(config.selectedValue == nil or IsDropdownValue(config.selectedValue), LIB.CommonData.debugPrefix .. "CreateDropdown selectedValue must be a string, number, boolean, or nil.")
-	assert(config.onValueChanged == nil or type(config.onValueChanged) == "function", LIB.CommonData.debugPrefix .. "CreateDropdown onValueChanged must be a function or nil.")
+	assert(
+		config.selectedValue == nil or IsDropdownValue(config.selectedValue),
+		LIB.CommonData.debugPrefix .. "CreateDropdown selectedValue must be a string, number, boolean, or nil."
+	)
+	assert(
+		config.onValueChanged == nil or type(config.onValueChanged) == "function",
+		LIB.CommonData.debugPrefix .. "CreateDropdown onValueChanged must be a function or nil."
+	)
 
 	local dropdown = CreateFrame("DropdownButton", nil, config.parent, "WowStyle1DropdownTemplate")
 	dropdown:SetWidth(config.width)

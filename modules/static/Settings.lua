@@ -146,7 +146,15 @@ end
 --- @return table initializer The checkbox initializer.
 --- @return table setting The registered setting.
 function ArcaneWizardLibrary.Settings:AddCheckbox(category, config)
-	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, Settings.VarType.Boolean, config.name, config.default or false)
+	local setting = Settings.RegisterAddOnSetting(
+		category,
+		config.settingKey,
+		config.variableName,
+		config.variableTable,
+		Settings.VarType.Boolean,
+		config.name,
+		config.default or false
+	)
 	local initializer = Settings.CreateCheckbox(category, setting, config.tooltip)
 
 	ApplyInitializerConfig(initializer, config)
@@ -163,7 +171,15 @@ end
 --- @return table initializer The slider initializer.
 --- @return table setting The registered setting.
 function ArcaneWizardLibrary.Settings:AddSlider(category, config)
-	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, Settings.VarType.Number, config.name, config.default or 1)
+	local setting = Settings.RegisterAddOnSetting(
+		category,
+		config.settingKey,
+		config.variableName,
+		config.variableTable,
+		Settings.VarType.Number,
+		config.name,
+		config.default or 1
+	)
 	local options = Settings.CreateSliderOptions(config.minValue or 1, config.maxValue or 10, config.step or 1)
 
 	if config.formatter then
@@ -188,15 +204,39 @@ end
 --- @return table settingCheckbox The checkbox setting.
 --- @return table settingSlider The slider setting.
 function ArcaneWizardLibrary.Settings:AddCheckboxSliderCombo(category, layout, config)
-	local settingCheckbox = Settings.RegisterAddOnSetting(category, config.checkboxSettingKey, config.checkboxVariableName, config.variableTable, Settings.VarType.Boolean, config.checkboxName, config.checkboxDefault or false)
-	local settingSlider = Settings.RegisterAddOnSetting(category, config.sliderSettingKey, config.sliderVariableName, config.variableTable, Settings.VarType.Number, config.sliderName, config.sliderDefault or 1)
+	local settingCheckbox = Settings.RegisterAddOnSetting(
+		category,
+		config.checkboxSettingKey,
+		config.checkboxVariableName,
+		config.variableTable,
+		Settings.VarType.Boolean,
+		config.checkboxName,
+		config.checkboxDefault or false
+	)
+	local settingSlider = Settings.RegisterAddOnSetting(
+		category,
+		config.sliderSettingKey,
+		config.sliderVariableName,
+		config.variableTable,
+		Settings.VarType.Number,
+		config.sliderName,
+		config.sliderDefault or 1
+	)
 	local optionsSlider = Settings.CreateSliderOptions(config.sliderMin or 1, config.sliderMax or 10, config.sliderStep or 1)
 
 	if config.sliderFormatter then
 		optionsSlider:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, config.sliderFormatter)
 	end
 
-	local initializer = CreateSettingsCheckboxSliderInitializer(settingCheckbox, config.checkboxName, config.checkboxTooltip, settingSlider, optionsSlider, config.sliderName, config.sliderTooltip)
+	local initializer = CreateSettingsCheckboxSliderInitializer(
+		settingCheckbox,
+		config.checkboxName,
+		config.checkboxTooltip,
+		settingSlider,
+		optionsSlider,
+		config.sliderName,
+		config.sliderTooltip
+	)
 	initializer.GetSetting = function() return settingCheckbox end
 
 	ApplyInitializerConfig(initializer, config)

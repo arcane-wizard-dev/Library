@@ -1,5 +1,13 @@
 local _, LIB = ...
 
+LIB.SETTINGS_HEADER = {
+	iconFileName = "icon.tga",
+	iconSize = 30,
+	iconSpacing = 9,
+	iconOffsetY = 2,
+	offsetX = 19
+}
+
 LIB.INFO_TEXT_HEIGHTS = {
 	compact = 13,
 	default = 27

@@ -40,12 +40,27 @@ end
 function ArcaneWizardLibrary.Controls:CreateInput(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateInput config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateInput parent is required.")
-	assert(type(config.width) == "number" and config.width >= InputData.minimumWidth, LIB.CommonData.debugPrefix .. "CreateInput width must be at least " .. InputData.minimumWidth .. ".")
+	assert(
+		type(config.width) == "number" and config.width >= InputData.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateInput width must be at least " .. InputData.minimumWidth .. "."
+	)
 	assert(type(config.text) == "string", LIB.CommonData.debugPrefix .. "CreateInput text must be a string.")
 	assert(type(config.placeholder) == "string", LIB.CommonData.debugPrefix .. "CreateInput placeholder must be a string.")
-	assert(config.maxLetters == nil or type(config.maxLetters) == "number" and config.maxLetters >= 0 and config.maxLetters == math.floor(config.maxLetters), LIB.CommonData.debugPrefix .. "CreateInput maxLetters must be a non-negative integer or nil.")
-	assert(config.onTextChanged == nil or type(config.onTextChanged) == "function", LIB.CommonData.debugPrefix .. "CreateInput onTextChanged must be a function or nil.")
-	assert(config.onEnterPressed == nil or type(config.onEnterPressed) == "function", LIB.CommonData.debugPrefix .. "CreateInput onEnterPressed must be a function or nil.")
+	assert(
+		config.maxLetters == nil
+			or type(config.maxLetters) == "number"
+				and config.maxLetters >= 0
+				and config.maxLetters == math.floor(config.maxLetters),
+		LIB.CommonData.debugPrefix .. "CreateInput maxLetters must be a non-negative integer or nil."
+	)
+	assert(
+		config.onTextChanged == nil or type(config.onTextChanged) == "function",
+		LIB.CommonData.debugPrefix .. "CreateInput onTextChanged must be a function or nil."
+	)
+	assert(
+		config.onEnterPressed == nil or type(config.onEnterPressed) == "function",
+		LIB.CommonData.debugPrefix .. "CreateInput onEnterPressed must be a function or nil."
+	)
 
 	local input = CreateFrame("EditBox", nil, config.parent, "SearchBoxTemplate")
 	input:SetSize(config.width, InputData.height)

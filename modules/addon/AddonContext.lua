@@ -26,6 +26,26 @@ local profileDefaults = ArcaneWizardLibrary.PROFILE_DEFAULTS
 
 local addonContexts = {}
 local addonOptions = {}
+local addonsByCategoryId = {}
+local settingsHeaderHooked = false
+local settingsHeaderAnchor
+local settingsHeaderIcon
+
+local function UpdateSettingsHeader(panel, category)
+	local addon = category and addonsByCategoryId[category:GetID()]
+	if not addon then return end
+
+	local header = LIB.SETTINGS_HEADER
+	local title = panel:GetSettingsList().Header.Title
+
+	settingsHeaderAnchor = { title:GetPoint() }
+	local point, relativeTo, relativePoint, offsetX, offsetY = unpack(settingsHeaderAnchor)
+	local titleOffsetX = header.offsetX + header.iconSize + header.iconSpacing
+	title:SetPoint(point, relativeTo, relativePoint, offsetX + titleOffsetX, offsetY)
+
+	settingsHeaderIcon:SetTexture(addon:GetMediaPath(header.iconFileName))
+	settingsHeaderIcon:Show()
+end
 
 local function GetOptions(context)
 	local options = addonOptions[context]
@@ -243,11 +263,39 @@ function AddonContextMixin:ResetAllCharacterProfiles()
 	database.profileKeys[options.characterGUID]["open-settings"] = true
 end
 
---- Stores the Blizzard settings category ID for this addon.
+--- Stores the settings category ID and adds the addon icon to its heading.
 ---
 --- @param categoryId number The settings category ID.
 function AddonContextMixin:SetMainCategoryId(categoryId)
+	if self.mainCategoryId then
+		addonsByCategoryId[self.mainCategoryId] = nil
+	end
+
 	self.mainCategoryId = categoryId
+	addonsByCategoryId[categoryId] = self
+
+	if not settingsHeaderHooked and SettingsPanel then
+		local header = SettingsPanel:GetSettingsList().Header
+		local title = header.Title
+		local layout = LIB.SETTINGS_HEADER
+
+		settingsHeaderIcon = header:CreateTexture(nil, "ARTWORK")
+		settingsHeaderIcon:SetSize(layout.iconSize, layout.iconSize)
+		settingsHeaderIcon:SetPoint("RIGHT", title, "LEFT", -layout.iconSpacing, layout.iconOffsetY)
+		settingsHeaderIcon:Hide()
+
+		hooksecurefunc(title, "SetText", function()
+			settingsHeaderIcon:Hide()
+
+			if settingsHeaderAnchor then
+				title:SetPoint(unpack(settingsHeaderAnchor))
+				settingsHeaderAnchor = nil
+			end
+		end)
+
+		hooksecurefunc(SettingsPanel, "DisplayCategory", UpdateSettingsHeader)
+		settingsHeaderHooked = true
+	end
 end
 
 --- Opens the settings category registered with SetMainCategoryId.

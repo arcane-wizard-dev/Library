@@ -54,7 +54,10 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	assert(type(config.width) == "number" and config.width >= ScrollFrameData.minimumWidth, LIB.CommonData.debugPrefix .. "CreateScrollFrame width is too small.")
 	assert(type(config.height) == "number" and config.height >= ScrollFrameData.minimumHeight, LIB.CommonData.debugPrefix .. "CreateScrollFrame height is too small.")
 	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreateScrollFrame showBorder must be a boolean.")
-	assert(type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1, LIB.CommonData.debugPrefix .. "CreateScrollFrame backgroundAlpha must be between 0 and 1.")
+	assert(
+		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
+		LIB.CommonData.debugPrefix .. "CreateScrollFrame backgroundAlpha must be between 0 and 1."
+	)
 	local insets = config.contentInsets or ScrollFrameData.contentInsets
 	assert(type(insets) == "table", LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets must be a table.")
 
@@ -62,7 +65,10 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 		assert(type(insets[side]) == "number" and insets[side] >= 0, LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets." .. side .. " must be non-negative.")
 	end
 
-	assert(insets.left + insets.right < config.width and insets.top + insets.bottom < config.height, LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets leave no content area.")
+	assert(
+		insets.left + insets.right < config.width and insets.top + insets.bottom < config.height,
+		LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets leave no content area."
+	)
 
 	local frame = CreateFrame("Frame", nil, config.parent, "BackdropTemplate")
 	frame:SetSize(config.width, config.height)

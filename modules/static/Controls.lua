@@ -46,9 +46,15 @@ local SelectionData = ControlData.selection
 local function AssertSelectionControlConfig(config, methodName)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. methodName .. " config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. methodName .. " parent is required.")
-	assert(type(config.width) == "number" and config.width >= SelectionData.minimumWidth, LIB.CommonData.debugPrefix .. methodName .. " width must be at least " .. SelectionData.minimumWidth .. ".")
+	assert(
+		type(config.width) == "number" and config.width >= SelectionData.minimumWidth,
+		LIB.CommonData.debugPrefix .. methodName .. " width must be at least " .. SelectionData.minimumWidth .. "."
+	)
 	assert(type(config.label) == "string" and config.label ~= "", LIB.CommonData.debugPrefix .. methodName .. " label must be a non-empty string.")
-	assert(config.onValueChanged == nil or type(config.onValueChanged) == "function", LIB.CommonData.debugPrefix .. methodName .. " onValueChanged must be a function or nil.")
+	assert(
+		config.onValueChanged == nil or type(config.onValueChanged) == "function",
+		LIB.CommonData.debugPrefix .. methodName .. " onValueChanged must be a function or nil."
+	)
 end
 
 local function ValidateOptions(options, selectedValue)
@@ -59,10 +65,16 @@ local function ValidateOptions(options, selectedValue)
 
 	for index, option in ipairs(options) do
 		assert(type(option) == "table", LIB.CommonData.debugPrefix .. "CreateOptionGroup option " .. index .. " must be a table.")
-		assert(type(option.label) == "string" and option.label ~= "", LIB.CommonData.debugPrefix .. "CreateOptionGroup option " .. index .. " label must be a non-empty string.")
+		assert(
+			type(option.label) == "string" and option.label ~= "",
+			LIB.CommonData.debugPrefix .. "CreateOptionGroup option " .. index .. " label must be a non-empty string."
+		)
 
 		local valueType = type(option.value)
-		assert(valueType == "string" or valueType == "number" or valueType == "boolean", LIB.CommonData.debugPrefix .. "CreateOptionGroup option " .. index .. " value must be a string, number, or boolean.")
+		assert(
+			valueType == "string" or valueType == "number" or valueType == "boolean",
+			LIB.CommonData.debugPrefix .. "CreateOptionGroup option " .. index .. " value must be a string, number, or boolean."
+		)
 		assert(not values[option.value], LIB.CommonData.debugPrefix .. "CreateOptionGroup option values must be unique.")
 
 		values[option.value] = true
@@ -117,7 +129,10 @@ function ArcaneWizardLibrary.Controls:CreateButton(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateButton config must be a table.")
 
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateButton parent is required.")
-	assert(type(config.width) == "number" and config.width >= ButtonData.minimumWidth, LIB.CommonData.debugPrefix .. "CreateButton width must be at least " .. ButtonData.minimumWidth .. ".")
+	assert(
+		type(config.width) == "number" and config.width >= ButtonData.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateButton width must be at least " .. ButtonData.minimumWidth .. "."
+	)
 	assert(type(config.label) == "string" and config.label ~= "", LIB.CommonData.debugPrefix .. "CreateButton label must be a non-empty string.")
 	assert(config.onClick == nil or type(config.onClick) == "function", LIB.CommonData.debugPrefix .. "CreateButton onClick must be a function or nil.")
 
@@ -161,8 +176,14 @@ end
 function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateOptionGroup config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateOptionGroup parent is required.")
-	assert(type(config.width) == "number" and config.width >= SelectionData.minimumWidth, LIB.CommonData.debugPrefix .. "CreateOptionGroup width must be at least " .. SelectionData.minimumWidth .. ".")
-	assert(config.onValueChanged == nil or type(config.onValueChanged) == "function", LIB.CommonData.debugPrefix .. "CreateOptionGroup onValueChanged must be a function or nil.")
+	assert(
+		type(config.width) == "number" and config.width >= SelectionData.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateOptionGroup width must be at least " .. SelectionData.minimumWidth .. "."
+	)
+	assert(
+		config.onValueChanged == nil or type(config.onValueChanged) == "function",
+		LIB.CommonData.debugPrefix .. "CreateOptionGroup onValueChanged must be a function or nil."
+	)
 	ValidateOptions(config.options, config.selectedValue)
 
 	local optionCount = #config.options
