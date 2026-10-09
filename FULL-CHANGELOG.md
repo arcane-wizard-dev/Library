@@ -1,3 +1,8 @@
+**v1.40 (2026-10-09)**
+- Added: Addon icons before the names in options menu headings
+- Minor code adjustments
+- Removed obsolete code for better maintainability
+
 **v1.39 (2026-10-05)**
 - Changed: Windows, popups, and controls now use native Blizzard UI templates, with selectable window styles and inset backgrounds, configurable close buttons, and optional tooltip borders for popups
 
