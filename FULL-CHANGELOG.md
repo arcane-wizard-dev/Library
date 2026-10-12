@@ -1,3 +1,6 @@
+**v1.41 (2026-10-12)**
+- Refactoring of the addon structure and source code
+
 **v1.40 (2026-10-09)**
 - Added: Addon icons before the names in options menu headings
 - Minor code adjustments
