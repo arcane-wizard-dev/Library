@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-local DropdownData = LIB.ControlData.dropdown
+local DropdownConfig = LIB.UIConfig.Control.dropdown
 
 ---@class ArcaneWizardLibraryDropdownOption
 ---@field label? string Displayed option or group label.
@@ -108,7 +108,7 @@ local function ResolveOptions(dropdown)
 end
 
 local function PopulateMenu(dropdown, root, options)
-	root:SetScrollMode(DropdownData.menuMaximumHeight)
+	root:SetScrollMode(DropdownConfig.menuMaximumHeight)
 
 	for _, option in ipairs(options) do
 		if option.divider then
@@ -146,10 +146,10 @@ local function PopulateMenu(dropdown, root, options)
 							icon:SetTexture(option.icon)
 						end
 
-						icon:SetSize(DropdownData.menuIconSize, DropdownData.menuIconSize)
-						icon:SetPoint("LEFT", button.fontString, "RIGHT", DropdownData.menuIconSpacing, 0)
+						icon:SetSize(DropdownConfig.menuIconSize, DropdownConfig.menuIconSize)
+						icon:SetPoint("LEFT", button.fontString, "RIGHT", DropdownConfig.menuIconSpacing, 0)
 
-						return button.fontString:GetUnboundedStringWidth() + DropdownData.menuIconWidth, DropdownData.menuRowHeight
+						return button.fontString:GetUnboundedStringWidth() + DropdownConfig.menuIconWidth, DropdownConfig.menuRowHeight
 					end
 				end)
 			end
@@ -170,8 +170,8 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateDropdown config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateDropdown parent is required.")
 	assert(
-		type(config.width) == "number" and config.width >= DropdownData.minimumWidth,
-		LIB.CommonData.debugPrefix .. "CreateDropdown width must be at least " .. DropdownData.minimumWidth .. "."
+		type(config.width) == "number" and config.width >= DropdownConfig.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateDropdown width must be at least " .. DropdownConfig.minimumWidth .. "."
 	)
 	assert(type(config.options) == "table" or type(config.options) == "function", LIB.CommonData.debugPrefix .. "CreateDropdown options must be a table or function.")
 	assert(

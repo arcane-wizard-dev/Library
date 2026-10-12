@@ -1,9 +1,9 @@
 local _, LIB = ...
 
-local FrameData = LIB.FrameData
+local FrameConfig = LIB.UIConfig.Frame
 local classicTabs = ArcaneWizardLibrary.GAME_TYPE_CLASSIC or ArcaneWizardLibrary.GAME_TYPE_TBC or ArcaneWizardLibrary.GAME_TYPE_MISTS
-local TabData = classicTabs and FrameData.tabs.classic or FrameData.tabs.standard
-local tabSpacing = ArcaneWizardLibrary.GAME_TYPE_CLASSIC and TabData.eraSpacing or TabData.spacing
+local TabConfig = classicTabs and FrameConfig.tabs.classic or FrameConfig.tabs.standard
+local tabSpacing = ArcaneWizardLibrary.GAME_TYPE_CLASSIC and TabConfig.eraSpacing or TabConfig.spacing
 local windowFrames = setmetatable({}, { __mode = "k" })
 local popupFrames = setmetatable({}, { __mode = "k" })
 local specialFrameCounter = 0
@@ -103,7 +103,7 @@ local function ValidateConfig(config, data, methodName)
 		local button = config.closeButton
 		assert(type(button) == "table", LIB.CommonData.debugPrefix .. methodName .. " closeButton must be a table.")
 		assert(button.size == nil or type(button.size) == "number" and button.size > 0, LIB.CommonData.debugPrefix .. methodName .. " closeButton.size must be positive.")
-		assert(button.point == nil or FrameData.anchorPoints[button.point], LIB.CommonData.debugPrefix .. methodName .. " closeButton.point is invalid.")
+		assert(button.point == nil or FrameConfig.anchorPoints[button.point], LIB.CommonData.debugPrefix .. methodName .. " closeButton.point is invalid.")
 		assert(button.x == nil or type(button.x) == "number", LIB.CommonData.debugPrefix .. methodName .. " closeButton.x must be a number.")
 		assert(button.y == nil or type(button.y) == "number", LIB.CommonData.debugPrefix .. methodName .. " closeButton.y must be a number.")
 	end
@@ -229,18 +229,18 @@ local function LayoutTabGroup(tabGroup)
 		offset = offset + entry.button:GetWidth()
 	end
 
-	tabGroup:SetSize(math.max(offset, 1), FrameData.tabs.height)
+	tabGroup:SetSize(math.max(offset, 1), FrameConfig.tabs.height)
 end
 
 local function ResizeTabButton(button)
 	if classicTabs then
-		PanelTemplates_TabResize(button, 0, nil, TabData.minimumWidth, TabData.maximumWidth)
+		PanelTemplates_TabResize(button, 0, nil, TabConfig.minimumWidth, TabConfig.maximumWidth)
 
 		return
 	end
 
 	button.Text:SetWidth(0)
-	local width = math.max(TabData.minimumWidth, button.Text:GetStringWidth() + TabData.padding)
+	local width = math.max(TabConfig.minimumWidth, button.Text:GetStringWidth() + TabConfig.padding)
 	PanelTemplates_TabResize(button, 0, width)
 	button.Text:SetWidth(0)
 end
@@ -255,7 +255,7 @@ local function CreateTabButton(tabGroup, id, text)
 		name = "ArcaneWizardLibraryTabButton" .. tabButtonCounter
 	end
 
-	local button = CreateFrame("Button", name, tabGroup, TabData.template)
+	local button = CreateFrame("Button", name, tabGroup, TabConfig.template)
 	button.tabId = id
 	button.tabGroup = tabGroup
 	button.Text = button:GetFontString()
@@ -456,7 +456,7 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 	local style = config.backgroundStyle or "solid"
 	assert(style == "solid" or style == "character", LIB.CommonData.debugPrefix .. "CreateInset backgroundStyle must be solid or character.")
 
-	local data = FrameData.inset
+	local data = FrameConfig.inset
 	local frame = CreateFrame("Frame", nil, config.parent, data.template)
 	frame:SetFrameLevel(config.parent:GetFrameLevel())
 	frame:SetSize(config.width, config.height)
@@ -487,7 +487,7 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateWindow config must be a table.")
 	assert(type(config.title) == "string", LIB.CommonData.debugPrefix .. "CreateWindow title must be a string.")
 	assert(type(config.showPortrait) == "boolean", LIB.CommonData.debugPrefix .. "CreateWindow showPortrait must be a boolean.")
-	ValidateConfig(config, config.showPortrait and FrameData.portrait or FrameData.window, "CreateWindow")
+	ValidateConfig(config, config.showPortrait and FrameConfig.portrait or FrameConfig.window, "CreateWindow")
 
 	local style = config.style or "standard"
 	assert(style == "standard" or style == "flat" or style == "solid", LIB.CommonData.debugPrefix .. "CreateWindow style must be standard, flat or solid.")
@@ -521,7 +521,7 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 	end
 
 	ConfigureCloseButton(frame, config)
-	CreateContentFrame(frame, FrameData.window.contentInsets)
+	CreateContentFrame(frame, FrameConfig.window.contentInsets)
 
 	if config.movable then
 		RegisterDragHandle(frame, frame.titleBar)
@@ -540,7 +540,7 @@ end
 --- @return ArcaneWizardLibraryPopupFrame frame The created popup.
 function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreatePopup config must be a table.")
-	ValidateConfig(config, FrameData.popup, "CreatePopup")
+	ValidateConfig(config, FrameConfig.popup, "CreatePopup")
 	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreatePopup showBorder must be a boolean.")
 
 	local style = config.style or "toast"
@@ -558,7 +558,7 @@ function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	frame:SetBorderShown(config.showBorder)
 	frame.background:SetAlpha(config.backgroundAlpha)
 
-	CreateContentFrame(frame, FrameData.popup.contentInsets)
+	CreateContentFrame(frame, FrameConfig.popup.contentInsets)
 	ConfigureCloseButton(frame, config)
 
 	if config.movable then
@@ -580,14 +580,14 @@ function ArcaneWizardLibrary.Frames:CreateTabGroup(window)
 	assert(not window.tabGroup, LIB.CommonData.debugPrefix .. "CreateTabGroup window already has a tab group.")
 
 	local tabGroup = CreateFrame("Frame", nil, window)
-	tabGroup:SetPoint("TOPLEFT", window, "BOTTOMLEFT", TabData.x, TabData.y)
-	tabGroup:SetSize(1, FrameData.tabs.height)
+	tabGroup:SetPoint("TOPLEFT", window, "BOTTOMLEFT", TabConfig.x, TabConfig.y)
+	tabGroup:SetSize(1, FrameConfig.tabs.height)
 	tabGroup.window = window
 	tabGroup.tabEntries = {}
 	tabGroup.tabsById = {}
-	tabGroup.tabPadding = TabData.padding
-	tabGroup.minTabWidth = TabData.minimumWidth
-	tabGroup.maxTabWidth = TabData.maximumWidth
+	tabGroup.tabPadding = TabConfig.padding
+	tabGroup.minTabWidth = TabConfig.minimumWidth
+	tabGroup.maxTabWidth = TabConfig.maximumWidth
 	tabGroup.AddTab = AddTab
 	tabGroup.SelectTab = SelectTab
 	tabGroup.GetSelectedTab = GetSelectedTab

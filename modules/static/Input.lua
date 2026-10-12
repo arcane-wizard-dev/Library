@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-local InputData = LIB.ControlData.input
+local InputConfig = LIB.UIConfig.Control.input
 
 ---@class ArcaneWizardLibraryInputConfig
 ---@field parent Frame Parent frame for the input field.
@@ -41,8 +41,8 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateInput config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateInput parent is required.")
 	assert(
-		type(config.width) == "number" and config.width >= InputData.minimumWidth,
-		LIB.CommonData.debugPrefix .. "CreateInput width must be at least " .. InputData.minimumWidth .. "."
+		type(config.width) == "number" and config.width >= InputConfig.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateInput width must be at least " .. InputConfig.minimumWidth .. "."
 	)
 	assert(type(config.text) == "string", LIB.CommonData.debugPrefix .. "CreateInput text must be a string.")
 	assert(type(config.placeholder) == "string", LIB.CommonData.debugPrefix .. "CreateInput placeholder must be a string.")
@@ -63,17 +63,17 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	)
 
 	local input = CreateFrame("EditBox", nil, config.parent, "SearchBoxTemplate")
-	input:SetSize(config.width, InputData.height)
+	input:SetSize(config.width, InputConfig.height)
 	input:SetAutoFocus(false)
 
 	input.Placeholder = input.Instructions
 	input.ClearButton = input.clearButton
 	input.searchIcon:Hide()
 
-	input:SetTextInsets(InputData.textLeftInset, InputData.textRightInset, 0, 0)
+	input:SetTextInsets(InputConfig.textLeftInset, InputConfig.textRightInset, 0, 0)
 	input.Placeholder:ClearAllPoints()
-	input.Placeholder:SetPoint("LEFT", InputData.textLeftInset, 0)
-	input.Placeholder:SetPoint("RIGHT", -InputData.textRightInset, 0)
+	input.Placeholder:SetPoint("LEFT", InputConfig.textLeftInset, 0)
+	input.Placeholder:SetPoint("RIGHT", -InputConfig.textRightInset, 0)
 
 	--- Sets the text displayed while the unfocused input is empty.
 	---

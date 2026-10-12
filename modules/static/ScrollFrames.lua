@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-local ScrollFrameData = LIB.ScrollFrameData
+local ScrollFrameConfig = LIB.UIConfig.ScrollFrame
 
 ---@class ArcaneWizardLibraryScrollFrame: Frame
 ---@field background Texture
@@ -51,14 +51,14 @@ end
 function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateScrollFrame config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateScrollFrame parent is required.")
-	assert(type(config.width) == "number" and config.width >= ScrollFrameData.minimumWidth, LIB.CommonData.debugPrefix .. "CreateScrollFrame width is too small.")
-	assert(type(config.height) == "number" and config.height >= ScrollFrameData.minimumHeight, LIB.CommonData.debugPrefix .. "CreateScrollFrame height is too small.")
+	assert(type(config.width) == "number" and config.width >= ScrollFrameConfig.minimumWidth, LIB.CommonData.debugPrefix .. "CreateScrollFrame width is too small.")
+	assert(type(config.height) == "number" and config.height >= ScrollFrameConfig.minimumHeight, LIB.CommonData.debugPrefix .. "CreateScrollFrame height is too small.")
 	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreateScrollFrame showBorder must be a boolean.")
 	assert(
 		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
 		LIB.CommonData.debugPrefix .. "CreateScrollFrame backgroundAlpha must be between 0 and 1."
 	)
-	local insets = config.contentInsets or ScrollFrameData.contentInsets
+	local insets = config.contentInsets or ScrollFrameConfig.contentInsets
 	assert(type(insets) == "table", LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets must be a table.")
 
 	for _, side in ipairs({"left", "right", "top", "bottom"}) do
@@ -84,7 +84,7 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	frame.background = frame.Center
 	frame.background:SetAlpha(config.backgroundAlpha)
 
-	frame.scrollStep = ScrollFrameData.wheelStep
+	frame.scrollStep = ScrollFrameConfig.wheelStep
 	frame.requestedContentHeight = 1
 
 	local scroll = CreateFrame("ScrollFrame", nil, frame)
@@ -98,8 +98,8 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	scroll:SetScrollChild(frame.content)
 
 	local bar = CreateFrame("EventFrame", nil, frame, "MinimalScrollBar")
-	bar:SetPoint("TOPRIGHT", -ScrollFrameData.barInset, -insets.top)
-	bar:SetPoint("BOTTOMRIGHT", -ScrollFrameData.barInset, insets.bottom)
+	bar:SetPoint("TOPRIGHT", -ScrollFrameConfig.barInset, -insets.top)
+	bar:SetPoint("BOTTOMRIGHT", -ScrollFrameConfig.barInset, insets.bottom)
 	frame.scrollBar = bar
 	frame.scrollUpButton = bar.Back
 	frame.scrollDownButton = bar.Forward

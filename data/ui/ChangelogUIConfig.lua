@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-LIB.ChangelogData = {
+LIB.UIConfig.Changelog = {
 	window = {
 		style = "solid",
 		width = 520,

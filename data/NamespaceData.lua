@@ -1,0 +1,3 @@
+local _, LIB = ...
+
+LIB.UIConfig = LIB.UIConfig or {}

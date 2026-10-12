@@ -2,7 +2,7 @@ local _, LIB = ...
 
 local AWL = ArcaneWizardLibrary
 local L = LIB.Localization
-local ChangelogData = LIB.ChangelogData
+local ChangelogConfig = LIB.UIConfig.Changelog
 
 ---@class ArcaneWizardLibraryChangelogVersion
 ---@field version string Version label displayed as the section heading.
@@ -21,12 +21,12 @@ local function CreateChangelogRow(state)
 	local text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("TOP")
-	text:SetSpacing(ChangelogData.lineSpacing)
+	text:SetSpacing(ChangelogConfig.lineSpacing)
 	text:SetWordWrap(true)
 
 	local bullet = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	bullet:SetPoint("TOPLEFT")
-	bullet:SetWidth(ChangelogData.bulletWidth)
+	bullet:SetWidth(ChangelogConfig.bulletWidth)
 	bullet:SetJustifyH("CENTER")
 	bullet:SetJustifyV("TOP")
 	bullet:SetText("•")
@@ -39,9 +39,9 @@ local function CreateChangelogRow(state)
 end
 
 local function AddChangelogRow(state, rowCount, text, isBullet, rowWidth, offset)
-	local padding = ChangelogData.contentPadding.x
-	local spacing = ChangelogData.lineSpacing
-	local textInset = isBullet and ChangelogData.bulletWidth + ChangelogData.bulletSpacing or 0
+	local padding = ChangelogConfig.contentPadding.x
+	local spacing = ChangelogConfig.lineSpacing
+	local textInset = isBullet and ChangelogConfig.bulletWidth + ChangelogConfig.bulletSpacing or 0
 
 	rowCount = rowCount + 1
 
@@ -73,8 +73,8 @@ local function AddChangelogRow(state, rowCount, text, isBullet, rowWidth, offset
 end
 
 local function RenderChangelog(state, versions)
-	local padding = ChangelogData.contentPadding
-	local spacing = ChangelogData.lineSpacing
+	local padding = ChangelogConfig.contentPadding
+	local spacing = ChangelogConfig.lineSpacing
 	local rowWidth = math.max(1, state.scrollArea.content:GetWidth() - padding.x * 2)
 	local offset = padding.y
 	local rowCount = 0
@@ -139,25 +139,25 @@ local function ValidateChangelog(versions, addonName)
 end
 
 local function CreateChangelogWindow(addonName)
-	local windowData = ChangelogData.window
+	local windowConfig = ChangelogConfig.window
 	local frame = AWL.Frames:CreateWindow({
 		title = "",
-		style = windowData.style,
-		width = windowData.width,
-		height = windowData.height,
-		backgroundAlpha = windowData.backgroundAlpha,
+		style = windowConfig.style,
+		width = windowConfig.width,
+		height = windowConfig.height,
+		backgroundAlpha = windowConfig.backgroundAlpha,
 		showPortrait = false,
 		showCloseButton = true,
 		movable = true,
 		closeOnEscape = true
 	})
 	frame:SetFrameStrata("DIALOG")
-	local insets = ChangelogData.insets
-	local buttonInset = ChangelogData.buttonInset
+	local insets = ChangelogConfig.insets
+	local buttonInset = ChangelogConfig.buttonInset
 
 	local closeButton = AWL.Controls:CreateButton({
 		parent = frame.content,
-		width = ChangelogData.closeButtonWidth,
+		width = ChangelogConfig.closeButtonWidth,
 		label = L["changelog.window.close"],
 		onClick = function()
 			frame:Hide()
@@ -166,7 +166,7 @@ local function CreateChangelogWindow(addonName)
 
 	closeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight())
 
-	local scrollData = ChangelogData.scrollFrame
+	local scrollConfig = ChangelogConfig.scrollFrame
 	local contentWidth = math.max(frame:GetWidth() - insets.left - insets.right, 96)
 	local contentHeight = math.max(frame:GetHeight() - insets.top - insets.bottom, 72)
 
@@ -174,9 +174,9 @@ local function CreateChangelogWindow(addonName)
 		parent = frame.content,
 		width = contentWidth,
 		height = contentHeight,
-		backgroundAlpha = scrollData.backgroundAlpha,
-		showBorder = scrollData.showBorder,
-		contentInsets = scrollData.contentInsets
+		backgroundAlpha = scrollConfig.backgroundAlpha,
+		showBorder = scrollConfig.showBorder,
+		contentInsets = scrollConfig.contentInsets
 	})
 	scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", insets.left, -insets.top)
 	scrollArea:SetPoint("BOTTOMRIGHT", closeButton, "TOPRIGHT", buttonInset, buttonInset)
@@ -184,8 +184,8 @@ local function CreateChangelogWindow(addonName)
 		parent = scrollArea,
 		width = contentWidth,
 		height = contentHeight,
-		backgroundStyle = scrollData.insetBackgroundStyle,
-		backgroundAlpha = scrollData.insetBackgroundAlpha
+		backgroundStyle = scrollConfig.insetBackgroundStyle,
+		backgroundAlpha = scrollConfig.insetBackgroundAlpha
 	})
 	inset:SetAllPoints(scrollArea)
 

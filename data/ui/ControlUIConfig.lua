@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-LIB.ControlData = {
+LIB.UIConfig.Control = {
 	button = { height = 22, minimumWidth = 44 },
 	selection = {
 		height = 22,

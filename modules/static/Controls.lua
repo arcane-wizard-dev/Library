@@ -1,8 +1,8 @@
 local _, LIB = ...
 
-local ControlData = LIB.ControlData
-local ButtonData = ControlData.button
-local SelectionData = ControlData.selection
+local ControlConfig = LIB.UIConfig.Control
+local ButtonConfig = ControlConfig.button
+local SelectionConfig = ControlConfig.selection
 
 ---@class ArcaneWizardLibraryButtonConfig
 ---@field parent Frame Parent frame for the button.
@@ -47,8 +47,8 @@ local function AssertSelectionControlConfig(config, methodName)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. methodName .. " config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. methodName .. " parent is required.")
 	assert(
-		type(config.width) == "number" and config.width >= SelectionData.minimumWidth,
-		LIB.CommonData.debugPrefix .. methodName .. " width must be at least " .. SelectionData.minimumWidth .. "."
+		type(config.width) == "number" and config.width >= SelectionConfig.minimumWidth,
+		LIB.CommonData.debugPrefix .. methodName .. " width must be at least " .. SelectionConfig.minimumWidth .. "."
 	)
 	assert(type(config.label) == "string" and config.label ~= "", LIB.CommonData.debugPrefix .. methodName .. " label must be a non-empty string.")
 	assert(
@@ -89,11 +89,11 @@ end
 
 local function CreateSelectionControl(config, template)
 	local button = CreateFrame("CheckButton", nil, config.parent, template)
-	button:SetSize(config.width, SelectionData.height)
+	button:SetSize(config.width, SelectionConfig.height)
 
 	button.Text = button.Text or button.text
 	button.Text:ClearAllPoints()
-	button.Text:SetPoint("LEFT", SelectionData.textOffset, 0)
+	button.Text:SetPoint("LEFT", SelectionConfig.textOffset, 0)
 	button.Text:SetPoint("RIGHT")
 	button.Text:SetJustifyH("LEFT")
 
@@ -103,12 +103,12 @@ local function CreateSelectionControl(config, template)
 	button:SetHighlightFontObject(GameFontHighlightSmall)
 	button:SetDisabledFontObject(GameFontDisableSmall)
 
-	for _, getter in ipairs(SelectionData.textureGetters) do
+	for _, getter in ipairs(SelectionConfig.textureGetters) do
 		local texture = button[getter](button)
 
 		if texture then
 			texture:ClearAllPoints()
-			texture:SetSize(SelectionData.iconSize, SelectionData.iconSize)
+			texture:SetSize(SelectionConfig.iconSize, SelectionConfig.iconSize)
 			texture:SetPoint("LEFT")
 		end
 	end
@@ -130,14 +130,14 @@ function ArcaneWizardLibrary.Controls:CreateButton(config)
 
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateButton parent is required.")
 	assert(
-		type(config.width) == "number" and config.width >= ButtonData.minimumWidth,
-		LIB.CommonData.debugPrefix .. "CreateButton width must be at least " .. ButtonData.minimumWidth .. "."
+		type(config.width) == "number" and config.width >= ButtonConfig.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateButton width must be at least " .. ButtonConfig.minimumWidth .. "."
 	)
 	assert(type(config.label) == "string" and config.label ~= "", LIB.CommonData.debugPrefix .. "CreateButton label must be a non-empty string.")
 	assert(config.onClick == nil or type(config.onClick) == "function", LIB.CommonData.debugPrefix .. "CreateButton onClick must be a function or nil.")
 
 	local button = CreateFrame("Button", nil, config.parent, "UIPanelButtonTemplate")
-	button:SetSize(config.width, ButtonData.height)
+	button:SetSize(config.width, ButtonConfig.height)
 	button:SetText(config.label)
 
 	if config.onClick then
@@ -177,8 +177,8 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateOptionGroup config must be a table.")
 	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateOptionGroup parent is required.")
 	assert(
-		type(config.width) == "number" and config.width >= SelectionData.minimumWidth,
-		LIB.CommonData.debugPrefix .. "CreateOptionGroup width must be at least " .. SelectionData.minimumWidth .. "."
+		type(config.width) == "number" and config.width >= SelectionConfig.minimumWidth,
+		LIB.CommonData.debugPrefix .. "CreateOptionGroup width must be at least " .. SelectionConfig.minimumWidth .. "."
 	)
 	assert(
 		config.onValueChanged == nil or type(config.onValueChanged) == "function",
@@ -187,7 +187,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	ValidateOptions(config.options, config.selectedValue)
 
 	local optionCount = #config.options
-	local groupHeight = optionCount * SelectionData.height + (optionCount - 1) * SelectionData.optionSpacing
+	local groupHeight = optionCount * SelectionConfig.height + (optionCount - 1) * SelectionConfig.optionSpacing
 	local group = CreateFrame("Frame", nil, config.parent)
 	group:SetSize(config.width, groupHeight)
 	group.buttons = {}
@@ -234,7 +234,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 
 	for index, option in ipairs(config.options) do
 		local button = CreateSelectionControl({ parent = group, width = config.width, label = option.label }, "UIRadioButtonTemplate")
-		button:SetPoint("TOPLEFT", 0, -(index - 1) * (SelectionData.height + SelectionData.optionSpacing))
+		button:SetPoint("TOPLEFT", 0, -(index - 1) * (SelectionConfig.height + SelectionConfig.optionSpacing))
 		button.value = option.value
 
 		button:SetScript("OnClick", function(clickedButton)

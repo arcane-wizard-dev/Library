@@ -2,6 +2,8 @@ local _, LIB = ...
 
 local L = LIB.Localization
 
+local SettingsConfig = LIB.UIConfig.Settings
+
 -----------------------
 --- Local Functions ---
 -----------------------
@@ -11,11 +13,11 @@ local function GetInfoTextHeight(config)
 		return config.height
 	end
 
-	if type(config.height) == "string" and LIB.INFO_TEXT_HEIGHTS[config.height] then
-		return LIB.INFO_TEXT_HEIGHTS[config.height]
+	if type(config.height) == "string" and SettingsConfig.infoTextHeights[config.height] then
+		return SettingsConfig.infoTextHeights[config.height]
 	end
 
-	return LIB.INFO_TEXT_HEIGHTS["default"]
+	return SettingsConfig.infoTextHeights["default"]
 end
 
 local function FormatAboutValue(value, detail)
@@ -128,11 +130,11 @@ end
 ---
 --- @return table initializer The separator initializer.
 function ArcaneWizardLibrary.Settings:AddSeparator(layout)
-	local initializer = Settings.CreateElementInitializer("ArcaneWizardLibrary_SettingsSeparatorTemplate", LIB.SETTINGS_SEPARATOR)
+	local initializer = Settings.CreateElementInitializer("ArcaneWizardLibrary_SettingsSeparatorTemplate", SettingsConfig.separator)
 	local line = layout:AddInitializer(initializer)
 
 	function line:GetExtent()
-		return LIB.SETTINGS_SEPARATOR.height
+		return SettingsConfig.separator.height
 	end
 
 	return initializer

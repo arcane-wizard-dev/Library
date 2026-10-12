@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-LIB.FrameData = {
+LIB.UIConfig.Frame = {
 	anchorPoints = {
 		TOPLEFT = true,
 		TOP = true,

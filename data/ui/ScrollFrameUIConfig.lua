@@ -1,6 +1,6 @@
 local _, LIB = ...
 
-LIB.ScrollFrameData = {
+LIB.UIConfig.ScrollFrame = {
 	minimumWidth = 96,
 	minimumHeight = 72,
 	contentInsets = { left = 8, right = 31, top = 8, bottom = 8 },

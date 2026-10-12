@@ -35,7 +35,7 @@ local function UpdateSettingsHeader(panel, category)
 	local addon = category and addonsByCategoryId[category:GetID()]
 	if not addon then return end
 
-	local header = LIB.SETTINGS_HEADER
+	local header = LIB.UIConfig.Settings.header
 	local title = panel:GetSettingsList().Header.Title
 
 	settingsHeaderAnchor = { title:GetPoint() }
@@ -277,7 +277,7 @@ function AddonContextMixin:SetMainCategoryId(categoryId)
 	if not settingsHeaderHooked and SettingsPanel then
 		local header = SettingsPanel:GetSettingsList().Header
 		local title = header.Title
-		local layout = LIB.SETTINGS_HEADER
+		local layout = LIB.UIConfig.Settings.header
 
 		settingsHeaderIcon = header:CreateTexture(nil, "ARTWORK")
 		settingsHeaderIcon:SetSize(layout.iconSize, layout.iconSize)
