@@ -4,4 +4,5 @@
 
 **Important note: This is an initial test version for World of Warcraft: Forever. Some addon features may not work correctly yet.**
 
-- Refactoring of the addon structure and source code
+- Updated: Embedded library 'LibDBIcon-1.0' (v12.1.1)
+- Fixed: Repeated error messages for missing translations

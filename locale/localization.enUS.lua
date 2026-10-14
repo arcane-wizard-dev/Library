@@ -2,6 +2,8 @@ local _, LIB = ...
 
 LIB.Localization = setmetatable({},{
 	__index=function(self,key)
+		rawset(self, key, key)
+
 		geterrorhandler()(LIB.CommonData.debugPrefix .. "Missing entry for '" .. tostring(key) .. "'")
 
 		return key
