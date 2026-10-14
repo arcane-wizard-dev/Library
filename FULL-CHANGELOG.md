@@ -1,3 +1,7 @@
+**v1.42 (2026-10-14)**
+- Updated: Embedded library 'LibDBIcon-1.0' (v12.1.1)
+- Fixed: Repeated error messages for missing translations
+
 **v1.41 (2026-10-12)**
 - Refactoring of the addon structure and source code
 
