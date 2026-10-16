@@ -1,3 +1,11 @@
+**v1.43 (2026-10-16)**
+- Added: Shared debug output for addons
+- Added: Optional notices above the changelog history
+- Added: New backgrounds for inset frames
+- Changed: Error messages identify the addon and function; initialization failures are reported through the Lua error handler
+- Changed: Replaced solid inset backgrounds with Blizzard's dialog background
+- Fixed: Scrollbar alignment in addon windows and changelogs
+
 **v1.42 (2026-10-14)**
 - Updated: Embedded library 'LibDBIcon-1.0' (v12.1.1)
 - Fixed: Repeated error messages for missing translations
