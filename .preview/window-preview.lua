@@ -4,6 +4,7 @@ local started = false
 local function ShowPreview()
 	local styles = { "standard", "flat", "solid" }
 	local width, height, gap = 330, 220, 28
+	local yOffset = 30
 	local totalWidth = width * 3 + gap * 2
 	local totalHeight = height * 2 + gap
 	local scale = math.min(1, (UIParent:GetWidth() - 72) / totalWidth, (UIParent:GetHeight() - 72) / totalHeight)
@@ -27,7 +28,7 @@ local function ShowPreview()
 			window:ClearAllPoints()
 			window:SetPoint("TOPLEFT", UIParent, "CENTER",
 				-totalWidth / 2 + (index - 1) * (width + gap),
-				totalHeight / 2 - row * (height + gap))
+				totalHeight / 2 + yOffset - row * (height + gap))
 
 			if portrait then
 				window.portrait:SetTexture("Interface\\AddOns\\ArcaneWizardLibrary\\assets\\icon-round.tga")

@@ -4,6 +4,7 @@ local started = false
 local function ShowPreview()
 	local styles = { "tiled", "tiled-dark", "textured", "shaded", "shaded-alt" }
 	local width, height, gap = 380, 260, 20
+	local yOffset = 30
 	local totalWidth = width * 3 + gap * 2
 	local totalHeight = height * 2 + gap
 	local scale = math.min(1, (UIParent:GetWidth() - 72) / totalWidth, (UIParent:GetHeight() - 72) / totalHeight)
@@ -25,7 +26,7 @@ local function ShowPreview()
 		window:ClearAllPoints()
 		window:SetPoint("TOPLEFT", UIParent, "CENTER",
 			-totalWidth / 2 + (index - 1) % 3 * (width + gap),
-			totalHeight / 2 - math.floor((index - 1) / 3) * (height + gap))
+			totalHeight / 2 + yOffset - math.floor((index - 1) / 3) * (height + gap))
 
 		local inset = AWL.Frames:CreateInset({
 			parent = window,

@@ -4,6 +4,7 @@ local started = false
 local function ShowPreview()
 	local styles = { "toast", "tooltip" }
 	local width, height, gap = 300, 150, 24
+	local yOffset = 30
 	local totalWidth = width * 2 + gap
 	local totalHeight = height * 2 + gap
 	local scale = math.min(1, (UIParent:GetWidth() - 72) / totalWidth, (UIParent:GetHeight() - 72) / totalHeight)
@@ -27,7 +28,7 @@ local function ShowPreview()
 			popup:ClearAllPoints()
 			popup:SetPoint("TOPLEFT", UIParent, "CENTER",
 				-totalWidth / 2 + (index - 1) * (width + gap),
-				totalHeight / 2 - row * (height + gap))
+				totalHeight / 2 + yOffset - row * (height + gap))
 
 			local heading = popup.content:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 			heading:SetPoint("TOPLEFT", popup.content, "TOPLEFT", 4, -4)
