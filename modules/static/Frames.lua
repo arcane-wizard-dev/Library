@@ -43,7 +43,7 @@ local tabButtonCounter = 0
 ---@field parent Frame Parent of the inset.
 ---@field width number Initial width in pixels.
 ---@field height number Initial height in pixels.
----@field backgroundStyle? "tiled"|"tiled-dark"|"textured"|"shaded"|"shaded-alt"|"character" Defaults to tiled; character is a legacy alias for textured.
+---@field backgroundStyle? "tiled"|"tiled-dark"|"textured"|"shaded"|"shaded-alt" Defaults to tiled.
 ---@field backgroundAlpha number Background opacity from 0 to 1.
 
 ---@class ArcaneWizardLibraryWindowConfig
@@ -483,15 +483,11 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 	local data = FrameConfig.inset
 	local style = config.backgroundStyle or "tiled"
 
-	if style == "character" then
-		style = "textured"
-	end
-
 	local atlas = data.backgroundAtlases[style]
 	local texture = data.backgroundTextures[style]
 	assert(
 		texture ~= nil or atlas ~= nil,
-		Errors:Format(config, "CreateInset", "The 'backgroundStyle' value must be 'tiled', 'tiled-dark', 'textured', 'shaded', 'shaded-alt', or 'character'.")
+		Errors:Format(config, "CreateInset", "The 'backgroundStyle' value must be 'tiled', 'tiled-dark', 'textured', 'shaded', or 'shaded-alt'.")
 	)
 
 	local frame = CreateFrame("Frame", nil, config.parent, data.template)
