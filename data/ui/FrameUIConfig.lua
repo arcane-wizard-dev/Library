@@ -20,8 +20,15 @@ LIB.UIConfig.Frame = {
 	portrait = { minimumWidth = 192, minimumHeight = 128 },
 	inset = {
 		template = "InsetFrameTemplate4",
-		backgroundColor = {0, 0, 0, 1},
-		backgroundAtlas = "character-panel-background",
+		backgroundAtlases = {
+			textured = "character-panel-background",
+			shaded = "auctionhouse-background-index",
+			["shaded-alt"] = "auctionhouse-background-auctions"
+		},
+		backgroundTextures = {
+			tiled = "Interface\\DialogFrame\\UI-DialogBox-Background",
+			["tiled-dark"] = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark"
+		},
 		fallbackTexture = "Interface\\FrameGeneral\\UI-Background-Marble"
 	},
 	popup = {
@@ -33,8 +40,8 @@ LIB.UIConfig.Frame = {
 		height = 32,
 		standard = {
 			template = "PanelTabButtonTemplate",
-			minimumWidth = 72,
-			padding = 44,
+			minimumWidth = 36,
+			padding = 24,
 			spacing = 3,
 			x = 12,
 			y = 2
@@ -42,6 +49,7 @@ LIB.UIConfig.Frame = {
 		classic = {
 			template = "CharacterFrameTabButtonTemplate",
 			minimumWidth = 36,
+			padding = 6,
 			maximumWidth = 88,
 			spacing = -15,
 			eraSpacing = -16,

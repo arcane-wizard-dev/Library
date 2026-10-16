@@ -10,7 +10,7 @@ LIB.UIConfig.Changelog = {
 	scrollFrame = {
 		showBorder = false,
 		backgroundAlpha = 0,
-		insetBackgroundStyle = "solid",
+		insetBackgroundStyle = "tiled",
 		insetBackgroundAlpha = 1,
 		contentInsets = {left = 10, right = 25, top = 15, bottom = 15}
 	},
@@ -18,6 +18,13 @@ LIB.UIConfig.Changelog = {
 	lineSpacing = 2,
 	bulletWidth = 8,
 	bulletSpacing = 4,
+	noticeTitle = "Important note",
+	noticeIcon = {
+		texture = "Interface\\GossipFrame\\AvailableQuestIcon",
+		size = 16,
+		offsetX = -6,
+		offsetY = 2
+	},
 	insets = {left = 13, right = 9, top = 35, bottom = 37},
 	buttonInset = 5,
 	closeButtonWidth = 100

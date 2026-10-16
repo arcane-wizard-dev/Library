@@ -1,5 +1,7 @@
 local _, LIB = ...
 
+local Errors = LIB.Internal.Errors
+
 local L = LIB.Localization
 
 local SettingsConfig = LIB.UIConfig.Settings
@@ -357,10 +359,13 @@ end
 ---
 --- @param layout table The layout object to append the initializers to.
 --- @param addonName string Addon name used to read metadata.
---- @param changelog? ArcaneWizardLibraryChangelogVersion[] Optional changelog versions displayed through an additional button.
+--- @param changelog? ArcaneWizardLibraryChangelog Optional changelog versions and notices displayed through an additional button.
 function ArcaneWizardLibrary.Settings:AddAboutSection(layout, addonName, changelog)
-	assert(layout ~= nil, LIB.CommonData.debugPrefix .. "AddAboutSection layout is required.")
-	assert(type(addonName) == "string" and addonName ~= "", LIB.CommonData.debugPrefix .. "AddAboutSection addonName must be a non-empty string.")
+	assert(layout ~= nil, Errors:Format(addonName, "AddAboutSection", "A settings layout is required."))
+	assert(
+		type(addonName) == "string" and addonName ~= "",
+		Errors:Format(addonName, "AddAboutSection", "The 'addonName' value must be a non-empty string.")
+	)
 
 	local config = GetAboutConfig(addonName)
 

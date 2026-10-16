@@ -2,6 +2,7 @@ package-as: ArcaneWizardLibrary
 
 ignore:
   - README.md
+  - .preview
 
 manual-changelog:
   filename: CHANGELOG.md

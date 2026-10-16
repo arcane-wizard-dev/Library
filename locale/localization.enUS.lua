@@ -4,17 +4,13 @@ LIB.Localization = setmetatable({},{
 	__index=function(self,key)
 		rawset(self, key, key)
 
-		geterrorhandler()(LIB.CommonData.debugPrefix .. "Missing entry for '" .. tostring(key) .. "'")
+		geterrorhandler()(LIB.CommonData.errorPrefix .. ": Missing entry for '" .. tostring(key) .. "'")
 
 		return key
 	end
 })
 
 local L = LIB.Localization
-
--- Initialization
-
-L["error.character-identity-unavailable"] = "Startup aborted: the player GUID, name or realm is unavailable. Please try /reload."
 
 -- Dialog
 

@@ -1,5 +1,7 @@
 local _, LIB = ...
 
+local Errors = LIB.Internal.Errors
+
 ---@class ArcaneWizardLibraryAddon
 ---@field name string
 ---@field version string|nil
@@ -8,6 +10,7 @@ local _, LIB = ...
 ---@field mainCategoryId number|nil
 ---@field initializationAborted boolean|nil
 ---@field GetMediaPath fun(self: ArcaneWizardLibraryAddon, fileName: string|nil): string Returns the addon media path or a media file path below it.
+---@field PrintDebug fun(self: ArcaneWizardLibraryAddon, msg: any) Prints a debug message with the addon name.
 ---@field SetMainCategoryId fun(self: ArcaneWizardLibraryAddon, categoryId: number) Stores the Blizzard settings category ID for this addon.
 ---@field OpenCategory fun(self: ArcaneWizardLibraryAddon): boolean Opens the stored Blizzard settings category when not blocked by combat lockdown.
 ---@field InitializeOptions fun(self: ArcaneWizardLibraryAddon, config: table): table|nil Initializes and binds this addon's GUID-based option profiles.
@@ -49,7 +52,7 @@ end
 
 local function GetOptions(context)
 	local options = addonOptions[context]
-	assert(options, LIB.CommonData.debugPrefix .. "Options are not initialized for " .. tostring(context.name) .. ".")
+	assert(options, Errors:Format(context.name, "GetOptions", "Options are not initialized."))
 
 	return options
 end
@@ -110,6 +113,15 @@ function AddonContextMixin:GetMediaPath(fileName)
 	end
 
 	return self.mediaPath
+end
+
+--- Prints a debug message with the addon name.
+---
+--- @param msg any The message to print.
+function AddonContextMixin:PrintDebug(msg)
+	local prefix = ORANGE_FONT_COLOR:WrapTextInColorCode(self.name .. " (Debug): ")
+
+	DEFAULT_CHAT_FRAME:AddMessage(prefix .. tostring(msg))
 end
 
 --- Initializes GUID-based options after SavedVariables have loaded.
@@ -306,7 +318,7 @@ function AddonContextMixin:OpenCategory()
 
 	local categoryId = self.mainCategoryId
 
-	assert(categoryId, LIB.CommonData.debugPrefix .. "No Options Category ID defined for " .. tostring(self.name) .. ". The options menu cannot be opened.")
+	assert(categoryId, Errors:Format(self.name, "OpenCategory", "No options category ID has been defined. The options menu cannot be opened."))
 
 	if not InCombatLockdown() then
 		Settings.OpenToCategory(categoryId)
@@ -325,7 +337,12 @@ function AddonContextMixin:AbortInitialization(frame)
 	self.initializationAborted = true
 	frame:UnregisterAllEvents()
 	frame:SetScript("OnEvent", nil)
-	print(self.name .. ": " .. LIB.Localization["error.character-identity-unavailable"])
+
+	geterrorhandler()(Errors:Format(
+		self.name,
+		"AbortInitialization",
+		"Startup aborted because the player GUID, name or realm is unavailable."
+	))
 end
 
 --- Registers or refreshes the addon's minimap button.
@@ -356,7 +373,7 @@ end
 ---
 --- @return ArcaneWizardLibraryAddon context The addon context.
 function ArcaneWizardLibrary:NewAddon(addonName)
-	assert(type(addonName) == "string" and addonName ~= "", LIB.CommonData.debugPrefix .. "No addon name defined.")
+	assert(type(addonName) == "string" and addonName ~= "", Errors:Format(addonName, "NewAddon", "No addon name has been defined."))
 
 	return CreateAddonContext(addonName)
 end
@@ -369,7 +386,7 @@ end
 function ArcaneWizardLibrary:GetAddon(addonName)
 	local context = addonContexts[addonName]
 
-	assert(context, LIB.CommonData.debugPrefix .. "addon context is not initialized for " .. tostring(addonName))
+	assert(context, Errors:Format(addonName, "GetAddon", "The addon context is not initialized."))
 
 	return context
 end

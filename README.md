@@ -16,7 +16,7 @@ This library provides pre-built solutions for common addon functionalities.
 
 #### Addon Context
 
-Provides a shared starting point for each addon, handling registration and access to its settings, minimap button, and AddonCompartment entry.
+Provides a shared starting point for each addon, handling registration and access to its settings, minimap button, and AddonCompartment entry. Debug messages use shared output while retaining the originating addon's name.
 
 #### Frames
 

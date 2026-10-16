@@ -1,5 +1,7 @@
 local _, LIB = ...
 
+local Errors = LIB.Internal.Errors
+
 local FrameConfig = LIB.UIConfig.Frame
 local classicTabs = ArcaneWizardLibrary.GAME_TYPE_CLASSIC or ArcaneWizardLibrary.GAME_TYPE_TBC or ArcaneWizardLibrary.GAME_TYPE_MISTS
 local TabConfig = classicTabs and FrameConfig.tabs.classic or FrameConfig.tabs.standard
@@ -37,13 +39,15 @@ local tabButtonCounter = 0
 ---@field background Texture Configurable inset background.
 
 ---@class ArcaneWizardLibraryInsetConfig
+---@field addonName? string Owning addon for errors; inherited from the parent when omitted.
 ---@field parent Frame Parent of the inset.
 ---@field width number Initial width in pixels.
 ---@field height number Initial height in pixels.
----@field backgroundStyle? "solid"|"character" Black or character-panel background; defaults to solid. Unavailable character atlases use Blizzard's marble texture.
+---@field backgroundStyle? "tiled"|"tiled-dark"|"textured"|"shaded"|"shaded-alt"|"character" Defaults to tiled; character is a legacy alias for textured.
 ---@field backgroundAlpha number Background opacity from 0 to 1.
 
 ---@class ArcaneWizardLibraryWindowConfig
+---@field addonName? string Owning addon for errors; inherited from the parent when omitted.
 ---@field title string Text displayed in the title bar.
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
@@ -56,6 +60,7 @@ local tabButtonCounter = 0
 ---@field closeOnEscape? boolean Whether Escape hides the window.
 
 ---@class ArcaneWizardLibraryPopupConfig
+---@field addonName? string Owning addon for errors; inherited from the parent when omitted.
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
 ---@field style? "toast"|"tooltip" Native popup appearance; defaults to toast.
@@ -89,23 +94,35 @@ local tabButtonCounter = 0
 -----------------------
 
 local function ValidateConfig(config, data, methodName)
-	assert(type(config.width) == "number" and config.width >= data.minimumWidth, LIB.CommonData.debugPrefix .. methodName .. " width is too small.")
-	assert(type(config.height) == "number" and config.height >= data.minimumHeight, LIB.CommonData.debugPrefix .. methodName .. " height is too small.")
-	assert(type(config.showCloseButton) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " showCloseButton must be a boolean.")
+	assert(type(config.width) == "number" and config.width >= data.minimumWidth, Errors:Format(config, methodName, "The 'width' value is too small."))
+	assert(
+		type(config.height) == "number" and config.height >= data.minimumHeight,
+		Errors:Format(config, methodName, "The 'height' value is too small.")
+	)
+	assert(type(config.showCloseButton) == "boolean", Errors:Format(config, methodName, "The 'showCloseButton' value must be a boolean."))
 	assert(
 		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
-		LIB.CommonData.debugPrefix .. methodName .. " backgroundAlpha must be between 0 and 1."
+		Errors:Format(config, methodName, "The 'backgroundAlpha' value must be between 0 and 1.")
 	)
-	assert(type(config.movable) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " movable must be a boolean.")
-	assert(config.closeOnEscape == nil or type(config.closeOnEscape) == "boolean", LIB.CommonData.debugPrefix .. methodName .. " closeOnEscape must be a boolean or nil.")
+	assert(type(config.movable) == "boolean", Errors:Format(config, methodName, "The 'movable' value must be a boolean."))
+	assert(
+		config.closeOnEscape == nil or type(config.closeOnEscape) == "boolean",
+		Errors:Format(config, methodName, "The 'closeOnEscape' value must be a boolean or nil.")
+	)
 
 	if config.closeButton ~= nil then
 		local button = config.closeButton
-		assert(type(button) == "table", LIB.CommonData.debugPrefix .. methodName .. " closeButton must be a table.")
-		assert(button.size == nil or type(button.size) == "number" and button.size > 0, LIB.CommonData.debugPrefix .. methodName .. " closeButton.size must be positive.")
-		assert(button.point == nil or FrameConfig.anchorPoints[button.point], LIB.CommonData.debugPrefix .. methodName .. " closeButton.point is invalid.")
-		assert(button.x == nil or type(button.x) == "number", LIB.CommonData.debugPrefix .. methodName .. " closeButton.x must be a number.")
-		assert(button.y == nil or type(button.y) == "number", LIB.CommonData.debugPrefix .. methodName .. " closeButton.y must be a number.")
+		assert(type(button) == "table", Errors:Format(config, methodName, "The 'closeButton' configuration must be a table."))
+		assert(
+			button.size == nil or type(button.size) == "number" and button.size > 0,
+			Errors:Format(config, methodName, "The 'closeButton.size' value must be positive.")
+		)
+		assert(
+			button.point == nil or FrameConfig.anchorPoints[button.point],
+			Errors:Format(config, methodName, "The 'closeButton.point' value is invalid.")
+		)
+		assert(button.x == nil or type(button.x) == "number", Errors:Format(config, methodName, "The 'closeButton.x' value must be a number."))
+		assert(button.y == nil or type(button.y) == "number", Errors:Format(config, methodName, "The 'closeButton.y' value must be a number."))
 	end
 end
 
@@ -131,6 +148,7 @@ local function CreateBaseFrame(config, template)
 	end
 
 	local frame = CreateFrame("Frame", frameName, UIParent, template)
+	Errors:SetOwner(frame, config)
 	frame:SetSize(config.width, config.height)
 	frame:SetPoint("CENTER")
 	frame:SetFrameStrata("MEDIUM")
@@ -182,7 +200,7 @@ end
 --- @param frame ArcaneWizardLibraryPopupFrame The popup frame.
 --- @param shown boolean Whether to show the border.
 local function SetPopupBorderShown(frame, shown)
-	assert(type(shown) == "boolean", LIB.CommonData.debugPrefix .. "SetBorderShown shown must be a boolean.")
+	assert(type(shown) == "boolean", Errors:Format(frame, "Popup:SetBorderShown", "The 'shown' value must be a boolean."))
 	local state = popupFrames[frame]
 	if state.shown == shown then return end
 
@@ -234,7 +252,13 @@ end
 
 local function ResizeTabButton(button)
 	if classicTabs then
-		PanelTemplates_TabResize(button, 0, nil, TabConfig.minimumWidth, TabConfig.maximumWidth)
+		button.Text:SetWidth(0)
+		local textWidth = math.ceil(button.Text:GetStringWidth())
+		PanelTemplates_TabResize(button, TabConfig.padding, nil, TabConfig.minimumWidth + TabConfig.padding, nil, math.min(textWidth, TabConfig.maximumWidth))
+
+		if textWidth > TabConfig.maximumWidth then
+			button.Text:SetWidth(TabConfig.maximumWidth)
+		end
 
 		return
 	end
@@ -271,13 +295,13 @@ local function CreateTabButton(tabGroup, id, text)
 		button:SetScript("OnShow", ResizeTabButton)
 	else
 		button:HookScript("OnShow", ResizeTabButton)
-
-		button:HookScript("OnEvent", function(self)
-			if self:IsVisible() then
-				ResizeTabButton(self)
-			end
-		end)
 	end
+
+	button:HookScript("OnEvent", function(self)
+		if self:IsVisible() then
+			ResizeTabButton(self)
+		end
+	end)
 
 	button:HookScript("OnSizeChanged", function()
 		LayoutTabGroup(tabGroup)
@@ -300,9 +324,9 @@ end
 ---
 --- @return ArcaneWizardLibraryTabPage page The created content page.
 local function AddTab(tabGroup, id, text)
-	assert(type(id) == "string" and id ~= "", LIB.CommonData.debugPrefix .. "AddTab id must be a non-empty string.")
-	assert(type(text) == "string" and text ~= "", LIB.CommonData.debugPrefix .. "AddTab text must be a non-empty string.")
-	assert(not tabGroup.tabsById[id], LIB.CommonData.debugPrefix .. "AddTab id is already registered.")
+	assert(type(id) == "string" and id ~= "", Errors:Format(tabGroup, "TabGroup:AddTab", "The tab ID must be a non-empty string."))
+	assert(type(text) == "string" and text ~= "", Errors:Format(tabGroup, "TabGroup:AddTab", "The tab text must be a non-empty string."))
+	assert(not tabGroup.tabsById[id], Errors:Format(tabGroup, "TabGroup:AddTab", "The tab ID is already registered."))
 	local button, width = CreateTabButton(tabGroup, id, text)
 	local page = CreateFrame("Frame", nil, tabGroup.window.content)
 	page:SetAllPoints()
@@ -335,8 +359,8 @@ end
 --- @return ArcaneWizardLibraryTabPage page The selected content page.
 local function SelectTab(tabGroup, id)
 	local entry = tabGroup.tabsById[id]
-	assert(entry, LIB.CommonData.debugPrefix .. "SelectTab id is not registered.")
-	assert(not entry.button.isDisabled, LIB.CommonData.debugPrefix .. "SelectTab cannot select a disabled tab.")
+	assert(entry, Errors:Format(tabGroup, "TabGroup:SelectTab", "The tab ID is not registered."))
+	assert(not entry.button.isDisabled, Errors:Format(tabGroup, "TabGroup:SelectTab", "A disabled tab cannot be selected."))
 
 	if tabGroup.selectedTabId == id then
 		return entry.page
@@ -387,8 +411,8 @@ end
 --- @param enabled boolean Whether the tab can be selected.
 local function SetTabEnabled(tabGroup, id, enabled)
 	local entry = tabGroup.tabsById[id]
-	assert(entry, LIB.CommonData.debugPrefix .. "SetTabEnabled id is not registered.")
-	assert(type(enabled) == "boolean", LIB.CommonData.debugPrefix .. "SetTabEnabled enabled must be a boolean.")
+	assert(entry, Errors:Format(tabGroup, "TabGroup:SetTabEnabled", "The tab ID is not registered."))
+	assert(type(enabled) == "boolean", Errors:Format(tabGroup, "TabGroup:SetTabEnabled", "The 'enabled' value must be a boolean."))
 
 	if enabled then
 		entry.button.isDisabled = false
@@ -431,7 +455,10 @@ end
 --- @param tabGroup ArcaneWizardLibraryTabGroup The owning tab group.
 --- @param callback fun(id: string|nil, page: ArcaneWizardLibraryTabPage|nil)|nil The callback, or nil to remove it.
 local function SetOnTabChanged(tabGroup, callback)
-	assert(callback == nil or type(callback) == "function", LIB.CommonData.debugPrefix .. "SetOnTabChanged callback must be a function or nil.")
+	assert(
+		callback == nil or type(callback) == "function",
+		Errors:Format(tabGroup, "TabGroup:SetOnTabChanged", "The callback must be a function or nil.")
+	)
 	tabGroup.onTabChanged = callback
 end
 
@@ -445,30 +472,43 @@ end
 ---
 --- @return ArcaneWizardLibraryInsetFrame frame The created inset.
 function ArcaneWizardLibrary.Frames:CreateInset(config)
-	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateInset config must be a table.")
-	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateInset parent is required.")
-	assert(type(config.width) == "number" and config.width > 0, LIB.CommonData.debugPrefix .. "CreateInset width must be positive.")
-	assert(type(config.height) == "number" and config.height > 0, LIB.CommonData.debugPrefix .. "CreateInset height must be positive.")
+	assert(type(config) == "table", Errors:Format(config, "CreateInset", "The 'config' value must be a table."))
+	assert(config.parent ~= nil, Errors:Format(config, "CreateInset", "A parent frame is required."))
+	assert(type(config.width) == "number" and config.width > 0, Errors:Format(config, "CreateInset", "The 'width' value must be positive."))
+	assert(type(config.height) == "number" and config.height > 0, Errors:Format(config, "CreateInset", "The 'height' value must be positive."))
 	assert(
 		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
-		LIB.CommonData.debugPrefix .. "CreateInset backgroundAlpha must be between 0 and 1."
+		Errors:Format(config, "CreateInset", "The 'backgroundAlpha' value must be between 0 and 1.")
 	)
-	local style = config.backgroundStyle or "solid"
-	assert(style == "solid" or style == "character", LIB.CommonData.debugPrefix .. "CreateInset backgroundStyle must be solid or character.")
-
 	local data = FrameConfig.inset
+	local style = config.backgroundStyle or "tiled"
+
+	if style == "character" then
+		style = "textured"
+	end
+
+	local atlas = data.backgroundAtlases[style]
+	local texture = data.backgroundTextures[style]
+	assert(
+		texture ~= nil or atlas ~= nil,
+		Errors:Format(config, "CreateInset", "The 'backgroundStyle' value must be 'tiled', 'tiled-dark', 'textured', 'shaded', 'shaded-alt', or 'character'.")
+	)
+
 	local frame = CreateFrame("Frame", nil, config.parent, data.template)
+	Errors:SetOwner(frame, config)
 	frame:SetFrameLevel(config.parent:GetFrameLevel())
 	frame:SetSize(config.width, config.height)
 	frame.background = frame:CreateTexture(nil, "BACKGROUND")
 	frame.background:SetAllPoints(frame)
 
-	if style == "solid" then
-		frame.background:SetColorTexture(unpack(data.backgroundColor))
-	elseif C_Texture.GetAtlasInfo(data.backgroundAtlas) then
-		frame.background:SetAtlas(data.backgroundAtlas)
+	if atlas and C_Texture.GetAtlasInfo(atlas) then
+		frame.background:SetAtlas(atlas)
 	else
-		frame.background:SetTexture(data.fallbackTexture, "REPEAT", "REPEAT")
+		if style == "textured" then
+			texture = data.fallbackTexture
+		end
+
+		frame.background:SetTexture(texture or data.backgroundTextures.tiled, "REPEAT", "REPEAT")
 		frame.background:SetHorizTile(true)
 		frame.background:SetVertTile(true)
 	end
@@ -484,13 +524,16 @@ end
 ---
 --- @return ArcaneWizardLibraryWindowFrame frame The created window.
 function ArcaneWizardLibrary.Frames:CreateWindow(config)
-	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateWindow config must be a table.")
-	assert(type(config.title) == "string", LIB.CommonData.debugPrefix .. "CreateWindow title must be a string.")
-	assert(type(config.showPortrait) == "boolean", LIB.CommonData.debugPrefix .. "CreateWindow showPortrait must be a boolean.")
+	assert(type(config) == "table", Errors:Format(config, "CreateWindow", "The 'config' value must be a table."))
+	assert(type(config.title) == "string", Errors:Format(config, "CreateWindow", "The 'title' value must be a string."))
+	assert(type(config.showPortrait) == "boolean", Errors:Format(config, "CreateWindow", "The 'showPortrait' value must be a boolean."))
 	ValidateConfig(config, config.showPortrait and FrameConfig.portrait or FrameConfig.window, "CreateWindow")
 
 	local style = config.style or "standard"
-	assert(style == "standard" or style == "flat" or style == "solid", LIB.CommonData.debugPrefix .. "CreateWindow style must be standard, flat or solid.")
+	assert(
+		style == "standard" or style == "flat" or style == "solid",
+		Errors:Format(config, "CreateWindow", "The 'style' value must be 'standard', 'flat', or 'solid'.")
+	)
 
 	local template = style == "flat" and "DefaultPanelFlatTemplate" or "DefaultPanelTemplate"
 	local frame = CreateBaseFrame(config, config.showPortrait and "PortraitFrameTemplate" or template)
@@ -539,12 +582,12 @@ end
 ---
 --- @return ArcaneWizardLibraryPopupFrame frame The created popup.
 function ArcaneWizardLibrary.Frames:CreatePopup(config)
-	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreatePopup config must be a table.")
+	assert(type(config) == "table", Errors:Format(config, "CreatePopup", "The 'config' value must be a table."))
 	ValidateConfig(config, FrameConfig.popup, "CreatePopup")
-	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreatePopup showBorder must be a boolean.")
+	assert(type(config.showBorder) == "boolean", Errors:Format(config, "CreatePopup", "The 'showBorder' value must be a boolean."))
 
 	local style = config.style or "toast"
-	assert(style == "toast" or style == "tooltip", LIB.CommonData.debugPrefix .. "CreatePopup style must be toast or tooltip.")
+	assert(style == "toast" or style == "tooltip", Errors:Format(config, "CreatePopup", "The 'style' value must be 'toast' or 'tooltip'."))
 
 	local frame = CreateBaseFrame(config, style == "tooltip" and "TooltipBackdropTemplate" or "BackdropTemplate")
 	popupFrames[frame] = {}
@@ -576,10 +619,11 @@ end
 ---
 --- @return ArcaneWizardLibraryTabGroup tabGroup The created tab group.
 function ArcaneWizardLibrary.Frames:CreateTabGroup(window)
-	assert(windowFrames[window], LIB.CommonData.debugPrefix .. "CreateTabGroup window must be a Library window.")
-	assert(not window.tabGroup, LIB.CommonData.debugPrefix .. "CreateTabGroup window already has a tab group.")
+	assert(windowFrames[window], Errors:Format(window, "CreateTabGroup", "The window must have been created by the Library."))
+	assert(not window.tabGroup, Errors:Format(window, "CreateTabGroup", "The window already has a tab group."))
 
 	local tabGroup = CreateFrame("Frame", nil, window)
+	Errors:SetOwner(tabGroup, window)
 	tabGroup:SetPoint("TOPLEFT", window, "BOTTOMLEFT", TabConfig.x, TabConfig.y)
 	tabGroup:SetSize(1, FrameConfig.tabs.height)
 	tabGroup.window = window

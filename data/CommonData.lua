@@ -1,5 +1,5 @@
 local _, LIB = ...
 
 LIB.CommonData = {
-	debugPrefix = "Arcane Wizard: Library (Debug): "
+	errorPrefix = "Arcane Wizard: Library"
 }

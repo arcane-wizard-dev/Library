@@ -1,8 +1,11 @@
 local _, LIB = ...
 
+local Errors = LIB.Internal.Errors
+
 local InputConfig = LIB.UIConfig.Control.input
 
 ---@class ArcaneWizardLibraryInputConfig
+---@field addonName? string Owning addon for errors; inherited from the parent when omitted.
 ---@field parent Frame Parent frame for the input field.
 ---@field width number Input width in pixels.
 ---@field text string Initial input text.
@@ -38,31 +41,32 @@ end
 ---
 --- @return ArcaneWizardLibraryInput input The created input field.
 function ArcaneWizardLibrary.Controls:CreateInput(config)
-	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateInput config must be a table.")
-	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateInput parent is required.")
+	assert(type(config) == "table", Errors:Format(config, "CreateInput", "The 'config' value must be a table."))
+	assert(config.parent ~= nil, Errors:Format(config, "CreateInput", "A parent frame is required."))
 	assert(
 		type(config.width) == "number" and config.width >= InputConfig.minimumWidth,
-		LIB.CommonData.debugPrefix .. "CreateInput width must be at least " .. InputConfig.minimumWidth .. "."
+		Errors:Format(config, "CreateInput", "The 'width' value must be at least " .. InputConfig.minimumWidth .. ".")
 	)
-	assert(type(config.text) == "string", LIB.CommonData.debugPrefix .. "CreateInput text must be a string.")
-	assert(type(config.placeholder) == "string", LIB.CommonData.debugPrefix .. "CreateInput placeholder must be a string.")
+	assert(type(config.text) == "string", Errors:Format(config, "CreateInput", "The 'text' value must be a string."))
+	assert(type(config.placeholder) == "string", Errors:Format(config, "CreateInput", "The 'placeholder' value must be a string."))
 	assert(
 		config.maxLetters == nil
-			or type(config.maxLetters) == "number"
-				and config.maxLetters >= 0
-				and config.maxLetters == math.floor(config.maxLetters),
-		LIB.CommonData.debugPrefix .. "CreateInput maxLetters must be a non-negative integer or nil."
+		or type(config.maxLetters) == "number"
+		and config.maxLetters >= 0
+		and config.maxLetters == math.floor(config.maxLetters),
+		Errors:Format(config, "CreateInput", "The 'maxLetters' value must be a non-negative integer or nil.")
 	)
 	assert(
 		config.onTextChanged == nil or type(config.onTextChanged) == "function",
-		LIB.CommonData.debugPrefix .. "CreateInput onTextChanged must be a function or nil."
+		Errors:Format(config, "CreateInput", "The 'onTextChanged' callback must be a function or nil.")
 	)
 	assert(
 		config.onEnterPressed == nil or type(config.onEnterPressed) == "function",
-		LIB.CommonData.debugPrefix .. "CreateInput onEnterPressed must be a function or nil."
+		Errors:Format(config, "CreateInput", "The 'onEnterPressed' callback must be a function or nil.")
 	)
 
 	local input = CreateFrame("EditBox", nil, config.parent, "SearchBoxTemplate")
+	Errors:SetOwner(input, config)
 	input:SetSize(config.width, InputConfig.height)
 	input:SetAutoFocus(false)
 
@@ -79,7 +83,7 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	---
 	--- @param text string The placeholder text.
 	function input:SetPlaceholder(text)
-		assert(type(text) == "string", LIB.CommonData.debugPrefix .. "Input SetPlaceholder text must be a string.")
+		assert(type(text) == "string", Errors:Format(self, "Input:SetPlaceholder", "The placeholder text must be a string."))
 
 		self.placeholderText = text
 		self.Placeholder:SetText(text)

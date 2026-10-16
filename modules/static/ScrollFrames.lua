@@ -1,5 +1,7 @@
 local _, LIB = ...
 
+local Errors = LIB.Internal.Errors
+
 local ScrollFrameConfig = LIB.UIConfig.ScrollFrame
 
 ---@class ArcaneWizardLibraryScrollFrame: Frame
@@ -13,6 +15,7 @@ local ScrollFrameConfig = LIB.UIConfig.ScrollFrame
 ---@field requestedContentHeight number
 
 ---@class ArcaneWizardLibraryScrollFrameConfig
+---@field addonName? string Owning addon for errors; inherited from the parent when omitted.
 ---@field parent Frame Parent frame for the scroll area.
 ---@field width number Scroll area width in pixels.
 ---@field height number Scroll area height in pixels.
@@ -49,28 +52,38 @@ end
 ---
 --- @return ArcaneWizardLibraryScrollFrame frame The created scroll area.
 function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
-	assert(type(config) == "table", LIB.CommonData.debugPrefix .. "CreateScrollFrame config must be a table.")
-	assert(config.parent ~= nil, LIB.CommonData.debugPrefix .. "CreateScrollFrame parent is required.")
-	assert(type(config.width) == "number" and config.width >= ScrollFrameConfig.minimumWidth, LIB.CommonData.debugPrefix .. "CreateScrollFrame width is too small.")
-	assert(type(config.height) == "number" and config.height >= ScrollFrameConfig.minimumHeight, LIB.CommonData.debugPrefix .. "CreateScrollFrame height is too small.")
-	assert(type(config.showBorder) == "boolean", LIB.CommonData.debugPrefix .. "CreateScrollFrame showBorder must be a boolean.")
+	assert(type(config) == "table", Errors:Format(config, "CreateScrollFrame", "The 'config' value must be a table."))
+	assert(config.parent ~= nil, Errors:Format(config, "CreateScrollFrame", "A parent frame is required."))
+	assert(
+		type(config.width) == "number" and config.width >= ScrollFrameConfig.minimumWidth,
+		Errors:Format(config, "CreateScrollFrame", "The 'width' value is too small.")
+	)
+	assert(
+		type(config.height) == "number" and config.height >= ScrollFrameConfig.minimumHeight,
+		Errors:Format(config, "CreateScrollFrame", "The 'height' value is too small.")
+	)
+	assert(type(config.showBorder) == "boolean", Errors:Format(config, "CreateScrollFrame", "The 'showBorder' value must be a boolean."))
 	assert(
 		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
-		LIB.CommonData.debugPrefix .. "CreateScrollFrame backgroundAlpha must be between 0 and 1."
+		Errors:Format(config, "CreateScrollFrame", "The 'backgroundAlpha' value must be between 0 and 1.")
 	)
 	local insets = config.contentInsets or ScrollFrameConfig.contentInsets
-	assert(type(insets) == "table", LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets must be a table.")
+	assert(type(insets) == "table", Errors:Format(config, "CreateScrollFrame", "The 'contentInsets' value must be a table."))
 
 	for _, side in ipairs({"left", "right", "top", "bottom"}) do
-		assert(type(insets[side]) == "number" and insets[side] >= 0, LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets." .. side .. " must be non-negative.")
+		assert(
+			type(insets[side]) == "number" and insets[side] >= 0,
+			Errors:Format(config, "CreateScrollFrame", "The 'contentInsets." .. side .. "' value must be non-negative.")
+		)
 	end
 
 	assert(
 		insets.left + insets.right < config.width and insets.top + insets.bottom < config.height,
-		LIB.CommonData.debugPrefix .. "CreateScrollFrame contentInsets leave no content area."
+		Errors:Format(config, "CreateScrollFrame", "The content insets leave no content area.")
 	)
 
 	local frame = CreateFrame("Frame", nil, config.parent, "BackdropTemplate")
+	Errors:SetOwner(frame, config)
 	frame:SetSize(config.width, config.height)
 
 	local backdrop = CopyTable(BACKDROP_TOAST_12_12)
@@ -98,8 +111,8 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	scroll:SetScrollChild(frame.content)
 
 	local bar = CreateFrame("EventFrame", nil, frame, "MinimalScrollBar")
-	bar:SetPoint("TOPRIGHT", -ScrollFrameConfig.barInset, -insets.top)
-	bar:SetPoint("BOTTOMRIGHT", -ScrollFrameConfig.barInset, insets.bottom)
+	bar:SetPoint("TOPRIGHT", -ScrollFrameConfig.barInsets.right, -ScrollFrameConfig.barInsets.top)
+	bar:SetPoint("BOTTOMRIGHT", -ScrollFrameConfig.barInsets.right, ScrollFrameConfig.barInsets.bottom)
 	frame.scrollBar = bar
 	frame.scrollUpButton = bar.Back
 	frame.scrollDownButton = bar.Forward
@@ -110,7 +123,10 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param height number Non-negative content height in pixels.
 	function frame:SetContentHeight(height)
-		assert(type(height) == "number" and height >= 0, LIB.CommonData.debugPrefix .. "ScrollFrame SetContentHeight requires a non-negative number.")
+		assert(
+			type(height) == "number" and height >= 0,
+			Errors:Format(self, "ScrollFrame:SetContentHeight", "The content height must be a non-negative number.")
+		)
 		self.requestedContentHeight = height
 		UpdateContentSize(self)
 	end
@@ -119,7 +135,7 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param step number Positive distance in pixels.
 	function frame:SetScrollStep(step)
-		assert(type(step) == "number" and step > 0, LIB.CommonData.debugPrefix .. "ScrollFrame SetScrollStep requires a positive number.")
+		assert(type(step) == "number" and step > 0, Errors:Format(self, "ScrollFrame:SetScrollStep", "The scroll step must be a positive number."))
 		self.scrollStep = step
 		self.scrollFrame:SetPanExtent(step)
 		UpdateScrollRange(self)
@@ -129,7 +145,7 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param value number Offset in pixels.
 	function frame:SetVerticalScroll(value)
-		assert(type(value) == "number", LIB.CommonData.debugPrefix .. "ScrollFrame SetVerticalScroll requires a number.")
+		assert(type(value) == "number", Errors:Format(self, "ScrollFrame:SetVerticalScroll", "The scroll position must be a number."))
 		self.scrollFrame:SetVerticalScroll(math.max(0, math.min(value, self.scrollFrame:GetVerticalScrollRange())))
 	end
 
