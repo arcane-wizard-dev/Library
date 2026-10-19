@@ -8,6 +8,7 @@
 	<Script file="static\Dropdown.lua" />
 	<Script file="static\ScrollFrames.lua" />
 	<Script file="static\Frames.lua" />
+	<Script file="static\Tables.lua" />
 	<Script file="static\Changelog.lua" />
 
 	<Script file="static\Settings.lua" />

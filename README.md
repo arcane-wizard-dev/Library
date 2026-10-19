@@ -16,31 +16,23 @@ This library provides pre-built solutions for common addon functionalities.
 
 #### Addon Context
 
-Provides a shared starting point for each addon, handling registration and access to its settings, minimap button, and AddonCompartment entry. Debug messages use shared output while retaining the originating addon's name.
+Shared addon registration, settings access, minimap and AddonCompartment integration, and debug output.
 
-#### Frames
+#### Frames, Tables & Controls
 
-Creates movable windows, compact popups, insets, content tabs, and scrollable areas using Blizzard's native appearance for each supported game version. Supports configurable backgrounds and close buttons, native scrollbars, and mouse-wheel handling.
+Reusable windows, scrollable tables, tabs, and input controls using Blizzard's native appearance for each supported game version.
 
-#### Controls
+#### Prebuilt Windows & Dialogs
 
-Provides buttons, checkboxes, option groups, dropdowns, and text inputs through a shared interface to Blizzard's native controls.
-
-#### Prebuilt Windows
-
-Provides a ready-to-use changelog window that presents an addon's release history on a single page and includes a localized button to open its settings.
-
-#### Dialogs
-
-Handles common interactions through a link popup with preselected text for copying and a Yes/No confirmation dialog that runs the addon's chosen action.
+Ready-to-use changelog windows, link popups, and confirmation dialogs.
 
 #### Utilities
 
-Supplies shared helpers for character identifiers, separate character and realm values, and independent copies of nested tables.
+Common helpers for character identifiers and copying nested tables.
 
-#### Settings API Wrappers
+#### Settings
 
-Builds addon settings within Blizzard's options menu using standard controls, information rows, and reusable Profiles and About sections. Collapsible groups, freely placed horizontal separators, and optional New badges help organize and highlight settings.
+Addon options in Blizzard's settings menu, with reusable layouts and profile support.
 
 ### How to Integrate
 

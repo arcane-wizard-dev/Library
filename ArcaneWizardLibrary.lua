@@ -11,6 +11,7 @@ AWL.Utils = {}
 AWL.Dialogs = {}
 AWL.Controls = {}
 AWL.ScrollFrames = {}
+AWL.Tables = {}
 AWL.Settings = {}
 AWL.Frames = {}
 

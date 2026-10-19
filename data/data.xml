@@ -3,9 +3,11 @@
 	<Script file="NamespaceData.lua" />
 	<Script file="CommonData.lua" />
 	<Script file="OptionsData.lua" />
+	<Script file="ui/TextureUIConfig.lua" />
 	<Script file="ui/SettingsUIConfig.lua" />
 	<Script file="ui/FrameUIConfig.lua" />
 	<Script file="ui/ControlUIConfig.lua" />
 	<Script file="ui/ScrollFrameUIConfig.lua" />
+	<Script file="ui/TableUIConfig.lua" />
 	<Script file="ui/ChangelogUIConfig.lua" />
 </Ui>
