@@ -1,3 +1,8 @@
+**v1.44 (2026-10-21)**
+- Added: Shared table frames with left-aligned column headers and optional settings menus
+- Removed obsolete code for better maintainability
+- Refactoring of the addon structure and source code
+
 **v1.43 (2026-10-16)**
 - Added: Shared debug output for addons
 - Added: Optional notices above the changelog history
