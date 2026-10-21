@@ -1,5 +1,5 @@
 **v1.44 (2026-10-21)**
-- Added: Shared table frames with left-aligned column headers and optional settings menus
+- Added: Shared table frames with left-aligned column headers and optional table menus
 - Removed obsolete code for better maintainability
 - Refactoring of the addon structure and source code
 
