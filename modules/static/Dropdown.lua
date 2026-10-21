@@ -22,12 +22,17 @@ local DropdownConfig = LIB.UIConfig.Control.dropdown
 ---@field selectedValue? string|number|boolean Initially selected option value.
 ---@field onValueChanged? fun(value: string|number|boolean, option: ArcaneWizardLibraryDropdownOption, dropdown: ArcaneWizardLibraryDropdown) Called after a user changes the selection.
 
----@class ArcaneWizardLibraryDropdown: Button
+---@class ArcaneWizardLibraryDropdown: DropdownButton
 ---@field value? string|number|boolean Currently selected value.
 ---@field optionsSource ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[] Static options or a dynamic options provider.
 ---@field onValueChanged? fun(value: string|number|boolean, option: ArcaneWizardLibraryDropdownOption, dropdown: ArcaneWizardLibraryDropdown)
 ---@field defaultText string Text displayed without a selection.
 ---@field emptyText string Text displayed when the menu has no entries.
+---@field SetDefaultText fun(self: ArcaneWizardLibraryDropdown, text: string)
+---@field SetupMenu fun(self: ArcaneWizardLibraryDropdown, generator: fun(owner: ArcaneWizardLibraryDropdown, root: table))
+---@field GetValue fun(self: ArcaneWizardLibraryDropdown): string|number|boolean|nil
+---@field SetValue fun(self: ArcaneWizardLibraryDropdown, value: string|number|boolean|nil)
+---@field SetEmptyText fun(self: ArcaneWizardLibraryDropdown, text: string)
 
 -----------------------
 --- Local Functions ---

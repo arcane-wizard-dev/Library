@@ -22,7 +22,9 @@ local tabButtonCounter = 0
 ---@field closeOnEscape boolean Whether pressing Escape hides the window.
 ---@field tabGroup? ArcaneWizardLibraryTabGroup Optional attached tab group.
 
----@class ArcaneWizardLibraryPopupFrame: Frame
+---@class ArcaneWizardLibraryPopupFrame: Frame, BackdropTemplate
+---@field NineSlice? {Center: Texture}
+---@field Center? Texture
 ---@field background Texture Configurable popup background.
 ---@field content Frame Content area inside the popup frame.
 ---@field closeButton? Button Optional close button.
@@ -79,10 +81,20 @@ local tabButtonCounter = 0
 ---@field tabId string Unique tab identifier.
 ---@field tabGroup ArcaneWizardLibraryTabGroup Owning tab group.
 ---@field label FontString Displayed tab label.
+---@field isDisabled? boolean Whether the tab is disabled.
+
+---@class ArcaneWizardLibraryTabEntry
+---@field id string
+---@field button ArcaneWizardLibraryTabButton
+---@field page ArcaneWizardLibraryTabPage
+---@field width number
 
 ---@class ArcaneWizardLibraryTabGroup: Frame
 ---@field window ArcaneWizardLibraryWindowFrame Window that owns the tab group.
 ---@field selectedTabId? string Currently selected tab identifier.
+---@field tabEntries ArcaneWizardLibraryTabEntry[]
+---@field tabsById table<string, ArcaneWizardLibraryTabEntry>
+---@field onTabChanged? fun(id: string?, page: ArcaneWizardLibraryTabPage?)
 ---@field AddTab fun(self: ArcaneWizardLibraryTabGroup, id: string, text: string): ArcaneWizardLibraryTabPage
 ---@field SelectTab fun(self: ArcaneWizardLibraryTabGroup, id: string): ArcaneWizardLibraryTabPage
 ---@field GetSelectedTab fun(self: ArcaneWizardLibraryTabGroup): string?, ArcaneWizardLibraryTabPage?
