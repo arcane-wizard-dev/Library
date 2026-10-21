@@ -10,7 +10,7 @@ LIB.UIConfig.Table = {
 		padding = 8,
 		edgeInset = 6
 	},
-	settingsMenu = {
+	tableMenu = {
 		template = "UIPanelIconDropdownButtonTemplate",
 		size = 16,
 		gap = 4,

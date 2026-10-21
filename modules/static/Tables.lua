@@ -25,8 +25,8 @@ local TableConfig = LIB.UIConfig.Table
 ---@field backgroundStyle? string Inset background style.
 ---@field backgroundAlpha number Inset background opacity.
 ---@field columns ArcaneWizardLibraryTableColumn[] Column definitions.
----@field settingsMenu? fun(owner: DropdownButton, root: table) Native menu builder with addon actions.
----@field showSettingsMenu? boolean Defaults to true when a menu builder is supplied.
+---@field tableMenu? fun(owner: DropdownButton, root: table) Native menu builder with addon actions.
+---@field showTableMenu? boolean Defaults to true when a menu builder is supplied.
 
 ---@class ArcaneWizardLibraryTable: ArcaneWizardLibraryScrollFrame
 ---@field inset Frame Framed background.
@@ -35,7 +35,7 @@ local TableConfig = LIB.UIConfig.Table
 ---@field columns ArcaneWizardLibraryTableColumn[] Owned column definitions.
 ---@field columnLayouts ArcaneWizardLibraryTableColumnLayout[] Calculated column positions.
 ---@field layoutWidth? number Width used by the latest layout.
----@field settingsMenu? DropdownButton Optional settings button.
+---@field tableMenu? DropdownButton Optional table menu button.
 ---@field GetContentWidth fun(self: ArcaneWizardLibraryTable): number
 ---@field GetColumnLayout fun(self: ArcaneWizardLibraryTable, index: number): number, number, string
 ---@field SetColumnText fun(self: ArcaneWizardLibraryTable, index: number, text: string)
@@ -91,8 +91,8 @@ local function UpdateLayout(frame)
 	local headerConfig = TableConfig.header
 	local rightEdge = width - headerConfig.edgeInset
 
-	if frame.settingsMenu and frame.settingsMenu:IsShown() then
-		rightEdge = rightEdge - TableConfig.settingsMenu.size - TableConfig.settingsMenu.gap
+	if frame.tableMenu and frame.tableMenu:IsShown() then
+		rightEdge = rightEdge - TableConfig.tableMenu.size - TableConfig.tableMenu.gap
 	end
 
 	for index, cell in ipairs(frame.header.cells) do
@@ -118,7 +118,7 @@ end
 --- Public Functions ---
 ------------------------
 
---- Creates a framed scroll area with fixed column headings and an optional settings menu.
+--- Creates a framed scroll area with fixed column headings and an optional table menu.
 ---
 --- @param config ArcaneWizardLibraryTableConfig Table configuration.
 ---
@@ -127,16 +127,16 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 	assert(type(config) == "table", Errors:Format(config, "CreateTable", "The 'config' value must be a table."))
 	assert(type(config.columns) == "table" and #config.columns > 0, Errors:Format(config, "CreateTable", "At least one column is required."))
 	assert(
-		config.settingsMenu == nil or type(config.settingsMenu) == "function",
-		Errors:Format(config, "CreateTable", "The 'settingsMenu' value must be a function or nil.")
+		config.tableMenu == nil or type(config.tableMenu) == "function",
+		Errors:Format(config, "CreateTable", "The 'tableMenu' value must be a function or nil.")
 	)
 	assert(
-		config.showSettingsMenu == nil or type(config.showSettingsMenu) == "boolean",
-		Errors:Format(config, "CreateTable", "The 'showSettingsMenu' value must be a boolean or nil.")
+		config.showTableMenu == nil or type(config.showTableMenu) == "boolean",
+		Errors:Format(config, "CreateTable", "The 'showTableMenu' value must be a boolean or nil.")
 	)
 	assert(
-		not config.showSettingsMenu or config.settingsMenu ~= nil,
-		Errors:Format(config, "CreateTable", "A menu builder is required to show the settings menu.")
+		not config.showTableMenu or config.tableMenu ~= nil,
+		Errors:Format(config, "CreateTable", "A menu builder is required to show the table menu.")
 	)
 
 	for _, column in ipairs(config.columns) do
@@ -186,8 +186,8 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 		frame.header.cells[index] = cell
 	end
 
-	if config.settingsMenu then
-		local menuConfig = TableConfig.settingsMenu
+	if config.tableMenu then
+		local menuConfig = TableConfig.tableMenu
 		local button = CreateFrame("DropdownButton", nil, frame.header, menuConfig.template)
 		button:SetSize(menuConfig.size, menuConfig.size)
 		button:SetPoint("RIGHT", frame.header, "RIGHT", -TableConfig.header.edgeInset, 0)
@@ -201,9 +201,9 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 			end
 		end
 
-		button:SetupMenu(config.settingsMenu)
-		button:SetShown(config.showSettingsMenu ~= false)
-		frame.settingsMenu = button
+		button:SetupMenu(config.tableMenu)
+		button:SetShown(config.showTableMenu ~= false)
+		frame.tableMenu = button
 		button:HookScript("OnHide", function(menuButton)
 			menuButton:CloseMenu()
 			UpdateLayout(frame)
