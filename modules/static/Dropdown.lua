@@ -32,6 +32,7 @@ local DropdownConfig = LIB.UIConfig.Control.dropdown
 ---@field SetupMenu fun(self: ArcaneWizardLibraryDropdown, generator: fun(owner: ArcaneWizardLibraryDropdown, root: table))
 ---@field GetValue fun(self: ArcaneWizardLibraryDropdown): string|number|boolean|nil
 ---@field SetValue fun(self: ArcaneWizardLibraryDropdown, value: string|number|boolean|nil)
+---@field SetOptions fun(self: ArcaneWizardLibraryDropdown, options: ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[])
 ---@field SetEmptyText fun(self: ArcaneWizardLibraryDropdown, text: string)
 
 -----------------------

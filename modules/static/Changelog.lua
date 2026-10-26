@@ -193,6 +193,7 @@ end
 
 local function CreateChangelogWindow(addonName)
 	local windowConfig = ChangelogConfig.window
+	---@class ArcaneWizardLibraryChangelogFrame: ArcaneWizardLibraryWindowFrame
 	local frame = AWL.Frames:CreateWindow({
 		addonName = addonName,
 		title = "",

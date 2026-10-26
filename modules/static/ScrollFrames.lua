@@ -13,7 +13,9 @@ local ScrollFrameConfig = LIB.UIConfig.ScrollFrame
 ---@field scrollDownButton Button
 ---@field scrollStep number
 ---@field requestedContentHeight number
+---@field SetContentHeight fun(self: ArcaneWizardLibraryScrollFrame, height: number)
 ---@field SetScrollStep fun(self: ArcaneWizardLibraryScrollFrame, step: number)
+---@field ScrollToTop fun(self: ArcaneWizardLibraryScrollFrame)
 
 ---@class ArcaneWizardLibraryScrollFrameConfig
 ---@field addonName? string Owning addon for errors; inherited from the parent when omitted.

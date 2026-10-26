@@ -18,7 +18,7 @@ AWL.Frames = {}
 AWL.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata(addonName, "Author")
 AWL.ADDON_VERSION = C_AddOns.GetAddOnMetadata(addonName, "Version")
 AWL.ADDON_BUILD_DATE = C_AddOns.GetAddOnMetadata(addonName, "X-BuildDate")
-AWL.ADDON_REVISION = C_AddOns.GetAddOnMetadata(addonName, "X-Revision")
+AWL.ADDON_REVISION = tonumber(C_AddOns.GetAddOnMetadata(addonName, "X-Revision")) or 0
 
 local gameVersion = GetBuildInfo()
 AWL.GAME_VERSION = gameVersion
