@@ -1,3 +1,10 @@
+**v1.45 (2026-10-28)**
+- Added: Library revision checks for dependent addons
+- Changed: Table menu fields renamed to 'tableMenu' and 'showTableMenu'
+- Updated: enUS, ruRU localizations
+- Updated: Addon description
+- Minor code adjustments
+
 **v1.44 (2026-10-21)**
 - Added: Shared table frames with left-aligned column headers and optional table menus
 - Removed obsolete code for better maintainability
