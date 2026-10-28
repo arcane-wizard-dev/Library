@@ -7,9 +7,9 @@
 ## LoadOnDemand: 0
 ## DefaultState: enabled
 
-## Notes: This addon is a library that bundles recurring code segments and functionalities.
-## Notes-deDE: Dieses Addon dient als Bibliothek, in der wiederkehrende Codeteile und Funktionen zusammengefasst sind.
-## Notes-ruRU: Этот аддон служит библиотекой, объединяющей повторяющиеся фрагменты кода и функции.
+## Notes: This addon provides the shared base of all Arcane Wizard addons. It bundles the components they have in common, so each addon can focus on its own features.
+## Notes-deDE: Dieses Addon stellt die gemeinsame Basis aller Addons von Arcane Wizard bereit. Es bündelt die Bausteine, die sie gemeinsam nutzen, damit sich jedes Addon auf seine eigenen Funktionen konzentrieren kann.
+## Notes-ruRU: Этот аддон обеспечивает общую основу всех аддонов Arcane Wizard. Он объединяет компоненты, общие для них, чтобы каждый аддон мог сосредоточиться на своих функциях.
 
 ## X-Revision: 1
 ## X-BuildDate: @build-date@

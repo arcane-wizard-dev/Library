@@ -4,3 +4,5 @@
 
 - Added: Library revision checks for dependent addons
 - Changed: Table menu fields renamed to 'tableMenu' and 'showTableMenu'
+- Updated: Addon description
+- Minor code adjustments

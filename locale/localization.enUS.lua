@@ -1,7 +1,7 @@
 local _, LIB = ...
 
-LIB.Localization = setmetatable({},{
-	__index=function(self,key)
+LIB.Localization = setmetatable({}, {
+	__index=function(self, key)
 		rawset(self, key, key)
 
 		geterrorhandler()(LIB.CommonData.errorPrefix .. ": Missing entry for '" .. tostring(key) .. "'")
@@ -14,7 +14,7 @@ local L = LIB.Localization
 
 -- Dialog
 
-L["dialog.link.text"] = "To copy the link press CTRL + C."
+L["dialog.link.text"] = "To copy the link, press CTRL + C."
 
 -- Changelog
 

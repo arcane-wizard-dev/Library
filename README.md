@@ -2,23 +2,23 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/arcane-wizard-dev/Library?color=blue&logo=github&cacheSeconds=600)](https://github.com/arcane-wizard-dev/Library/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/arcane-wizard-dev/Library?color=blue&logo=github&cacheSeconds=600)](https://github.com/arcane-wizard-dev/Library/releases)
 
-_The shared foundation of all Arcane Wizard addons._
+_One library for every addon._
 
-Arcane Wizard: Library provides shared functions and reusable interface components for World of Warcraft addons. Other addon developers can also use it in their own projects.
+Arcane Wizard: Library is a World of Warcraft addon that provides the shared base of all Arcane Wizard addons. It bundles the components they have in common, so each addon can focus on its own features.
 
 ## For Players
 
-Install this library if an addon you use requires it. It provides shared functionality and has no standalone interface.
+Install Arcane Wizard: Library if you use an Arcane Wizard addon, and keep it enabled alongside it. It works in the background and has no interface of its own.
 
 ## For Developers
 
-This library provides pre-built solutions for common addon functionalities.
+This library shares code across Arcane Wizard addons and keeps their development and maintenance simple. Other addon developers are welcome to use it as well.
 
 ### Features
 
 #### Addon Context
 
-Shared addon registration, settings access, minimap and AddonCompartment integration, and debug output.
+Shared addon registration, settings access, minimap and Addon Compartment integration, and debug output.
 
 #### Frames, Tables & Controls
 
@@ -59,7 +59,7 @@ When an addon starts using newer library functionality, raise only that addon's 
 
 ## Bugs & Feedback
 
-If you find a bug or have a suggestion, please use the GitHub Issues or the CurseForge comments.
+If you find a bug or have a suggestion, please open a GitHub issue or leave a comment on CurseForge.
 
 ## Translation Support
 

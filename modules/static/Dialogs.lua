@@ -1,6 +1,7 @@
 local _, LIB = ...
 
 local L = LIB.Localization
+local DialogConfig = LIB.UIConfig.Frame.dialog
 
 ----------------------------
 --- Static Popup Dialogs ---
@@ -10,12 +11,12 @@ StaticPopupDialogs["ARCANE_WIZARD_LIB_LINK"] = {
 	text = L["dialog.link.text"],
 	button1 = CLOSE,
 	hasEditBox = true,
-	editBoxWidth = 300,
+	editBoxWidth = DialogConfig.editBoxWidth,
 	OnShow = function(self, data)
 		self:GetEditBox():SetText(data)
 		self:GetEditBox():HighlightText()
 		self:GetEditBox():SetFocus()
-		self:SetWidth(350)
+		self:SetWidth(DialogConfig.width)
 	end,
 	EditBoxOnTextChanged = function(self, data)
 		if self:GetText() ~= data then

@@ -1,3 +1,7 @@
+local _, LIB = ...
+
+local SettingsConfig = LIB.UIConfig.Settings
+
 ArcaneWizardLibrary_SettingsPanelTextMixin = {}
 
 function ArcaneWizardLibrary_SettingsPanelTextMixin:Init(initializer)
@@ -49,7 +53,7 @@ function ArcaneWizardLibrary_SettingsExpandMixin:Init(initializer)
 end
 
 function ArcaneWizardLibrary_SettingsExpandMixin:CalculateHeight()
-	return 30
+	return SettingsConfig.expandableSectionHeight
 end
 
 function ArcaneWizardLibrary_SettingsExpandMixin:OnExpandedChanged(expanded)

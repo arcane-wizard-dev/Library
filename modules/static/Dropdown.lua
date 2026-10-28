@@ -138,7 +138,7 @@ local function PopulateMenu(dropdown, root, options)
 		if option.divider then
 			root:CreateDivider()
 		else
-			local entry
+			local entry = nil
 
 			if option.children then
 				entry = root:CreateButton(option.label)

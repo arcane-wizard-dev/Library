@@ -21,7 +21,7 @@ local function ShowTooltip(addon, config, tooltip)
 
 	local version = addon.version
 	local buildDate = addon.buildDate
-	local metadata
+	local metadata = nil
 
 	if version and version ~= "" then
 		metadata = tostring(version)

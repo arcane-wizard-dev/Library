@@ -31,8 +31,8 @@ local addonContexts = {}
 local addonOptions = {}
 local addonsByCategoryId = {}
 local settingsHeaderHooked = false
-local settingsHeaderAnchor
-local settingsHeaderIcon
+local settingsHeaderAnchor = nil
+local SettingsHeaderIcon = nil
 
 local function UpdateSettingsHeader(panel, category)
 	local addon = category and addonsByCategoryId[category:GetID()]
@@ -46,8 +46,8 @@ local function UpdateSettingsHeader(panel, category)
 	local titleOffsetX = header.offsetX + header.iconSize + header.iconSpacing
 	title:SetPoint(point, relativeTo, relativePoint, offsetX + titleOffsetX, offsetY)
 
-	settingsHeaderIcon:SetTexture(addon:GetMediaPath(header.iconFileName))
-	settingsHeaderIcon:Show()
+	SettingsHeaderIcon:SetTexture(addon:GetMediaPath(header.iconFileName))
+	SettingsHeaderIcon:Show()
 end
 
 local function GetOptions(context)
@@ -239,7 +239,7 @@ function AddonContextMixin:OpenSettingsOnLoading()
 	local profileKey = options.database.profileKeys[options.characterGUID]
 	if not profileKey["open-settings"] then return false end
 
-	local opened
+	local opened = nil
 
 	if options.onOpenSettings then
 		opened = options.onOpenSettings()
@@ -291,13 +291,14 @@ function AddonContextMixin:SetMainCategoryId(categoryId)
 		local title = header.Title
 		local layout = LIB.UIConfig.Settings.header
 
-		settingsHeaderIcon = header:CreateTexture(nil, "ARTWORK")
-		settingsHeaderIcon:SetSize(layout.iconSize, layout.iconSize)
-		settingsHeaderIcon:SetPoint("RIGHT", title, "LEFT", -layout.iconSpacing, layout.iconOffsetY)
-		settingsHeaderIcon:Hide()
+		SettingsHeaderIcon = header:CreateTexture(nil, "ARTWORK")
+		SettingsHeaderIcon:SetSize(layout.iconSize, layout.iconSize)
+		SettingsHeaderIcon:SetPoint("RIGHT", title, "LEFT", -layout.iconSpacing, layout.iconOffsetY)
+		SettingsHeaderIcon:Hide()
 
+		-- Der Header wird auch für fremde Kategorien verwendet; deshalb Icon und ursprüngliche Titelposition zurücksetzen.
 		hooksecurefunc(title, "SetText", function()
-			settingsHeaderIcon:Hide()
+			SettingsHeaderIcon:Hide()
 
 			if settingsHeaderAnchor then
 				title:SetPoint(unpack(settingsHeaderAnchor))

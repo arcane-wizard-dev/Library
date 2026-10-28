@@ -31,6 +31,10 @@ LIB.UIConfig.Frame = {
 		},
 		fallbackTexture = "Interface\\FrameGeneral\\UI-Background-Marble"
 	},
+	dialog = {
+		editBoxWidth = 300,
+		width = 350
+	},
 	popup = {
 		minimumWidth = 64,
 		minimumHeight = 48,

@@ -8,6 +8,8 @@ LIB.UIConfig.Changelog = {
 		backgroundAlpha = 1
 	},
 	scrollFrame = {
+		minimumWidth = 96,
+		minimumHeight = 72,
 		showBorder = false,
 		backgroundAlpha = 0,
 		insetBackgroundStyle = "tiled",

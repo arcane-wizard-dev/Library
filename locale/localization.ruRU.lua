@@ -35,7 +35,7 @@ L["settings.profiles.delete-character-profiles.confirm"] = "Все профил�
 
 -- About
 
-L["settings.about"] = "О дополнении"
+L["settings.about"] = "Об аддоне"
 L["settings.about.game-version"] = "Версия игры"
 L["settings.about.addon-version"] = "Версия аддона"
 L["settings.about.lib-version"] = "Версия библиотеки"

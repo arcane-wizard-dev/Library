@@ -1,6 +1,7 @@
 local _, LIB = ...
 
 LIB.UIConfig.Settings = {
+	expandableSectionHeight = 30,
 	header = {
 		iconFileName = "icon.tga",
 		iconSize = 30,

@@ -6,8 +6,8 @@ local FrameConfig = LIB.UIConfig.Frame
 local classicTabs = ArcaneWizardLibrary.GAME_TYPE_CLASSIC or ArcaneWizardLibrary.GAME_TYPE_TBC or ArcaneWizardLibrary.GAME_TYPE_MISTS
 local TabConfig = classicTabs and FrameConfig.tabs.classic or FrameConfig.tabs.standard
 local tabSpacing = ArcaneWizardLibrary.GAME_TYPE_CLASSIC and TabConfig.eraSpacing or TabConfig.spacing
-local windowFrames = setmetatable({}, { __mode = "k" })
-local popupFrames = setmetatable({}, { __mode = "k" })
+local WindowFrames = setmetatable({}, { __mode = "k" })
+local PopupFrames = setmetatable({}, { __mode = "k" })
 local specialFrameCounter = 0
 local tabButtonCounter = 0
 
@@ -152,7 +152,7 @@ local function RegisterDragHandle(frame, handle)
 end
 
 local function CreateBaseFrame(config, template)
-	local frameName
+	local frameName = nil
 
 	if config.closeOnEscape then
 		specialFrameCounter = specialFrameCounter + 1
@@ -213,7 +213,7 @@ end
 --- @param shown boolean Whether to show the border.
 local function SetPopupBorderShown(frame, shown)
 	assert(type(shown) == "boolean", Errors:Format(frame, "Popup:SetBorderShown", "The 'shown' value must be a boolean."))
-	local state = popupFrames[frame]
+	local state = PopupFrames[frame]
 	if state.shown == shown then return end
 
 	if frame.NineSlice then
@@ -282,7 +282,7 @@ local function ResizeTabButton(button)
 end
 
 local function CreateTabButton(tabGroup, id, text)
-	local name
+	local name = nil
 	local groupShown = tabGroup:IsShown()
 
 	if classicTabs then
@@ -578,7 +578,7 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 		RegisterDragHandle(frame, frame.titleBar)
 	end
 
-	windowFrames[frame] = true
+	WindowFrames[frame] = true
 	frame:Hide()
 
 	return frame
@@ -598,11 +598,11 @@ function ArcaneWizardLibrary.Frames:CreatePopup(config)
 	assert(style == "toast" or style == "tooltip", Errors:Format(config, "CreatePopup", "The 'style' value must be 'toast' or 'tooltip'."))
 
 	local frame = CreateBaseFrame(config, style == "tooltip" and "TooltipBackdropTemplate" or "BackdropTemplate")
-	popupFrames[frame] = {}
+	PopupFrames[frame] = {}
 
 	if style == "tooltip" then
 		frame.background = frame.NineSlice.Center
-		popupFrames[frame].borderColor = { frame:GetBackdropBorderColor() }
+		PopupFrames[frame].borderColor = { frame:GetBackdropBorderColor() }
 	end
 
 	frame.SetBorderShown = SetPopupBorderShown
@@ -627,7 +627,7 @@ end
 ---
 --- @return ArcaneWizardLibraryTabGroup tabGroup The created tab group.
 function ArcaneWizardLibrary.Frames:CreateTabGroup(window)
-	assert(windowFrames[window], Errors:Format(window, "CreateTabGroup", "The window must have been created by the Library."))
+	assert(WindowFrames[window], Errors:Format(window, "CreateTabGroup", "The window must have been created by the Library."))
 	assert(not window.tabGroup, Errors:Format(window, "CreateTabGroup", "The window already has a tab group."))
 
 	local tabGroup = CreateFrame("Frame", nil, window)

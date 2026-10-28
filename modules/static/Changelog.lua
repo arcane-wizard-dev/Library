@@ -222,8 +222,8 @@ local function CreateChangelogWindow(addonName)
 	closeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight())
 
 	local scrollConfig = ChangelogConfig.scrollFrame
-	local contentWidth = math.max(frame:GetWidth() - insets.left - insets.right, 96)
-	local contentHeight = math.max(frame:GetHeight() - insets.top - insets.bottom, 72)
+	local contentWidth = math.max(frame:GetWidth() - insets.left - insets.right, scrollConfig.minimumWidth)
+	local contentHeight = math.max(frame:GetHeight() - insets.top - insets.bottom, scrollConfig.minimumHeight)
 
 	local scrollArea = AWL.ScrollFrames:CreateScrollFrame({
 		parent = frame.content,
@@ -274,7 +274,7 @@ function ArcaneWizardLibrary.Frames:OpenChangelog(addonName, versions)
 
 	local state = changelogWindows[addonName] or CreateChangelogWindow(addonName)
 	local frame = state.frame
-	frame.titleText:SetText(string.format(L["changelog.window.title"], addonName))
+	frame.titleText:SetText(L["changelog.window.title"]:format(addonName))
 	frame:Show()
 	RenderChangelog(state, versions)
 	state.scrollArea:ScrollToTop()
