@@ -18,23 +18,23 @@ Arcane Wizard: Library provides reusable components that simplify addon developm
 
 #### Addon Context
 
-Shared addon registration, settings access, minimap and Addon Compartment integration, and debug output.
+The library provides shared addon registration, access to settings, minimap and Addon Compartment integration, and debug output.
 
 #### Frames, Tables & Controls
 
-Reusable windows, scrollable tables, tabs, and input controls using Blizzard's native appearance for each supported game version.
+Reusable windows, scrollable tables, tabs, and input controls match Blizzard's native appearance for each supported game version.
 
 #### Prebuilt Windows & Dialogs
 
-Ready-to-use changelog windows, link popups, and confirmation dialogs.
+The library provides ready-to-use changelog windows, link popups, and confirmation dialogs.
 
 #### Utilities
 
-Common helpers for character identifiers and copying nested tables.
+Shared helpers handle character identifiers and copy nested tables.
 
 #### Settings
 
-Addon options in Blizzard's settings menu, with reusable layouts and profile support.
+The library integrates addon options into Blizzard's settings menu with reusable layouts and profile support.
 
 ### How to Integrate
 
