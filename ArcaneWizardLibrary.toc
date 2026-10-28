@@ -7,9 +7,9 @@
 ## LoadOnDemand: 0
 ## DefaultState: enabled
 
-## Notes: This addon provides the shared base of all Arcane Wizard addons. It bundles the components they have in common, so each addon can focus on its own features.
-## Notes-deDE: Dieses Addon stellt die gemeinsame Basis aller Addons von Arcane Wizard bereit. Es bündelt die Bausteine, die sie gemeinsam nutzen, damit sich jedes Addon auf seine eigenen Funktionen konzentrieren kann.
-## Notes-ruRU: Этот аддон обеспечивает общую основу всех аддонов Arcane Wizard. Он объединяет компоненты, общие для них, чтобы каждый аддон мог сосредоточиться на своих функциях.
+## Notes: This addon provides the shared foundation for all Arcane Wizard addons. It brings common functionality together in one place, making it easier to develop and maintain the addons that use it.
+## Notes-deDE: Dieses Addon stellt die gemeinsame Grundlage aller Addons von Arcane Wizard bereit. Es bündelt gemeinsam genutzte Funktionen an einem Ort und erleichtert so die Entwicklung und Pflege der darauf aufbauenden Addons.
+## Notes-ruRU: Этот аддон предоставляет общую основу для всех аддонов Arcane Wizard. Он объединяет общие функции в одном месте, упрощая разработку и поддержку использующих его аддонов.
 
 ## X-Revision: 1
 ## X-BuildDate: @build-date@

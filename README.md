@@ -4,15 +4,15 @@
 
 _One library for every addon._
 
-Arcane Wizard: Library is a World of Warcraft addon that provides the shared base of all Arcane Wizard addons. It bundles the components they have in common, so each addon can focus on its own features.
+Arcane Wizard: Library is a World of Warcraft addon that provides the shared foundation for all Arcane Wizard addons. It brings common functionality together in one place, making it easier to develop and maintain the addons that use it.
 
 ## For Players
 
-Install Arcane Wizard: Library if you use an Arcane Wizard addon, and keep it enabled alongside it. It works in the background and has no interface of its own.
+Install Arcane Wizard: Library alongside your Arcane Wizard addons and keep it enabled. It provides the shared functionality they need, runs in the background, and has no interface of its own.
 
 ## For Developers
 
-This library shares code across Arcane Wizard addons and keeps their development and maintenance simple. Other addon developers are welcome to use it as well.
+Arcane Wizard: Library provides reusable components that simplify addon development and maintenance. Shared functionality can be maintained centrally and used across multiple addons. Other addon developers are welcome to use the library in their own projects.
 
 ### Features
 
