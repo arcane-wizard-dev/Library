@@ -1,3 +1,7 @@
+**v1.46 (2026-10-29)**
+- Added: TOC version for patch 12.1.7 [retail]
+- Removed: TOC version for patch 12.1.0 [retail]
+
 **v1.45 (2026-10-28)**
 - Added: Library revision checks for dependent addons
 - Changed: Table menu fields renamed to 'tableMenu' and 'showTableMenu'
