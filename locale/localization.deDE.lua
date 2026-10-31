@@ -16,6 +16,10 @@ L["settings.changelog.name"] = "Versionshinweise"
 L["settings.changelog.button"] = "Changelog"
 L["settings.changelog.tooltip"] = "Öffnet das Changelog-Fenster."
 
+-- Settings
+
+L["settings.dropdown.no-selection"] = "Keine Auswahl"
+
 -- Profiles
 
 L["settings.profiles.section-header"] = "Profile"
@@ -28,14 +32,14 @@ L["settings.profiles.switch.button.account-to-character"] = "Charakterprofil nut
 L["settings.profiles.switch.button.character-to-account"] = "Accountprofil nutzen"
 L["settings.profiles.switch.confirm.account-to-character"] = "Dieser Charakter nutzt danach ein eigenes Charakterprofil. Diese Änderung erfordert ein Neuladen der Benutzeroberfläche. Möchtest du fortfahren?"
 L["settings.profiles.switch.confirm.character-to-account"] = "Dieser Charakter nutzt danach das Accountprofil. Diese Änderung erfordert ein Neuladen der Benutzeroberfläche. Möchtest du fortfahren?"
-L["settings.profiles.delete-character-profiles.name"] = "Charakterprofile zurücksetzen"
+L["settings.profiles.delete-character-profiles.name"] = "Charakterprofile löschen"
 L["settings.profiles.delete-character-profiles.button"] = "Charakterprofile löschen"
 L["settings.profiles.delete-character-profiles.tooltip"] = "Löscht alle Charakterprofile und setzt alle Charaktere auf das Accountprofil."
 L["settings.profiles.delete-character-profiles.confirm"] = "Alle Charakterprofile werden gelöscht und alle Charaktere nutzen danach das Accountprofil. Möchtest du fortfahren?"
 
 -- About
 
-L["settings.about"] = "Über"
+L["settings.about"] = "Über das Addon"
 L["settings.about.game-version"] = "Spielversion"
 L["settings.about.addon-version"] = "Addonversion"
 L["settings.about.lib-version"] = "Bibliotheksversion"

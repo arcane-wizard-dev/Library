@@ -6,15 +6,6 @@ local AWL = ArcaneWizardLibrary
 local L = LIB.Localization
 local ChangelogConfig = LIB.UIConfig.Changelog
 
----@class ArcaneWizardLibraryChangelogVersion
----@field version string Version label displayed as the section heading.
----@field date? string Optional release or build date.
----@field entries string[] Changelog entries displayed as bullet points.
-
----@class ArcaneWizardLibraryChangelog
----@field [integer] ArcaneWizardLibraryChangelogVersion
----@field notices? string[] Current notices displayed before the version history.
-
 local changelogWindows = {}
 
 -----------------------
@@ -193,7 +184,7 @@ end
 
 local function CreateChangelogWindow(addonName)
 	local windowConfig = ChangelogConfig.window
-	---@class ArcaneWizardLibraryChangelogFrame: ArcaneWizardLibraryWindowFrame
+	---@class (partial) ArcaneWizardLibraryChangelogFrame
 	local frame = AWL.Frames:CreateWindow({
 		addonName = addonName,
 		title = "",

@@ -2,26 +2,6 @@ local _, LIB = ...
 
 local Errors = LIB.Internal.Errors
 
----@class ArcaneWizardLibraryAddon
----@field name string
----@field version string|nil
----@field buildDate string|nil
----@field mediaPath string
----@field mainCategoryId number|nil
----@field initializationAborted boolean|nil
----@field GetMediaPath fun(self: ArcaneWizardLibraryAddon, fileName: string|nil): string Returns the addon media path or a media file path below it.
----@field PrintDebug fun(self: ArcaneWizardLibraryAddon, msg: any) Prints a debug message with the addon name.
----@field SetMainCategoryId fun(self: ArcaneWizardLibraryAddon, categoryId: number) Stores the Blizzard settings category ID for this addon.
----@field OpenCategory fun(self: ArcaneWizardLibraryAddon): boolean Opens the stored Blizzard settings category when not blocked by combat lockdown.
----@field InitializeOptions fun(self: ArcaneWizardLibraryAddon, config: table): table|nil Initializes and binds this addon's GUID-based option profiles.
----@field IsAccountProfile fun(self: ArcaneWizardLibraryAddon): boolean Returns whether the current character uses account settings.
----@field OpenSettingsOnLoading fun(self: ArcaneWizardLibraryAddon): boolean Opens settings when requested by a profile change.
----@field ToggleProfileMode fun(self: ArcaneWizardLibraryAddon) Switches the profile selection and requests settings after reload.
----@field ResetAllCharacterProfiles fun(self: ArcaneWizardLibraryAddon) Resets character profiles while preserving account settings.
----@field AbortInitialization fun(self: ArcaneWizardLibraryAddon, frame: Frame) Stops startup when the player identity is unavailable.
----@field RegisterMinimapButton fun(self: ArcaneWizardLibraryAddon, config: table): table Registers a LibDataBroker minimap button for this addon.
----@field CreateCompartmentHandlers fun(self: ArcaneWizardLibraryAddon, config: table): table Creates AddonCompartment handler functions for this addon.
-
 local AddonContextMixin = {}
 
 local AddonLauncher = LIB.Internal.AddonLauncher
@@ -32,7 +12,7 @@ local addonOptions = {}
 local addonsByCategoryId = {}
 local settingsHeaderHooked = false
 local settingsHeaderAnchor = nil
-local SettingsHeaderIcon = nil
+local SettingsHeaderIcon = nil ---@type Texture
 
 local function UpdateSettingsHeader(panel, category)
 	local addon = category and addonsByCategoryId[category:GetID()]

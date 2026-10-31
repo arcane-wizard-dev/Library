@@ -24,6 +24,10 @@ L["settings.changelog.name"] = "Version Notes"
 L["settings.changelog.button"] = "Changelog"
 L["settings.changelog.tooltip"] = "Opens the changelog window."
 
+-- Settings
+
+L["settings.dropdown.no-selection"] = "No selection"
+
 -- Profiles
 
 L["settings.profiles.section-header"] = "Profiles"
@@ -36,7 +40,7 @@ L["settings.profiles.switch.button.account-to-character"] = "Use Character Profi
 L["settings.profiles.switch.button.character-to-account"] = "Use Account Profile"
 L["settings.profiles.switch.confirm.account-to-character"] = "This character will use its own character profile after this. This change requires a UI reload. Do you want to continue?"
 L["settings.profiles.switch.confirm.character-to-account"] = "This character will use the account profile after this. This change requires a UI reload. Do you want to continue?"
-L["settings.profiles.delete-character-profiles.name"] = "Reset Character Profiles"
+L["settings.profiles.delete-character-profiles.name"] = "Delete Character Profiles"
 L["settings.profiles.delete-character-profiles.button"] = "Delete Character Profiles"
 L["settings.profiles.delete-character-profiles.tooltip"] = "Deletes all character profiles and sets all characters to the account profile."
 L["settings.profiles.delete-character-profiles.confirm"] = "All character profiles will be deleted and all characters will use the account profile after this. Do you want to continue?"

@@ -4,24 +4,6 @@ local Errors = LIB.Internal.Errors
 
 local InputConfig = LIB.UIConfig.Control.input
 
----@class ArcaneWizardLibraryInputConfig
----@field addonName? string Owning addon for errors; inherited from the parent when omitted.
----@field parent Frame Parent frame for the input field.
----@field width number Input width in pixels.
----@field text string Initial input text.
----@field placeholder string Text displayed while the unfocused input is empty.
----@field maxLetters? number Maximum number of characters. Nil or zero allows the game default.
----@field onTextChanged? fun(text: string, userInput: boolean, input: ArcaneWizardLibraryInput) Called after the text changes.
----@field onEnterPressed? fun(text: string, input: ArcaneWizardLibraryInput) Called before Enter clears focus.
-
----@class ArcaneWizardLibraryInput: EditBox
----@field Placeholder FontString
----@field ClearButton Button
----@field placeholderText string
----@field isClearButtonChange boolean
----@field onTextChanged? fun(text: string, userInput: boolean, input: ArcaneWizardLibraryInput)
----@field onEnterPressed? fun(text: string, input: ArcaneWizardLibraryInput)
-
 -----------------------
 --- Local Functions ---
 -----------------------
@@ -29,6 +11,24 @@ local InputConfig = LIB.UIConfig.Control.input
 local function UpdateInput(input)
 	input.Placeholder:SetShown(not input:HasFocus() and input:GetText() == "" and input.placeholderText ~= "")
 	input.ClearButton:SetShown(input:IsEnabled() and input:GetText() ~= "")
+end
+
+local function CreateClearButton(input)
+	local config = InputConfig.clearButton
+	local button = CreateFrame("Button", nil, input)
+	button:SetSize(config.size, config.size)
+	button:SetPoint("RIGHT", -config.rightInset, 0)
+	button.Icon = button:CreateTexture(nil, "ARTWORK")
+	button.Icon:SetAtlas(config.atlas)
+	button.Icon:SetSize(config.iconSize, config.iconSize)
+	button.Icon:SetPoint("TOPLEFT", config.iconInset, -config.iconInset)
+	button.Icon:SetAlpha(config.iconAlpha)
+	button:SetScript("OnEnter", ClearButtonMixin.OnEnter)
+	button:SetScript("OnLeave", ClearButtonMixin.OnLeave)
+	button:SetScript("OnMouseDown", ClearButtonMixin.OnMouseDown)
+	button:SetScript("OnMouseUp", ClearButtonMixin.OnMouseUp)
+
+	return button
 end
 
 ------------------------
@@ -65,14 +65,13 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 		Errors:Format(config, "CreateInput", "The 'onEnterPressed' callback must be a function or nil.")
 	)
 
-	local input = CreateFrame("EditBox", nil, config.parent, "SearchBoxTemplate")
+	local input = CreateFrame("EditBox", nil, config.parent, "InputBoxInstructionsTemplate")
 	Errors:SetOwner(input, config)
 	input:SetSize(config.width, InputConfig.height)
 	input:SetAutoFocus(false)
 
 	input.Placeholder = input.Instructions
-	input.ClearButton = input.clearButton
-	input.searchIcon:Hide()
+	input.ClearButton = CreateClearButton(input)
 
 	input:SetTextInsets(InputConfig.textLeftInset, InputConfig.textRightInset, 0, 0)
 	input.Placeholder:ClearAllPoints()
@@ -120,6 +119,9 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 			self.onEnterPressed(self:GetText(), self)
 		end
 
+		self:ClearFocus()
+	end)
+	input:SetScript("OnEscapePressed", function(self)
 		self:ClearFocus()
 	end)
 

@@ -66,6 +66,52 @@ local function ApplySettingConfig(setting, config)
 	end
 end
 
+local function GetDropdownOptions(options, multiSelect)
+	local container = Settings.CreateControlTextContainer()
+
+	for _, option in ipairs(options or {}) do
+		if multiSelect then
+			assert(
+				type(option.value) == "number" and option.value % 1 == 0 and option.value >= 1 and option.value <= 32,
+				Errors:Format(nil, "Settings", "Multi-select option values must be bit positions from 1 to 32.")
+			)
+			container:AddCheckbox(option.value, option.label, option.tooltip)
+		else
+			container:Add(option.value, option.label, option.tooltip)
+		end
+	end
+
+	return container:GetData()
+end
+
+local function GetDropdownDefault(value, multiSelect)
+	if multiSelect then
+		if value == nil then
+			return 0
+		end
+
+		assert(type(value) == "number", Errors:Format(nil, "Settings", "A multi-select default must be a numeric bitmask."))
+	end
+
+	return value
+end
+
+local function GetMultiSelectText(selections)
+	if not selections or #selections == 0 then return L["settings.dropdown.no-selection"] end
+	return nil
+end
+
+local function ConfigureMultiSelectText(initializer)
+	initializer.getSelectionTextFunc = GetMultiSelectText
+
+	-- Blizzard verwendet die Zeile später auch für andere Dropdowns.
+	local resetter = initializer.Resetter
+	function initializer:Resetter(frame)
+		frame.Control.Dropdown:SetSelectionText(nil)
+		resetter(self, frame)
+	end
+end
+
 local function GetAboutConfig(addonName)
 	return {
 		addonVersion = GetAddonMetadata(addonName, "Version"),
@@ -80,6 +126,43 @@ end
 ------------------------
 --- Public Functions ---
 ------------------------
+
+--- Binds a multi-select bitmask to existing boolean options without changing their saved format.
+--- Other keys, such as a controlling checkbox, read and write the original table directly.
+---
+--- @param variableTable table The existing settings table.
+--- @param selectionKey string The virtual key used by the dropdown.
+--- @param optionKeys table Boolean option keys in bit-position order (1-32).
+--- @return table proxy The variable table for a multi-select dropdown or checkbox-dropdown combination.
+function ArcaneWizardLibrary.Settings:CreateMultiSelectProxy(variableTable, selectionKey, optionKeys)
+	assert(#optionKeys >= 1 and #optionKeys <= 32, Errors:Format(nil, "Settings", "A multi-select binding requires 1 to 32 option keys."))
+
+	return setmetatable({}, {
+		__index = function(_, key)
+			if key ~= selectionKey then
+				return variableTable[key]
+			end
+
+			local selection = 0
+			for position, optionKey in ipairs(optionKeys) do
+				if variableTable[optionKey] then
+					selection = bit.bor(selection, bit.lshift(1, position - 1))
+				end
+			end
+			return selection
+		end,
+		__newindex = function(_, key, value)
+			if key ~= selectionKey then
+				variableTable[key] = value
+				return
+			end
+
+			for position, optionKey in ipairs(optionKeys) do
+				variableTable[optionKey] = bit.band(value, bit.lshift(1, position - 1)) ~= 0
+			end
+		end
+	})
+end
 
 --- Adds a button to the settings layout.
 ---
@@ -101,6 +184,45 @@ function ArcaneWizardLibrary.Settings:AddButton(layout, config)
 	layout:AddInitializer(initializer)
 
 	return initializer
+end
+
+--- Registers a checkbox followed by an action button. Unchecking disables the button.
+--- Uses checkboxSettingKey, checkboxVariableName, variableTable, checkboxName, checkboxTooltip and checkboxDefault.
+--- buttonText and onClick configure the action; optional checkboxOnClick receives setting value changes.
+---
+--- @param category table The settings category.
+--- @param layout table The settings layout.
+--- @param config table Checkbox binding, button text and callback, optional visibility settings and isNew badge.
+---
+--- @return table initializer The combined initializer.
+--- @return table settingCheckbox The checkbox setting.
+function ArcaneWizardLibrary.Settings:AddCheckboxButtonCombo(category, layout, config)
+	local settingCheckbox = Settings.RegisterAddOnSetting(
+		category,
+		config.checkboxSettingKey,
+		config.checkboxVariableName,
+		config.variableTable,
+		Settings.VarType.Boolean,
+		config.checkboxName,
+		config.checkboxDefault or false
+	)
+	local initializer = CreateSettingsCheckboxWithButtonInitializer(
+		settingCheckbox,
+		config.buttonText,
+		config.onClick,
+		nil,
+		true,
+		config.checkboxTooltip
+	)
+
+	ApplyInitializerConfig(initializer, config)
+	if config.checkboxOnClick then
+		settingCheckbox:SetValueChangedCallback(config.checkboxOnClick)
+	end
+
+	layout:AddInitializer(initializer)
+
+	return initializer, settingCheckbox
 end
 
 --- Adds a static text row to the settings layout.
@@ -250,30 +372,28 @@ function ArcaneWizardLibrary.Settings:AddCheckboxSliderCombo(category, layout, c
 	return initializer, settingCheckbox, settingSlider
 end
 
---- Registers a dropdown in the settings category.
+--- Registers a dropdown in the settings category, optionally with multiple selections.
+--- With multiSelect = true, option.value is a stable bit position (1-32) and the saved value is a bitmask.
+--- The multi-select default is 0 (no selection); for example, 3 selects positions 1 and 2.
 ---
 --- @param category table The settings category.
---- @param config table Variable binding, label, options, default, optional behavior settings and isNew badge.
+--- @param config table Variable binding, label, options (value, label, tooltip), default, optional multiSelect, behavior settings and isNew badge.
 ---
 --- @return table initializer The dropdown initializer.
 --- @return table setting The registered setting.
 function ArcaneWizardLibrary.Settings:AddDropdown(category, config)
-	local varType = type(config.default) == "string" and Settings.VarType.String or Settings.VarType.Number
-	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, varType, config.name, config.default)
+	local default = GetDropdownDefault(config.default, config.multiSelect)
+	local varType = type(default) == "string" and Settings.VarType.String or Settings.VarType.Number
+	local setting = Settings.RegisterAddOnSetting(category, config.settingKey, config.variableName, config.variableTable, varType, config.name, default)
 
 	local function GetOptions()
-		local container = Settings.CreateControlTextContainer()
-
-		if config.options then
-			for _, opt in ipairs(config.options) do
-				container:Add(opt.value, opt.label)
-			end
-		end
-
-		return container:GetData()
+		return GetDropdownOptions(config.options, config.multiSelect)
 	end
 
 	local initializer = Settings.CreateDropdown(category, setting, GetOptions, config.tooltip)
+	if config.multiSelect then
+		ConfigureMultiSelectText(initializer)
+	end
 
 	ApplyInitializerConfig(initializer, config)
 	ApplySettingConfig(setting, config)
@@ -281,20 +401,110 @@ function ArcaneWizardLibrary.Settings:AddDropdown(category, config)
 	return initializer, setting
 end
 
+--- Registers a checkbox followed by a dropdown. Unchecking disables the dropdown without clearing its value.
+--- Uses checkboxSettingKey, checkboxVariableName, checkboxName, checkboxTooltip and checkboxDefault;
+--- dropdownSettingKey, dropdownVariableName, dropdownName, dropdownTooltip, dropdownDefault and dropdownOptions.
+--- Both settings use variableTable. Optional checkboxOnClick and dropdownOnClick receive setting value changes.
+--- Without multiSelect (or with false), dropdownOptions provide an exclusive single selection.
+--- With multiSelect = true, dropdownOptions use the same bit positions and bitmask default as AddDropdown.
+---
+--- @param category table The settings category.
+--- @param layout table The settings layout.
+--- @param config table Checkbox and dropdown configuration, optional multiSelect, visibility settings and isNew badge.
+---
+--- @return table initializer The combined initializer.
+--- @return table settingCheckbox The checkbox setting.
+--- @return table settingDropdown The dropdown setting.
+function ArcaneWizardLibrary.Settings:AddCheckboxDropdownCombo(category, layout, config)
+	local default = GetDropdownDefault(config.dropdownDefault, config.multiSelect)
+	local varType = type(default) == "string" and Settings.VarType.String or Settings.VarType.Number
+	local settingCheckbox = Settings.RegisterAddOnSetting(
+		category,
+		config.checkboxSettingKey,
+		config.checkboxVariableName,
+		config.variableTable,
+		Settings.VarType.Boolean,
+		config.checkboxName,
+		config.checkboxDefault or false
+	)
+	local settingDropdown = Settings.RegisterAddOnSetting(
+		category,
+		config.dropdownSettingKey,
+		config.dropdownVariableName,
+		config.variableTable,
+		varType,
+		config.dropdownName,
+		default
+	)
+
+	local function GetOptions()
+		return GetDropdownOptions(config.dropdownOptions, config.multiSelect)
+	end
+
+	local initializer = CreateSettingsCheckboxDropdownInitializer(
+		settingCheckbox,
+		config.checkboxName,
+		config.checkboxTooltip,
+		settingDropdown,
+		GetOptions,
+		config.dropdownName,
+		config.dropdownTooltip
+	)
+	initializer.GetSetting = function() return settingCheckbox end
+
+	if config.multiSelect then
+		ConfigureMultiSelectText(initializer)
+	end
+	ApplyInitializerConfig(initializer, config)
+
+	if config.checkboxOnClick then
+		settingCheckbox:SetValueChangedCallback(config.checkboxOnClick)
+	end
+
+	if config.dropdownOnClick then
+		settingDropdown:SetValueChangedCallback(config.dropdownOnClick)
+	end
+
+	layout:AddInitializer(initializer)
+
+	return initializer, settingCheckbox, settingDropdown
+end
+
 --- Adds an expandable header section to the settings layout.
 ---
 --- @param layout table The layout object to append the initializer to.
 --- @param name string The display name of the header.
+--- @param getStatusText? function Returns optional status text appended to the name when the header is displayed.
+--- Call initializer:RefreshStatusText() after status changes to update an already visible header.
 ---
 --- @return table initializer The layout initializer object for the header.
 --- @return function isExpandedPredicate A function that returns the current expanded state (boolean).
-function ArcaneWizardLibrary.Settings:AddExpandableHeader(layout, name)
+function ArcaneWizardLibrary.Settings:AddExpandableHeader(layout, name, getStatusText)
 	local initializer = CreateFromMixins(SettingsExpandableSectionInitializer)
 	local data = { name = name, expanded = false }
 
 	initializer:Init("ArcaneWizardLibrary_SettingsExpandTemplate")
 	initializer.data = data
 	initializer.GetExtent = ScrollBoxFactoryInitializerMixin.GetExtent
+
+	if getStatusText then
+		function initializer:GetName()
+			local statusText = getStatusText()
+
+			if statusText and statusText ~= "" then
+				return self.data.name .. " - " .. statusText
+			end
+
+			return self.data.name
+		end
+
+		function initializer:RefreshStatusText()
+			local frame = self.frame
+			if frame and frame:GetElementData() == self then
+				frame.Button.Text:SetText(self:GetName())
+			end
+		end
+	end
 
 	layout:AddInitializer(initializer)
 

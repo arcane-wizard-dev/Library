@@ -13,7 +13,20 @@ LIB.UIConfig.Control = {
 			"GetDisabledTexture", "GetCheckedTexture", "GetDisabledCheckedTexture"
 		}
 	},
-	input = { height = 22, minimumWidth = 80, textLeftInset = 8, textRightInset = 22 },
+	input = {
+		height = 22,
+		minimumWidth = 80,
+		textLeftInset = 8,
+		textRightInset = 22,
+		clearButton = {
+			size = 17,
+			rightInset = 3,
+			iconSize = 10,
+			iconInset = 3,
+			iconAlpha = 0.5,
+			atlas = "common-search-clearbutton"
+		}
+	},
 	dropdown = {
 		minimumWidth = 80,
 		menuIconSize = 16,

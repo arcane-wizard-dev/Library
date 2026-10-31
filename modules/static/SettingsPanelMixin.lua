@@ -50,6 +50,9 @@ ArcaneWizardLibrary_SettingsExpandMixin = CreateFromMixins(SettingsExpandableSec
 function ArcaneWizardLibrary_SettingsExpandMixin:Init(initializer)
 	SettingsExpandableSectionMixin.Init(self, initializer)
 	self.data = initializer.data
+	if initializer.RefreshStatusText then
+		initializer.frame = self
+	end
 end
 
 function ArcaneWizardLibrary_SettingsExpandMixin:CalculateHeight()

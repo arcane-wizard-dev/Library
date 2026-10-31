@@ -16,6 +16,10 @@ L["settings.changelog.name"] = "Примечания к версии"
 L["settings.changelog.button"] = "Журнал изменений"
 L["settings.changelog.tooltip"] = "Открывает окно журнала изменений."
 
+-- Settings
+
+L["settings.dropdown.no-selection"] = "Ничего не выбрано"
+
 -- Profiles
 
 L["settings.profiles.section-header"] = "Профили"
@@ -28,7 +32,7 @@ L["settings.profiles.switch.button.account-to-character"] = "Использов�
 L["settings.profiles.switch.button.character-to-account"] = "Использовать профиль учётной записи"
 L["settings.profiles.switch.confirm.account-to-character"] = "После этого персонаж будет использовать собственный профиль. Это изменение требует перезагрузки интерфейса. Продолжить?"
 L["settings.profiles.switch.confirm.character-to-account"] = "После этого персонаж будет использовать профиль учётной записи. Это изменение требует перезагрузки интерфейса. Продолжить?"
-L["settings.profiles.delete-character-profiles.name"] = "Сбросить профили персонажей"
+L["settings.profiles.delete-character-profiles.name"] = "Удалить профили персонажей"
 L["settings.profiles.delete-character-profiles.button"] = "Удалить профили персонажей"
 L["settings.profiles.delete-character-profiles.tooltip"] = "Удаляет все профили персонажей и переводит всех персонажей на профиль учётной записи."
 L["settings.profiles.delete-character-profiles.confirm"] = "Все профили персонажей будут удалены, и все персонажи будут использовать профиль учётной записи. Продолжить?"

@@ -4,37 +4,6 @@ local Errors = LIB.Internal.Errors
 
 local DropdownConfig = LIB.UIConfig.Control.dropdown
 
----@class ArcaneWizardLibraryDropdownOption
----@field label? string Displayed option or group label.
----@field value? string|number|boolean Selectable option value.
----@field icon? string|number Optional texture path or file ID.
----@field atlas? string Optional texture atlas name.
----@field textColor? number[] Optional RGB or RGBA label color.
----@field children? ArcaneWizardLibraryDropdownOption[] Nested options.
----@field divider? boolean Whether the entry is a divider.
----@field disabled? boolean Whether the entry is disabled.
-
----@class ArcaneWizardLibraryDropdownConfig
----@field addonName? string Owning addon for errors; inherited from the parent when omitted.
----@field parent Frame Parent frame for the dropdown.
----@field width number Dropdown width in pixels.
----@field options ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[] Static options or a dynamic options provider.
----@field selectedValue? string|number|boolean Initially selected option value.
----@field onValueChanged? fun(value: string|number|boolean, option: ArcaneWizardLibraryDropdownOption, dropdown: ArcaneWizardLibraryDropdown) Called after a user changes the selection.
-
----@class ArcaneWizardLibraryDropdown: DropdownButton
----@field value? string|number|boolean Currently selected value.
----@field optionsSource ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[] Static options or a dynamic options provider.
----@field onValueChanged? fun(value: string|number|boolean, option: ArcaneWizardLibraryDropdownOption, dropdown: ArcaneWizardLibraryDropdown)
----@field defaultText string Text displayed without a selection.
----@field emptyText string Text displayed when the menu has no entries.
----@field SetDefaultText fun(self: ArcaneWizardLibraryDropdown, text: string)
----@field SetupMenu fun(self: ArcaneWizardLibraryDropdown, generator: fun(owner: ArcaneWizardLibraryDropdown, root: table))
----@field GetValue fun(self: ArcaneWizardLibraryDropdown): string|number|boolean|nil
----@field SetValue fun(self: ArcaneWizardLibraryDropdown, value: string|number|boolean|nil)
----@field SetOptions fun(self: ArcaneWizardLibraryDropdown, options: ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[])
----@field SetEmptyText fun(self: ArcaneWizardLibraryDropdown, text: string)
-
 -----------------------
 --- Local Functions ---
 -----------------------

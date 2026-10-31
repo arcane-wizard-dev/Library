@@ -4,28 +4,6 @@ local Errors = LIB.Internal.Errors
 
 local ScrollFrameConfig = LIB.UIConfig.ScrollFrame
 
----@class ArcaneWizardLibraryScrollFrame: Frame
----@field background Texture
----@field scrollFrame ScrollFrame
----@field content Frame
----@field scrollBar Frame
----@field scrollUpButton Button
----@field scrollDownButton Button
----@field scrollStep number
----@field requestedContentHeight number
----@field SetContentHeight fun(self: ArcaneWizardLibraryScrollFrame, height: number)
----@field SetScrollStep fun(self: ArcaneWizardLibraryScrollFrame, step: number)
----@field ScrollToTop fun(self: ArcaneWizardLibraryScrollFrame)
-
----@class ArcaneWizardLibraryScrollFrameConfig
----@field addonName? string Owning addon for errors; inherited from the parent when omitted.
----@field parent Frame Parent frame for the scroll area.
----@field width number Scroll area width in pixels.
----@field height number Scroll area height in pixels.
----@field backgroundAlpha number Background opacity from 0 to 1.
----@field showBorder boolean Whether to create the outer border.
----@field contentInsets? {left: number, right: number, top: number, bottom: number} Non-negative viewport margins; defaults to the Library margins.
-
 -----------------------
 --- Local Functions ---
 -----------------------
