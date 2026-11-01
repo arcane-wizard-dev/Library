@@ -2,8 +2,7 @@
 ### [@project-version@](https://github.com/arcane-wizard-dev/Library/tree/@project-version@) (@build-date@)
 [Full Changelog](@full-changelog@) - [Previous Releases](https://github.com/arcane-wizard-dev/Library/releases)
 
-- Added: Shared options menu controls for grouping related settings and showing their status in section headings
-- Changed: Limited loading to Retail, Forever, Classic, and Talebound
-- Changed: Text inputs use Blizzard's standard input template while keeping placeholder and clear-button behavior
-- Updated: deDE, enUS, ruRU localizations
-- Raised the revision of Arcane Wizard: Library to 2
+- Added: An info button in the Profiles section explains the active profile, switching profiles, and deleting character profiles
+- Added: Addons can display help text in the same gold frame as the Profiles info button
+- Changed: The TOC no longer restricts loading by game type
+- Raised the revision of Arcane Wizard: Library to 3

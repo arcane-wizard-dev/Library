@@ -2,6 +2,7 @@ local _, LIB = ...
 
 LIB.UIConfig.Control = {
 	button = { height = 22, minimumWidth = 44 },
+	infoTooltip = { width = 320, padding = 14, gap = 8 },
 	selection = {
 		height = 22,
 		minimumWidth = 44,

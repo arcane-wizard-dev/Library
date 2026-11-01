@@ -530,7 +530,9 @@ function ArcaneWizardLibrary.Settings:AddProfilesSection(layout, config)
 		end
 	end
 
-	layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["settings.profiles.section-header"]))
+	layout:AddInitializer(Settings.CreateElementInitializer("ArcaneWizardLibrary_SettingsProfilesHeader", {
+		name = L["settings.profiles.section-header"]
+	}))
 
 	self:AddInfoText(layout, {
 		leftText  = L["settings.profiles.profile-mode"],

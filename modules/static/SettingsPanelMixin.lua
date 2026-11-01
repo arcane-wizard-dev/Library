@@ -1,6 +1,25 @@
 local _, LIB = ...
 
 local SettingsConfig = LIB.UIConfig.Settings
+local L = LIB.Localization
+
+local function GetHelpSection(titleKey, textKey)
+	return NORMAL_FONT_COLOR:WrapTextInColorCode(L[titleKey]) .. "\n" .. L[textKey]
+end
+
+local function GetProfileHelpText()
+	return table.concat({
+		GetHelpSection("settings.profiles.profile-mode", "settings.profiles.help.mode"),
+		GetHelpSection("settings.profiles.switch.name", "settings.profiles.help.switch"),
+		GetHelpSection("settings.profiles.delete-character-profiles.name", "settings.profiles.help.delete")
+	}, "\n\n")
+end
+
+ArcaneWizardLibrary_ProfileInfoButtonMixin = {}
+
+function ArcaneWizardLibrary_ProfileInfoButtonMixin:InitProfileHelp()
+	ArcaneWizardLibrary.Controls:AttachInfoTooltip(self, GetProfileHelpText)
+end
 
 ArcaneWizardLibrary_SettingsPanelTextMixin = {}
 

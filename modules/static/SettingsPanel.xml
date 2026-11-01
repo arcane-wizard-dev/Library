@@ -2,6 +2,19 @@
 ..\FrameXML\UI.xsd">
 	<Script file="SettingsPanelMixin.lua"/>
 
+	<Frame name="ArcaneWizardLibrary_SettingsProfilesHeader" inherits="SettingsListSectionHeaderTemplate" virtual="true">
+		<Frames>
+			<Button parentKey="InfoButton" inherits="UIPanelInfoButton" mixin="ArcaneWizardLibrary_ProfileInfoButtonMixin">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="5"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad method="InitProfileHelp" inherit="append"/>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+
 	<Frame name="ArcaneWizardLibrary_SettingsPanelText" mixin="ArcaneWizardLibrary_SettingsPanelTextMixin" virtual="true">
 		<Layers>
 			<Layer level="OVERLAY">

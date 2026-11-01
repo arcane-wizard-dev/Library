@@ -23,6 +23,9 @@ L["settings.dropdown.no-selection"] = "Ничего не выбрано"
 -- Profiles
 
 L["settings.profiles.section-header"] = "Профили"
+L["settings.profiles.help.mode"] = "Персонажи с профилем учётной записи используют общие настройки аддона. В профиле персонажа хранятся настройки только для этого персонажа."
+L["settings.profiles.help.switch"] = "Профиль меняется только у текущего персонажа. После подтверждения интерфейс перезагружается."
+L["settings.profiles.help.delete"] = "После подтверждения удаляет все профили персонажей этого аддона. Затем все персонажи используют профиль учётной записи."
 L["settings.profiles.profile-mode"] = "Активный профиль"
 L["settings.profiles.mode.account"] = "Профиль учётной записи"
 L["settings.profiles.mode.character"] = "Профиль персонажа"

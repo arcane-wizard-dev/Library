@@ -5,10 +5,32 @@ local Errors = LIB.Internal.Errors
 local ControlConfig = LIB.UIConfig.Control
 local ButtonConfig = ControlConfig.button
 local SelectionConfig = ControlConfig.selection
+local InfoTooltipConfig = ControlConfig.infoTooltip
+local infoTooltip
 
 -----------------------
 --- Local Functions ---
 -----------------------
+
+local function CreateInfoTooltip()
+	local frame = CreateFrame("Frame", nil, UIParent, "GlowBoxTemplate")
+	frame:SetFrameStrata("TOOLTIP")
+	frame:SetClampedToScreen(true)
+	frame:EnableMouse(false)
+
+	local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLeft")
+	text:SetPoint("TOPLEFT", InfoTooltipConfig.padding, -InfoTooltipConfig.padding)
+	return {frame = frame, text = text}
+end
+
+local function HideInfoTooltip(button)
+	if not infoTooltip then return end
+	local frame = infoTooltip.frame
+	if frame:IsShown() and select(2, frame:GetPoint(1)) == button then
+		frame:Hide()
+		frame:ClearAllPoints()
+	end
+end
 
 local function AssertSelectionControlConfig(config, methodName)
 	assert(type(config) == "table", Errors:Format(config, methodName, "The 'config' value must be a table."))
@@ -87,6 +109,30 @@ end
 ------------------------
 --- Public Functions ---
 ------------------------
+
+--- Sets the hover and hide scripts of an info button to show a shared Blizzard help frame.
+---
+--- @param button Button The info button that owns the tooltip.
+--- @param getText fun():string Returns the current, optionally color-formatted help text.
+function ArcaneWizardLibrary.Controls:AttachInfoTooltip(button, getText)
+	assert(button and type(button.SetScript) == "function", Errors:Format(button, "AttachInfoTooltip", "An info button is required."))
+	assert(type(getText) == "function", Errors:Format(button, "AttachInfoTooltip", "The 'getText' callback must be a function."))
+	button:SetScript("OnEnter", function(owner)
+		infoTooltip = infoTooltip or CreateInfoTooltip()
+		local frame, text = infoTooltip.frame, infoTooltip.text
+		local config = InfoTooltipConfig
+		local width = math.min(config.width, UIParent:GetWidth() - 2 * config.gap)
+		frame:SetWidth(width)
+		text:SetWidth(width - 2 * config.padding)
+		text:SetText(getText())
+		frame:ClearAllPoints()
+		frame:SetPoint("TOPRIGHT", owner, "TOPLEFT", -config.gap, 0)
+		frame:SetHeight(text:GetStringHeight() + 2 * config.padding)
+		frame:Show()
+	end)
+	button:SetScript("OnLeave", HideInfoTooltip)
+	button:SetScript("OnHide", HideInfoTooltip)
+end
 
 --- Creates a native Blizzard action button.
 ---

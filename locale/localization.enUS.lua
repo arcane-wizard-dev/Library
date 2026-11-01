@@ -31,6 +31,9 @@ L["settings.dropdown.no-selection"] = "No selection"
 -- Profiles
 
 L["settings.profiles.section-header"] = "Profiles"
+L["settings.profiles.help.mode"] = "Characters using the account profile share this addon's settings. A character profile keeps separate settings for one character."
+L["settings.profiles.help.switch"] = "Switching profiles affects only the current character. The interface reloads after confirmation."
+L["settings.profiles.help.delete"] = "Deletes all character profiles for this addon after confirmation. All characters then use the account profile."
 L["settings.profiles.profile-mode"] = "Active Profile"
 L["settings.profiles.mode.account"] = "Account Profile"
 L["settings.profiles.mode.character"] = "Character Profile"
