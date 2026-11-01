@@ -1,3 +1,10 @@
+**v1.47 (2026-11-01)**
+- Added: Shared options menu controls for grouping related settings and showing their status in section headings
+- Changed: Limited loading to Retail, Forever, Classic, and Talebound
+- Changed: Text inputs use Blizzard's standard input template while keeping placeholder and clear-button behavior
+- Updated: deDE, enUS, ruRU localizations
+- Raised the revision of Arcane Wizard: Library to 2
+
 **v1.46 (2026-10-29)**
 - Added: TOC version for patch 12.1.7 [retail]
 - Removed: TOC version for patch 12.1.0 [retail]
