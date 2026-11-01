@@ -1,3 +1,6 @@
+**v1.49 (2026-11-01)**
+- Added: Addons can include WoW key binding controls in their settings
+
 **v1.48 (2026-11-01)**
 - Added: An info button in the Profiles section explains the active profile, switching profiles, and deleting character profiles
 - Added: Addons can display help text in the same gold frame as the Profiles info button
