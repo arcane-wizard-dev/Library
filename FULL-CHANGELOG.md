@@ -1,3 +1,9 @@
+**v1.48 (2026-11-01)**
+- Added: An info button in the Profiles section explains the active profile, switching profiles, and deleting character profiles
+- Added: Addons can display help text in the same gold frame as the Profiles info button
+- Changed: The TOC no longer restricts loading by game type
+- Raised the revision of Arcane Wizard: Library to 3
+
 **v1.47 (2026-11-01)**
 - Added: Shared options menu controls for grouping related settings and showing their status in section headings
 - Changed: Limited loading to Retail, Forever, Classic, and Talebound
