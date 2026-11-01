@@ -34,7 +34,7 @@ Shared helpers handle character identifiers and copy nested tables.
 
 #### Settings
 
-The library integrates addon options into Blizzard's settings menu with reusable layouts and profile support.
+The library integrates addon options into Blizzard's settings menu with reusable layouts, profile support, and native key binding controls.
 
 ### How to Integrate
 

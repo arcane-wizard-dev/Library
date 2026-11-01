@@ -6,6 +6,8 @@ local L = LIB.Localization
 
 local SettingsConfig = LIB.UIConfig.Settings
 
+local CreateKeybindingEntryInitializer = _G["CreateKeybindingEntryInitializer"] ---@type fun(bindingIndex: number, search?: boolean): table
+
 -----------------------
 --- Local Functions ---
 -----------------------
@@ -162,6 +164,25 @@ function ArcaneWizardLibrary.Settings:CreateMultiSelectProxy(variableTable, sele
 			end
 		end
 	})
+end
+
+--- Adds Blizzard's key binding row for an existing binding action.
+--- WoW handles input, conflicts, removal and persistence; no addon setting is registered.
+---
+--- @param layout table The settings layout.
+--- @param config table Registered binding action in binding; optional visibility settings and isNew badge.
+--- @return table initializer The native key binding initializer.
+function ArcaneWizardLibrary.Settings:AddKeyBinding(layout, config)
+	for index = 1, GetNumBindings() do
+		if GetBinding(index) == config.binding then
+			local initializer = CreateKeybindingEntryInitializer(index)
+			ApplyInitializerConfig(initializer, config)
+			layout:AddInitializer(initializer)
+			return initializer
+		end
+	end
+
+	error(Errors:Format(nil, "AddKeyBinding", "Unknown binding action: " .. tostring(config.binding)))
 end
 
 --- Adds a button to the settings layout.
