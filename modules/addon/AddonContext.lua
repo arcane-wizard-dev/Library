@@ -21,7 +21,7 @@ local function UpdateSettingsHeader(panel, category)
 	local header = LIB.UIConfig.Settings.header
 	local title = panel:GetSettingsList().Header.Title
 
-	settingsHeaderAnchor = { title:GetPoint() }
+	settingsHeaderAnchor = {title:GetPoint()}
 	local point, relativeTo, relativePoint, offsetX, offsetY = unpack(settingsHeaderAnchor)
 	local titleOffsetX = header.offsetX + header.iconSize + header.iconSpacing
 	title:SetPoint(point, relativeTo, relativePoint, offsetX + titleOffsetX, offsetY)
@@ -72,7 +72,7 @@ local function CreateAddonContext(addonName)
 		mediaPath = "Interface\\AddOns\\" .. addonName .. "\\assets\\"
 	}
 
-	setmetatable(context, { __index = AddonContextMixin })
+	setmetatable(context, {__index = AddonContextMixin})
 	addonContexts[addonName] = context
 
 	return context

@@ -502,7 +502,7 @@ end
 --- @return function isExpandedPredicate A function that returns the current expanded state (boolean).
 function ArcaneWizardLibrary.Settings:AddExpandableHeader(layout, name, getStatusText)
 	local initializer = CreateFromMixins(SettingsExpandableSectionInitializer)
-	local data = { name = name, expanded = false }
+	local data = {name = name, expanded = false}
 
 	initializer:Init("ArcaneWizardLibrary_SettingsExpandTemplate")
 	initializer.data = data

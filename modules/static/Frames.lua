@@ -6,8 +6,8 @@ local FrameConfig = LIB.UIConfig.Frame
 local classicTabs = ArcaneWizardLibrary.GAME_TYPE_CLASSIC or ArcaneWizardLibrary.GAME_TYPE_TBC or ArcaneWizardLibrary.GAME_TYPE_MISTS
 local TabConfig = classicTabs and FrameConfig.tabs.classic or FrameConfig.tabs.standard
 local tabSpacing = ArcaneWizardLibrary.GAME_TYPE_CLASSIC and TabConfig.eraSpacing or TabConfig.spacing
-local WindowFrames = setmetatable({}, { __mode = "k" })
-local PopupFrames = setmetatable({}, { __mode = "k" })
+local WindowFrames = setmetatable({}, {__mode = "k"})
+local PopupFrames = setmetatable({}, {__mode = "k"})
 local specialFrameCounter = 0
 local tabButtonCounter = 0
 
@@ -512,7 +512,7 @@ function ArcaneWizardLibrary.Frames:CreatePopup(config)
 
 	if style == "tooltip" then
 		frame.background = frame.NineSlice.Center
-		PopupFrames[frame].borderColor = { frame:GetBackdropBorderColor() }
+		PopupFrames[frame].borderColor = {frame:GetBackdropBorderColor()}
 	end
 
 	frame.SetBorderShown = SetPopupBorderShown

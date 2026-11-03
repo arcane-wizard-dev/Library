@@ -15,9 +15,9 @@ LIB.UIConfig.Frame = {
 	window = {
 		minimumWidth = 128,
 		minimumHeight = 96,
-		contentInsets = { left = 8, right = 8, top = 35, bottom = 8 }
+		contentInsets = {left = 8, right = 8, top = 35, bottom = 8}
 	},
-	portrait = { minimumWidth = 192, minimumHeight = 128 },
+	portrait = {minimumWidth = 192, minimumHeight = 128},
 	inset = {
 		template = "InsetFrameTemplate4",
 		backgroundAtlases = {
@@ -38,7 +38,7 @@ LIB.UIConfig.Frame = {
 	popup = {
 		minimumWidth = 64,
 		minimumHeight = 48,
-		contentInsets = { left = 10, right = 10, top = 10, bottom = 10 }
+		contentInsets = {left = 10, right = 10, top = 10, bottom = 10}
 	},
 	tabs = {
 		height = 32,

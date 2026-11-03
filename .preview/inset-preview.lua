@@ -2,7 +2,7 @@ local AWL = ArcaneWizardLibrary
 local started = false
 
 local function ShowPreview()
-	local styles = { "tiled", "tiled-dark", "textured", "shaded", "shaded-alt" }
+	local styles = {"tiled", "tiled-dark", "textured", "shaded", "shaded-alt"}
 	local width, height, gap = 380, 260, 20
 	local yOffset = 30
 	local totalWidth = width * 3 + gap * 2

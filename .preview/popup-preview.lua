@@ -2,7 +2,7 @@ local AWL = ArcaneWizardLibrary
 local started = false
 
 local function ShowPreview()
-	local styles = { "toast", "tooltip" }
+	local styles = {"toast", "tooltip"}
 	local width, height, gap = 300, 150, 24
 	local yOffset = 30
 	local totalWidth = width * 2 + gap
@@ -19,7 +19,7 @@ local function ShowPreview()
 				backgroundAlpha = 0.9,
 				showBorder = border,
 				showCloseButton = true,
-				closeButton = { size = 18, point = "TOPRIGHT", x = -3, y = -3 },
+				closeButton = {size = 18, point = "TOPRIGHT", x = -3, y = -3},
 				movable = true,
 				closeOnEscape = true
 			})

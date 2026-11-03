@@ -252,7 +252,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	end
 
 	for index, option in ipairs(config.options) do
-		local button = CreateSelectionControl({ parent = group, width = config.width, label = option.label }, "UIRadioButtonTemplate")
+		local button = CreateSelectionControl({parent = group, width = config.width, label = option.label}, "UIRadioButtonTemplate")
 		button:SetPoint("TOPLEFT", 0, -(index - 1) * (SelectionConfig.height + SelectionConfig.optionSpacing))
 		button.value = option.value
 

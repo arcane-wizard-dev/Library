@@ -35,7 +35,7 @@ function ArcaneWizardLibrary_SettingsSeparatorMixin:Init(initializer)
 	local data = initializer:GetData()
 	local inset = data.texCoordInset
 
-	for _, texture in ipairs({ self.Left, self.LeftLine, self.Center, self.RightLine, self.Right }) do
+	for _, texture in ipairs({self.Left, self.LeftLine, self.Center, self.RightLine, self.Right}) do
 		texture:ClearAllPoints()
 		texture:SetTexture(data.texture)
 		texture:SetDesaturated(true)

@@ -2,7 +2,7 @@ local AWL = ArcaneWizardLibrary
 local started = false
 
 local function ShowPreview()
-	local styles = { "standard", "flat", "solid" }
+	local styles = {"standard", "flat", "solid"}
 	local width, height, gap = 330, 220, 28
 	local yOffset = 30
 	local totalWidth = width * 3 + gap * 2

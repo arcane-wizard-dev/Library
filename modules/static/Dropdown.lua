@@ -62,7 +62,7 @@ local function ValidateDropdownOptions(options, values, context)
 
 			if option.children then
 				assert(option.value == nil, Errors:Format(context.owner, "CreateDropdown", optionPath .. " cannot define both 'value' and 'children'."))
-				ValidateDropdownOptions(option.children, values, { path = optionPath .. " children", owner = context.owner })
+				ValidateDropdownOptions(option.children, values, {path = optionPath .. " children", owner = context.owner})
 			else
 				assert(
 					IsDropdownValue(option.value),
@@ -95,7 +95,7 @@ local function ResolveOptions(dropdown)
 		options = options()
 	end
 
-	ValidateDropdownOptions(options, {}, { path = "Options", owner = dropdown })
+	ValidateDropdownOptions(options, {}, {path = "Options", owner = dropdown})
 
 	return options
 end

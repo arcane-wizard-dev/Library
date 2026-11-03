@@ -4,7 +4,7 @@ LIB.Internal = LIB.Internal or {}
 LIB.Internal.Errors = {}
 
 local Errors = LIB.Internal.Errors
-local owners = setmetatable({}, { __mode = "k" })
+local owners = setmetatable({}, {__mode = "k"})
 
 -----------------------
 --- Local Functions ---
