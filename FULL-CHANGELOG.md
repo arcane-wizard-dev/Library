@@ -1,3 +1,6 @@
+**v1.50 (2026-11-03)**
+- Minor code adjustments
+
 **v1.49 (2026-11-01)**
 - Added: Addons can include WoW key binding controls in their settings
 
