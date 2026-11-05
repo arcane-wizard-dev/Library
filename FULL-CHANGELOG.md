@@ -1,3 +1,7 @@
+**v1.51 (2026-11-05)**
+- Changed: Debug output now accepts format strings and converts values centrally
+- Raised the revision of Arcane Wizard: Library to 4
+
 **v1.50 (2026-11-03)**
 - Minor code adjustments
 
