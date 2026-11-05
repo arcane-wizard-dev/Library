@@ -95,10 +95,27 @@ function AddonContextMixin:GetMediaPath(fileName)
 	return self.mediaPath
 end
 
---- Prints a debug message with the addon name.
+--- Prints a debug message with the addon name and optional format values.
 ---
---- @param msg any The message to print.
-function AddonContextMixin:PrintDebug(msg)
+--- @param msg any The message or format string to print.
+--- @param ... any Optional format values; non-string, non-number values are converted to text.
+function AddonContextMixin:PrintDebug(msg, ...)
+	local argumentCount = select("#", ...)
+
+	if argumentCount > 0 then
+		local arguments = {...}
+
+		for index = 1, argumentCount do
+			local value = arguments[index]
+
+			if type(value) ~= "string" and type(value) ~= "number" then
+				arguments[index] = tostring(value)
+			end
+		end
+
+		msg = string.format(msg, unpack(arguments, 1, argumentCount))
+	end
+
 	local prefix = ORANGE_FONT_COLOR:WrapTextInColorCode(self.name .. " (Debug): ")
 
 	DEFAULT_CHAT_FRAME:AddMessage(prefix .. tostring(msg))
