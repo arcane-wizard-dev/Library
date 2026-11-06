@@ -1,3 +1,7 @@
+**v1.52 (2026-11-06)**
+- Changed: Settings headings now use Blizzard's standard layout
+- Minor code adjustments
+
 **v1.51 (2026-11-05)**
 - Changed: Debug output now accepts format strings and converts values centrally
 - Raised the revision of Arcane Wizard: Library to 4
