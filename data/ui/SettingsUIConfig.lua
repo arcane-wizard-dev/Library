@@ -2,13 +2,6 @@ local _, LIB = ...
 
 LIB.UIConfig.Settings = {
 	expandableSectionHeight = 30,
-	header = {
-		iconFileName = "icon.tga",
-		iconSize = 30,
-		iconSpacing = 9,
-		iconOffsetY = 2,
-		offsetX = 19
-	},
 	infoTextHeights = {
 		compact = 13,
 		default = 27

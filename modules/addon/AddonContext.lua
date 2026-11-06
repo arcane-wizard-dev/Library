@@ -9,26 +9,6 @@ local profileDefaults = ArcaneWizardLibrary.PROFILE_DEFAULTS
 
 local addonContexts = {}
 local addonOptions = {}
-local addonsByCategoryId = {}
-local settingsHeaderHooked = false
-local settingsHeaderAnchor = nil
-local SettingsHeaderIcon = nil ---@type Texture
-
-local function UpdateSettingsHeader(panel, category)
-	local addon = category and addonsByCategoryId[category:GetID()]
-	if not addon then return end
-
-	local header = LIB.UIConfig.Settings.header
-	local title = panel:GetSettingsList().Header.Title
-
-	settingsHeaderAnchor = {title:GetPoint()}
-	local point, relativeTo, relativePoint, offsetX, offsetY = unpack(settingsHeaderAnchor)
-	local titleOffsetX = header.offsetX + header.iconSize + header.iconSpacing
-	title:SetPoint(point, relativeTo, relativePoint, offsetX + titleOffsetX, offsetY)
-
-	SettingsHeaderIcon:SetTexture(addon:GetMediaPath(header.iconFileName))
-	SettingsHeaderIcon:Show()
-end
 
 local function GetOptions(context)
 	local options = addonOptions[context]
@@ -272,40 +252,11 @@ function AddonContextMixin:ResetAllCharacterProfiles()
 	database.profileKeys[options.characterGUID]["open-settings"] = true
 end
 
---- Stores the settings category ID and adds the addon icon to its heading.
+--- Stores the settings category ID.
 ---
 --- @param categoryId number The settings category ID.
 function AddonContextMixin:SetMainCategoryId(categoryId)
-	if self.mainCategoryId then
-		addonsByCategoryId[self.mainCategoryId] = nil
-	end
-
 	self.mainCategoryId = categoryId
-	addonsByCategoryId[categoryId] = self
-
-	if not settingsHeaderHooked and SettingsPanel then
-		local header = SettingsPanel:GetSettingsList().Header
-		local title = header.Title
-		local layout = LIB.UIConfig.Settings.header
-
-		SettingsHeaderIcon = header:CreateTexture(nil, "ARTWORK")
-		SettingsHeaderIcon:SetSize(layout.iconSize, layout.iconSize)
-		SettingsHeaderIcon:SetPoint("RIGHT", title, "LEFT", -layout.iconSpacing, layout.iconOffsetY)
-		SettingsHeaderIcon:Hide()
-
-		-- Der Header wird auch für fremde Kategorien verwendet; deshalb Icon und ursprüngliche Titelposition zurücksetzen.
-		hooksecurefunc(title, "SetText", function()
-			SettingsHeaderIcon:Hide()
-
-			if settingsHeaderAnchor then
-				title:SetPoint(unpack(settingsHeaderAnchor))
-				settingsHeaderAnchor = nil
-			end
-		end)
-
-		hooksecurefunc(SettingsPanel, "DisplayCategory", UpdateSettingsHeader)
-		settingsHeaderHooked = true
-	end
 end
 
 --- Opens the settings category registered with SetMainCategoryId.

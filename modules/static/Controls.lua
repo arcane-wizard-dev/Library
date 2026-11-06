@@ -24,12 +24,11 @@ local function CreateInfoTooltip()
 end
 
 local function HideInfoTooltip(button)
-	if not infoTooltip then return end
+	if not infoTooltip or infoTooltip.owner ~= button then return end
 	local frame = infoTooltip.frame
-	if frame:IsShown() and select(2, frame:GetPoint(1)) == button then
-		frame:Hide()
-		frame:ClearAllPoints()
-	end
+	infoTooltip.owner = nil
+	frame:Hide()
+	frame:ClearAllPoints()
 end
 
 local function AssertSelectionControlConfig(config, methodName)
@@ -128,6 +127,7 @@ function ArcaneWizardLibrary.Controls:AttachInfoTooltip(button, getText)
 		frame:ClearAllPoints()
 		frame:SetPoint("TOPRIGHT", owner, "TOPLEFT", -config.gap, 0)
 		frame:SetHeight(text:GetStringHeight() + 2 * config.padding)
+		infoTooltip.owner = owner
 		frame:Show()
 	end)
 	button:SetScript("OnLeave", HideInfoTooltip)
