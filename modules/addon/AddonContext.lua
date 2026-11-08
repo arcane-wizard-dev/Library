@@ -68,11 +68,7 @@ end
 ---
 --- @return string path The addon media path or the requested file path.
 function AddonContextMixin:GetMediaPath(fileName)
-	if fileName and fileName ~= "" then
-		return self.mediaPath .. fileName
-	end
-
-	return self.mediaPath
+	return self.mediaPath .. (fileName or "")
 end
 
 --- Prints a debug message with the addon name and optional format values.

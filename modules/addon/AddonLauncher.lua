@@ -19,22 +19,16 @@ end
 local function ShowTooltip(addon, config, tooltip)
 	GameTooltip_SetTitle(tooltip, addon.name)
 
-	local version = addon.version
-	local buildDate = addon.buildDate
-	local metadata = nil
+	local version = addon.version ~= "" and addon.version or nil
+	local buildDate = addon.buildDate ~= "" and addon.buildDate or nil
+	local metadata = version or buildDate
 
-	if version and version ~= "" then
-		metadata = tostring(version)
-
-		if buildDate and buildDate ~= "" then
-			metadata = metadata .. " (" .. tostring(buildDate) .. ")"
-		end
-	elseif buildDate and buildDate ~= "" then
-		metadata = tostring(buildDate)
+	if version and buildDate then
+		metadata = tostring(version) .. " (" .. tostring(buildDate) .. ")"
 	end
 
 	if metadata then
-		GameTooltip_AddNormalLine(tooltip, metadata)
+		GameTooltip_AddNormalLine(tooltip, tostring(metadata))
 	end
 
 	GameTooltip_AddBlankLineToTooltip(tooltip)
