@@ -1,3 +1,6 @@
+**v1.53 (2026-11-08)**
+- Minor code adjustments
+
 **v1.52 (2026-11-06)**
 - Changed: Settings headings now use Blizzard's standard layout
 - Minor code adjustments
