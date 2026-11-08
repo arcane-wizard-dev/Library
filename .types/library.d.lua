@@ -1,5 +1,13 @@
 ---@meta
 
+-- WoW Client Constants
+
+---@type integer?
+WOW_PROJECT_MISTS_CLASSIC = nil
+
+---@type integer?
+WOW_PROJECT_CAMELOT = nil
+
 -- AddonContext
 
 ---@class ArcaneWizardLibraryAddon
