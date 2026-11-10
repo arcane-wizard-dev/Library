@@ -1,6 +1,12 @@
 local _, LIB = ...
 
 LIB.UIConfig.Settings = {
+	title = {
+		iconSize = 30,
+		iconSpacing = 9,
+		iconOffsetY = 2,
+		offsetX = 19
+	},
 	expandableSectionHeight = 30,
 	infoTextHeights = {
 		compact = 13,

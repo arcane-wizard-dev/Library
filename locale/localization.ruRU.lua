@@ -19,6 +19,7 @@ L["settings.changelog.tooltip"] = "Открывает окно журнала и
 -- Settings
 
 L["settings.dropdown.no-selection"] = "Ничего не выбрано"
+L["settings.defaults.confirm"] = "Сбросить все настройки на этой странице до значений по умолчанию?"
 
 -- Profiles
 

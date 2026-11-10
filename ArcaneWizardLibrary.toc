@@ -11,7 +11,7 @@
 ## Notes-deDE: Dieses Addon stellt die gemeinsame Grundlage aller Addons von Arcane Wizard bereit. Es bündelt gemeinsam genutzte Funktionen an einem Ort und erleichtert so die Entwicklung und Pflege der darauf aufbauenden Addons.
 ## Notes-ruRU: Этот аддон предоставляет общую основу для всех аддонов Arcane Wizard. Он объединяет общие функции в одном месте, упрощая разработку и поддержку использующих его аддонов.
 
-## X-Revision: 4
+## X-Revision: 5
 ## X-BuildDate: @build-date@
 ## X-E-Mail: feedback@wow-addon.dev
 ## X-Github: https://github.com/arcane-wizard-dev/Library

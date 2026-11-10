@@ -27,6 +27,7 @@ L["settings.changelog.tooltip"] = "Opens the changelog window."
 -- Settings
 
 L["settings.dropdown.no-selection"] = "No selection"
+L["settings.defaults.confirm"] = "Do you want to reset all settings on this page to their default values?"
 
 -- Profiles
 
