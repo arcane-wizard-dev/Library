@@ -56,3 +56,16 @@ function Errors:Format(owner, group, message)
 
 	return LIB.CommonData.errorPrefix .. " (" .. context .. "): " .. message
 end
+
+--- Raises a formatted assertion error only when the condition fails.
+--- Message parts are concatenated in order, so callers on hot paths avoid building strings up front.
+---
+--- @param condition any The condition that must be truthy.
+--- @param owner table|string|nil Configuration, frame or addon name.
+--- @param group string The function group.
+--- @param ... string|number The error description parts.
+function Errors:Assert(condition, owner, group, ...)
+	if condition then return end
+
+	error(self:Format(owner, group, table.concat({...})), 2)
+end

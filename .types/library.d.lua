@@ -109,6 +109,7 @@ WOW_PROJECT_CAMELOT = nil
 ---@class ArcaneWizardLibraryDropdown: DropdownButton
 ---@field value? string|number|boolean Currently selected value.
 ---@field optionsSource ArcaneWizardLibraryDropdownOption[]|fun(): ArcaneWizardLibraryDropdownOption[] Static options or a dynamic options provider.
+---@field pendingOptions? ArcaneWizardLibraryDropdownOption[] Options resolved by SetValue for the immediately following menu generation.
 ---@field onValueChanged? fun(value: string|number|boolean, option: ArcaneWizardLibraryDropdownOption, dropdown: ArcaneWizardLibraryDropdown)
 ---@field defaultText string Text displayed without a selection.
 ---@field emptyText string Text displayed when the menu has no entries.

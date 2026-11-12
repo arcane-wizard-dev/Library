@@ -12,7 +12,7 @@ local addonOptions = {}
 
 local function GetOptions(context)
 	local options = addonOptions[context]
-	assert(options, Errors:Format(context.name, "GetOptions", "Options are not initialized."))
+	Errors:Assert(options, context.name, "GetOptions", "Options are not initialized.")
 
 	return options
 end

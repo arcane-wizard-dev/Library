@@ -46,16 +46,10 @@ local function GetAddonMetadata(addonName, key)
 	return C_AddOns.GetAddOnMetadata(addonName, key)
 end
 
---- @param canvas? table The canvas page from CreateCategory; nil for Blizzard's shared settings list.
-local function ApplyInitializerConfig(initializer, config, canvas)
+local function ApplyInitializerConfig(initializer, config)
 	if config.parentInit and config.parentCondition then
-		if canvas then
-			-- Blizzards Elternauswertung erwartet ein vertikales Layout und scheitert auf Canvas-Seiten.
-			initializer.data.indent = true
-			initializer:AddModifyPredicate(config.parentCondition)
-		else
-			initializer:SetParentInitializer(config.parentInit, config.parentCondition)
-		end
+		initializer.data.indent = true
+		initializer:AddModifyPredicate(config.parentCondition)
 	end
 
 	if config.shownPredicate then
@@ -75,16 +69,12 @@ end
 --- Canvas Categories ---
 -------------------------
 
--- Seiten aus CreateCategory zeigen ihre Zeilen in einer eigenen Instanz von Blizzards Einstellungsliste.
--- Die eigene Liste trennt Zeilen und Frame-Pools von Blizzards gemeinsam genutzter Liste.
--- Ob damit ein konkreter Taint-Fehler ausbleibt, muss im Spiel geprüft werden.
 local canvasByCategory = {}
 local canvasByLayout = {}
 
 local CanvasMixin = {}
 
 function CanvasMixin:Init(name, parentCategory)
-	-- Versteckt starten, damit OnShow schon beim ersten Anzeigen ausgelöst wird.
 	local frame = CreateFrame("Frame")
 	frame:Hide()
 
@@ -106,7 +96,6 @@ function CanvasMixin:Init(name, parentCategory)
 	local titleConfig = SettingsConfig.title
 	title:SetText(displayName)
 	if self.icon and self.icon ~= "" then
-		-- Anordnung wie vor v1.52, ausschließlich in der eigenen Canvas-Liste.
 		local point, relativeTo, relativePoint, offsetX, offsetY = title:GetPoint()
 		local titleOffsetX = titleConfig.offsetX + titleConfig.iconSize + titleConfig.iconSpacing
 		title:SetPoint(point, relativeTo, relativePoint, offsetX + titleOffsetX, offsetY)
@@ -125,7 +114,6 @@ function CanvasMixin:Init(name, parentCategory)
 	end)
 
 	self.list = list
-	-- Nur ein Container für die Zeilen; er wird nicht bei Blizzard registriert.
 	self.layout = CreateVerticalLayout()
 	self.settings = {}
 
@@ -136,7 +124,6 @@ end
 
 function CanvasMixin:TrackSetting(setting)
 	table.insert(self.settings, setting)
-	-- Eltern- und Sichtbarkeitsbedingungen hängen meist von Einstellungen dieser Seite ab.
 	Settings.SetOnValueChangedCallback(setting:GetVariable(), self.Refresh, self)
 end
 
@@ -160,12 +147,11 @@ function CanvasMixin:ResetToDefaults()
 end
 
 local function RegisterSetting(category, settingKey, variableName, variableTable, varType, name, default)
-	local setting = Settings.RegisterAddOnSetting(category, settingKey, variableName, variableTable, varType, name, default)
-
 	local canvas = canvasByCategory[category]
-	if canvas then
-		canvas:TrackSetting(setting)
-	end
+	assert(canvas, Errors:Format(nil, "Settings", "The category must be created with ArcaneWizardLibrary.Settings:CreateCategory."))
+
+	local setting = Settings.RegisterAddOnSetting(category, settingKey, variableName, variableTable, varType, name, default)
+	canvas:TrackSetting(setting)
 
 	return setting
 end
@@ -214,7 +200,6 @@ end
 local function ConfigureMultiSelectText(initializer)
 	initializer.getSelectionTextFunc = GetMultiSelectText
 
-	-- Blizzard verwendet die Zeile später auch für andere Dropdowns.
 	local resetter = initializer.Resetter
 	function initializer:Resetter(frame)
 		frame.Control.Dropdown:SetSelectionText(nil)
@@ -237,17 +222,9 @@ end
 --- Public Functions ---
 ------------------------
 
---- Creates a settings page whose rows are shown in its own list on a canvas page.
---- Use it instead of Settings.RegisterVerticalLayoutCategory or Settings.RegisterVerticalLayoutSubcategory;
---- register a top-level category with Settings.RegisterAddOnCategory as before.
---- Rows use a separate list and frame pools instead of Blizzard's shared settings list.
---- All Add* functions accept the returned category and layout; verify taint behavior in-game.
---- When name identifies an addon, its TOC Title labels the category and its IconTexture appears in the heading.
---- Subcategories inherit the icon; registered category names remain plain text.
---- Canvas rows are not indexed by Blizzard's settings search. The Defaults button resets only
---- addon settings registered on this page through the Add* helpers, not key bindings or subcategories.
---- Settings.Create*(category, ...) does not work for these categories; use the Add* functions or
---- Settings.Create*Initializer with layout:AddInitializer instead.
+--- Creates a canvas settings page for the Add* helpers, using the addon's TOC title and icon when available.
+--- Register top-level categories with Settings.RegisterAddOnCategory.
+--- Entries are excluded from Blizzard's settings search. Defaults resets only this page's Add* settings.
 ---
 --- @param name string The addon identifier or a custom page name.
 --- @param parentCategory? table Optional parent category; creates a subcategory.
@@ -313,7 +290,7 @@ function ArcaneWizardLibrary.Settings:AddKeyBinding(layout, config)
 	for index = 1, GetNumBindings() do
 		if GetBinding(index) == config.binding then
 			local initializer = CreateKeybindingEntryInitializer(index)
-			ApplyInitializerConfig(initializer, config, canvasByLayout[layout])
+			ApplyInitializerConfig(initializer, config)
 			layout:AddInitializer(initializer)
 			return initializer
 		end
@@ -337,7 +314,7 @@ function ArcaneWizardLibrary.Settings:AddButton(layout, config)
 		true
 	)
 
-	ApplyInitializerConfig(initializer, config, canvasByLayout[layout])
+	ApplyInitializerConfig(initializer, config)
 
 	layout:AddInitializer(initializer)
 
@@ -373,7 +350,7 @@ function ArcaneWizardLibrary.Settings:AddCheckboxButtonCombo(category, layout, c
 		config.checkboxTooltip
 	)
 
-	ApplyInitializerConfig(initializer, config, canvasByLayout[layout])
+	ApplyInitializerConfig(initializer, config)
 	if config.checkboxOnClick then
 		settingCheckbox:SetValueChangedCallback(config.checkboxOnClick)
 	end
@@ -395,7 +372,7 @@ function ArcaneWizardLibrary.Settings:AddInfoText(layout, config)
 		rightText = config.rightText or "",
 	})
 
-	ApplyInitializerConfig(initializer, config, canvasByLayout[layout])
+	ApplyInitializerConfig(initializer, config)
 
 	local line = layout:AddInitializer(initializer)
 
@@ -440,15 +417,10 @@ function ArcaneWizardLibrary.Settings:AddCheckbox(category, config)
 		config.default or false
 	)
 	local canvas = canvasByCategory[category]
-	local initializer = nil
-	if canvas then
-		initializer = Settings.CreateCheckboxInitializer(setting, nil, config.tooltip)
-		canvas.layout:AddInitializer(initializer)
-	else
-		initializer = Settings.CreateCheckbox(category, setting, config.tooltip)
-	end
+	local initializer = Settings.CreateCheckboxInitializer(setting, nil, config.tooltip)
+	canvas.layout:AddInitializer(initializer)
 
-	ApplyInitializerConfig(initializer, config, canvas)
+	ApplyInitializerConfig(initializer, config)
 	ApplySettingConfig(setting, config)
 
 	return initializer, setting
@@ -478,15 +450,10 @@ function ArcaneWizardLibrary.Settings:AddSlider(category, config)
 	end
 
 	local canvas = canvasByCategory[category]
-	local initializer = nil
-	if canvas then
-		initializer = Settings.CreateSliderInitializer(setting, options, config.tooltip)
-		canvas.layout:AddInitializer(initializer)
-	else
-		initializer = Settings.CreateSlider(category, setting, options, config.tooltip)
-	end
+	local initializer = Settings.CreateSliderInitializer(setting, options, config.tooltip)
+	canvas.layout:AddInitializer(initializer)
 
-	ApplyInitializerConfig(initializer, config, canvas)
+	ApplyInitializerConfig(initializer, config)
 	ApplySettingConfig(setting, config)
 
 	return initializer, setting
@@ -537,7 +504,7 @@ function ArcaneWizardLibrary.Settings:AddCheckboxSliderCombo(category, layout, c
 	)
 	initializer.GetSetting = function() return settingCheckbox end
 
-	ApplyInitializerConfig(initializer, config, canvasByLayout[layout])
+	ApplyInitializerConfig(initializer, config)
 
 	layout:AddInitializer(initializer)
 
@@ -563,18 +530,13 @@ function ArcaneWizardLibrary.Settings:AddDropdown(category, config)
 	end
 
 	local canvas = canvasByCategory[category]
-	local initializer = nil
-	if canvas then
-		initializer = Settings.CreateDropdownInitializer(setting, GetOptions, config.tooltip)
-		canvas.layout:AddInitializer(initializer)
-	else
-		initializer = Settings.CreateDropdown(category, setting, GetOptions, config.tooltip)
-	end
+	local initializer = Settings.CreateDropdownInitializer(setting, GetOptions, config.tooltip)
+	canvas.layout:AddInitializer(initializer)
 	if config.multiSelect then
 		ConfigureMultiSelectText(initializer)
 	end
 
-	ApplyInitializerConfig(initializer, config, canvas)
+	ApplyInitializerConfig(initializer, config)
 	ApplySettingConfig(setting, config)
 
 	return initializer, setting
@@ -634,7 +596,7 @@ function ArcaneWizardLibrary.Settings:AddCheckboxDropdownCombo(category, layout,
 	if config.multiSelect then
 		ConfigureMultiSelectText(initializer)
 	end
-	ApplyInitializerConfig(initializer, config, canvasByLayout[layout])
+	ApplyInitializerConfig(initializer, config)
 
 	if config.checkboxOnClick then
 		settingCheckbox:SetValueChangedCallback(config.checkboxOnClick)
@@ -659,9 +621,11 @@ end
 --- @return table initializer The layout initializer object for the header.
 --- @return function isExpandedPredicate A function that returns the current expanded state (boolean).
 function ArcaneWizardLibrary.Settings:AddExpandableHeader(layout, name, getStatusText)
+	local canvas = canvasByLayout[layout]
+	assert(canvas, Errors:Format(nil, "AddExpandableHeader", "The layout must be created with ArcaneWizardLibrary.Settings:CreateCategory."))
+
 	local initializer = CreateFromMixins(SettingsExpandableSectionInitializer)
-	-- canvas: Seiten aus CreateCategory aktualisieren beim Auf- und Zuklappen ihre eigene Liste.
-	local data = {name = name, expanded = false, canvas = canvasByLayout[layout]}
+	local data = {name = name, expanded = false, canvas = canvas}
 
 	initializer:Init("ArcaneWizardLibrary_SettingsExpandTemplate")
 	initializer.data = data

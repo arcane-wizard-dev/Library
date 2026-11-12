@@ -15,60 +15,60 @@ local function IsDropdownValue(value)
 end
 
 local function ValidateDropdownOptions(options, values, context)
-	assert(type(options) == "table", Errors:Format(context.owner, "CreateDropdown", context.path .. " must return or contain a table."))
+	local owner, path = context.owner, context.path
+	Errors:Assert(type(options) == "table", owner, "CreateDropdown", path, " must return or contain a table.")
 
 	for index, option in ipairs(options) do
-		local optionPath = context.path .. " option " .. index
-		assert(type(option) == "table", Errors:Format(context.owner, "CreateDropdown", optionPath .. " must be a table."))
+		Errors:Assert(type(option) == "table", owner, "CreateDropdown", path, " option ", index, " must be a table.")
 
 		if option.divider then
-			assert(
+			Errors:Assert(
 				option.disabled == nil or type(option.disabled) == "boolean",
-				Errors:Format(context.owner, "CreateDropdown", "The 'disabled' value of " .. optionPath .. " must be a boolean or nil.")
+				owner, "CreateDropdown", "The 'disabled' value of ", path, " option ", index, " must be a boolean or nil."
 			)
 		else
-			assert(
+			Errors:Assert(
 				type(option.label) == "string" and option.label ~= "",
-				Errors:Format(context.owner, "CreateDropdown", "The 'label' value of " .. optionPath .. " must be a non-empty string.")
+				owner, "CreateDropdown", "The 'label' value of ", path, " option ", index, " must be a non-empty string."
 			)
-			assert(
+			Errors:Assert(
 				option.disabled == nil or type(option.disabled) == "boolean",
-				Errors:Format(context.owner, "CreateDropdown", "The 'disabled' value of " .. optionPath .. " must be a boolean or nil.")
+				owner, "CreateDropdown", "The 'disabled' value of ", path, " option ", index, " must be a boolean or nil."
 			)
-			assert(
+			Errors:Assert(
 				option.icon == nil or type(option.icon) == "string" or type(option.icon) == "number",
-				Errors:Format(context.owner, "CreateDropdown", "The 'icon' value of " .. optionPath .. " must be a texture path, file ID, or nil.")
+				owner, "CreateDropdown", "The 'icon' value of ", path, " option ", index, " must be a texture path, file ID, or nil."
 			)
-			assert(
+			Errors:Assert(
 				option.atlas == nil or type(option.atlas) == "string",
-				Errors:Format(context.owner, "CreateDropdown", "The 'atlas' value of " .. optionPath .. " must be a string or nil.")
+				owner, "CreateDropdown", "The 'atlas' value of ", path, " option ", index, " must be a string or nil."
 			)
-			assert(not (option.icon and option.atlas), Errors:Format(context.owner, "CreateDropdown", optionPath .. " cannot define both 'icon' and 'atlas'."))
+			Errors:Assert(not (option.icon and option.atlas), owner, "CreateDropdown", path, " option ", index, " cannot define both 'icon' and 'atlas'.")
 
 			if option.textColor then
-				assert(
+				Errors:Assert(
 					type(option.textColor) == "table" and #option.textColor >= 3,
-					Errors:Format(context.owner, "CreateDropdown", "The 'textColor' of " .. optionPath .. " must contain at least red, green, and blue values.")
+					owner, "CreateDropdown", "The 'textColor' of ", path, " option ", index, " must contain at least red, green, and blue values."
 				)
 
 				for colorIndex = 1, math.min(#option.textColor, 4) do
 					local colorValue = option.textColor[colorIndex]
-					assert(
+					Errors:Assert(
 						type(colorValue) == "number" and colorValue >= 0 and colorValue <= 1,
-						Errors:Format(context.owner, "CreateDropdown", "The 'textColor' values of " .. optionPath .. " must be numbers between 0 and 1.")
+						owner, "CreateDropdown", "The 'textColor' values of ", path, " option ", index, " must be numbers between 0 and 1."
 					)
 				end
 			end
 
 			if option.children then
-				assert(option.value == nil, Errors:Format(context.owner, "CreateDropdown", optionPath .. " cannot define both 'value' and 'children'."))
-				ValidateDropdownOptions(option.children, values, {path = optionPath .. " children", owner = context.owner})
+				Errors:Assert(option.value == nil, owner, "CreateDropdown", path, " option ", index, " cannot define both 'value' and 'children'.")
+				ValidateDropdownOptions(option.children, values, {path = path .. " option " .. index .. " children", owner = owner})
 			else
-				assert(
+				Errors:Assert(
 					IsDropdownValue(option.value),
-					Errors:Format(context.owner, "CreateDropdown", "The 'value' of " .. optionPath .. " must be a string, number, or boolean.")
+					owner, "CreateDropdown", "The 'value' of ", path, " option ", index, " must be a string, number, or boolean."
 				)
-				assert(not values[option.value], Errors:Format(context.owner, "CreateDropdown", "Option values must be unique."))
+				Errors:Assert(not values[option.value], owner, "CreateDropdown", "Option values must be unique.")
 				values[option.value] = true
 			end
 		end
@@ -198,22 +198,25 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	---
 	--- @param value string|number|boolean|nil An option value, or nil to clear it.
 	function dropdown:SetValue(value)
-		assert(value == nil or IsDropdownValue(value), Errors:Format(self, "Dropdown:SetValue", "The selected value is invalid."))
-		assert(
-			value == nil or FindDropdownOption(ResolveOptions(self), value),
-			Errors:Format(self, "Dropdown:SetValue", "The selected value must match an option.")
-		)
+		Errors:Assert(value == nil or IsDropdownValue(value), self, "Dropdown:SetValue", "The selected value is invalid.")
+
+		local canReuseOptions = type(self.optionsSource) == "table" or self.value == value
+		local options = value ~= nil and ResolveOptions(self) or nil
+		Errors:Assert(value == nil or FindDropdownOption(options, value), self, "Dropdown:SetValue", "The selected value must match an option.")
+
 		self.value = value
+		self.pendingOptions = canReuseOptions and options or nil
 		self:GenerateMenu()
+		self.pendingOptions = nil
 	end
 
 	--- Replaces the options and refreshes the menu.
 	---
 	--- @param options table|function Static options or a provider.
 	function dropdown:SetOptions(options)
-		assert(
+		Errors:Assert(
 			type(options) == "table" or type(options) == "function",
-			Errors:Format(self, "Dropdown:SetOptions", "The options source must be a table or function.")
+			self, "Dropdown:SetOptions", "The options source must be a table or function."
 		)
 		self.optionsSource = options
 		self:GenerateMenu()
@@ -223,7 +226,7 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	---
 	--- @param text string The empty-menu text.
 	function dropdown:SetEmptyText(text)
-		assert(type(text) == "string", Errors:Format(self, "Dropdown:SetEmptyText", "The empty-menu text must be a string."))
+		Errors:Assert(type(text) == "string", self, "Dropdown:SetEmptyText", "The empty-menu text must be a string.")
 		self.emptyText = text
 		self:GenerateMenu()
 	end
@@ -234,7 +237,8 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	end
 
 	dropdown:SetupMenu(function(owner, root)
-		local options = ResolveOptions(owner)
+		local options = owner.pendingOptions or ResolveOptions(owner)
+		owner.pendingOptions = nil
 
 		if owner.value ~= nil and not FindDropdownOption(options, owner.value) then
 			owner.value = nil

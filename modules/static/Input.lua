@@ -82,7 +82,7 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 	---
 	--- @param text string The placeholder text.
 	function input:SetPlaceholder(text)
-		assert(type(text) == "string", Errors:Format(self, "Input:SetPlaceholder", "The placeholder text must be a string."))
+		Errors:Assert(type(text) == "string", self, "Input:SetPlaceholder", "The placeholder text must be a string.")
 
 		self.placeholderText = text
 		self.Placeholder:SetText(text)

@@ -104,9 +104,9 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param height number Non-negative content height in pixels.
 	function frame:SetContentHeight(height)
-		assert(
+		Errors:Assert(
 			type(height) == "number" and height >= 0,
-			Errors:Format(self, "ScrollFrame:SetContentHeight", "The content height must be a non-negative number.")
+			self, "ScrollFrame:SetContentHeight", "The content height must be a non-negative number."
 		)
 		self.requestedContentHeight = height
 		UpdateContentSize(self)
@@ -116,7 +116,7 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param step number Positive distance in pixels.
 	function frame:SetScrollStep(step)
-		assert(type(step) == "number" and step > 0, Errors:Format(self, "ScrollFrame:SetScrollStep", "The scroll step must be a positive number."))
+		Errors:Assert(type(step) == "number" and step > 0, self, "ScrollFrame:SetScrollStep", "The scroll step must be a positive number.")
 		self.scrollStep = step
 		self.scrollFrame:SetPanExtent(step)
 		UpdateScrollRange(self)
@@ -126,7 +126,7 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param value number Offset in pixels.
 	function frame:SetVerticalScroll(value)
-		assert(type(value) == "number", Errors:Format(self, "ScrollFrame:SetVerticalScroll", "The scroll position must be a number."))
+		Errors:Assert(type(value) == "number", self, "ScrollFrame:SetVerticalScroll", "The scroll position must be a number.")
 		self.scrollFrame:SetVerticalScroll(math.max(0, math.min(value, self.scrollFrame:GetVerticalScrollRange())))
 	end
 

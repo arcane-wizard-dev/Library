@@ -85,11 +85,8 @@ function ArcaneWizardLibrary_SettingsExpandMixin:OnExpandedChanged(expanded)
 
 	self:EvaluateVisibility(expanded)
 
-	-- RepairDisplay erreicht nur Blizzards Hauptliste; Seiten aus CreateCategory haben eine eigene.
-	if self.data and self.data.canvas then
+	if self.data then
 		self.data.canvas:Refresh()
-	else
-		SettingsInbound.RepairDisplay()
 	end
 end
 

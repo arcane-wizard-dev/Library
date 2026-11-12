@@ -122,7 +122,7 @@ end
 --- @param frame ArcaneWizardLibraryPopupFrame The popup frame.
 --- @param shown boolean Whether to show the border.
 local function SetPopupBorderShown(frame, shown)
-	assert(type(shown) == "boolean", Errors:Format(frame, "Popup:SetBorderShown", "The 'shown' value must be a boolean."))
+	Errors:Assert(type(shown) == "boolean", frame, "Popup:SetBorderShown", "The 'shown' value must be a boolean.")
 	local state = PopupFrames[frame]
 	if state.shown == shown then return end
 
@@ -281,8 +281,8 @@ end
 --- @return ArcaneWizardLibraryTabPage page The selected content page.
 local function SelectTab(tabGroup, id)
 	local entry = tabGroup.tabsById[id]
-	assert(entry, Errors:Format(tabGroup, "TabGroup:SelectTab", "The tab ID is not registered."))
-	assert(not entry.button.isDisabled, Errors:Format(tabGroup, "TabGroup:SelectTab", "A disabled tab cannot be selected."))
+	Errors:Assert(entry, tabGroup, "TabGroup:SelectTab", "The tab ID is not registered.")
+	Errors:Assert(not entry.button.isDisabled, tabGroup, "TabGroup:SelectTab", "A disabled tab cannot be selected.")
 
 	if tabGroup.selectedTabId == id then
 		return entry.page
@@ -333,8 +333,8 @@ end
 --- @param enabled boolean Whether the tab can be selected.
 local function SetTabEnabled(tabGroup, id, enabled)
 	local entry = tabGroup.tabsById[id]
-	assert(entry, Errors:Format(tabGroup, "TabGroup:SetTabEnabled", "The tab ID is not registered."))
-	assert(type(enabled) == "boolean", Errors:Format(tabGroup, "TabGroup:SetTabEnabled", "The 'enabled' value must be a boolean."))
+	Errors:Assert(entry, tabGroup, "TabGroup:SetTabEnabled", "The tab ID is not registered.")
+	Errors:Assert(type(enabled) == "boolean", tabGroup, "TabGroup:SetTabEnabled", "The 'enabled' value must be a boolean.")
 
 	if enabled then
 		entry.button.isDisabled = false

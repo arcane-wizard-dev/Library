@@ -225,7 +225,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	--- @param value string|number|boolean A value present in the option group.
 	function group:SetValue(value)
 		local selectedButton = self.buttonsByValue[value]
-		assert(selectedButton ~= nil, Errors:Format(self, "OptionGroup:SetValue", "The selected value must match an option value."))
+		Errors:Assert(selectedButton ~= nil, self, "OptionGroup:SetValue", "The selected value must match an option value.")
 
 		self.value = value
 
@@ -238,7 +238,7 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	---
 	--- @param enabled boolean Whether the options can be selected.
 	function group:SetEnabled(enabled)
-		assert(type(enabled) == "boolean", Errors:Format(self, "OptionGroup:SetEnabled", "The 'enabled' value must be a boolean."))
+		Errors:Assert(type(enabled) == "boolean", self, "OptionGroup:SetEnabled", "The 'enabled' value must be a boolean.")
 
 		self.enabled = enabled
 

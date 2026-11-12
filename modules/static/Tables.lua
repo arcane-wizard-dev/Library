@@ -44,11 +44,11 @@ local function UpdateLayout(frame)
 		end
 
 		local cellPadding = math.min(padding, math.max(0, (columnWidth - 1) / 2))
-		frame.columnLayouts[index] = {
-			x = x + cellPadding,
-			width = math.max(1, columnWidth - cellPadding * 2),
-			align = column.align or "LEFT"
-		}
+		local layout = frame.columnLayouts[index] or {}
+		layout.x = x + cellPadding
+		layout.width = math.max(1, columnWidth - cellPadding * 2)
+		layout.align = column.align or "LEFT"
+		frame.columnLayouts[index] = layout
 		x = x + columnWidth
 	end
 
@@ -192,7 +192,7 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 	--- @return number width
 	--- @return string align
 	function frame:GetColumnLayout(index)
-		assert(self.columns[index] ~= nil, Errors:Format(self, "Table:GetColumnLayout", "The column index is invalid."))
+		Errors:Assert(self.columns[index] ~= nil, self, "Table:GetColumnLayout", "The column index is invalid.")
 
 		if self.layoutWidth ~= self:GetWidth() then
 			UpdateLayout(self)
@@ -207,8 +207,8 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 	--- @param index number Column index.
 	--- @param text string Column heading.
 	function frame:SetColumnText(index, text)
-		assert(self.columns[index] ~= nil, Errors:Format(self, "Table:SetColumnText", "The column index is invalid."))
-		assert(type(text) == "string", Errors:Format(self, "Table:SetColumnText", "The column text must be a string."))
+		Errors:Assert(self.columns[index] ~= nil, self, "Table:SetColumnText", "The column index is invalid.")
+		Errors:Assert(type(text) == "string", self, "Table:SetColumnText", "The column text must be a string.")
 		self.columns[index].text = text
 		self.header.cells[index]:SetText(text)
 	end
