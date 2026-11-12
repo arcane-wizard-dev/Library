@@ -127,7 +127,7 @@ function CanvasMixin:TrackSetting(setting)
 	Settings.SetOnValueChangedCallback(setting:GetVariable(), self.Refresh, self)
 end
 
-function CanvasMixin:Refresh()
+function CanvasMixin:Refresh(setting)
 	if not self.list:IsVisible() then
 		return
 	end
@@ -136,6 +136,12 @@ function CanvasMixin:Refresh()
 	self.list.ScrollBox:ForEachFrame(function(frame)
 		if frame.EvaluateState then
 			frame:EvaluateState()
+		end
+
+		local data = frame:GetElementData().data
+		if setting and data and data.dropdownSetting == setting then
+			local dropdown = frame.Control.Dropdown
+			dropdown:UpdateToMenuSelections(dropdown:GetMenuDescription())
 		end
 	end)
 end
