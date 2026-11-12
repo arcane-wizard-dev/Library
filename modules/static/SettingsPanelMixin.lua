@@ -86,7 +86,7 @@ function ArcaneWizardLibrary_SettingsExpandMixin:OnExpandedChanged(expanded)
 	self:EvaluateVisibility(expanded)
 
 	if self.data then
-		self.data.canvas:Refresh()
+		self.data.canvas:RefreshNow()
 	end
 end
 

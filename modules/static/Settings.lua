@@ -116,6 +116,11 @@ function CanvasMixin:Init(name, parentCategory)
 	self.list = list
 	self.layout = CreateVerticalLayout()
 	self.settings = {}
+	self.runRefresh = function()
+		if self.refreshPending then
+			self:RefreshNow()
+		end
+	end
 
 	frame:SetScript("OnShow", function()
 		list:Display(self.layout:GetInitializers())
@@ -132,16 +137,30 @@ function CanvasMixin:Refresh(setting)
 		return
 	end
 
+	if setting then
+		self.list.ScrollBox:ForEachFrame(function(frame)
+			local data = frame:GetElementData().data
+			if data and data.dropdownSetting == setting then
+				local dropdown = frame.Control.Dropdown
+				dropdown:UpdateToMenuSelections(dropdown:GetMenuDescription())
+			end
+		end)
+	end
+
+	if self.refreshPending then return end
+
+	self.refreshPending = true
+	C_Timer.After(0, self.runRefresh)
+end
+
+function CanvasMixin:RefreshNow()
+	self.refreshPending = false
+	if not self.list:IsVisible() then return end
+
 	self.list:RepairDisplay(self.layout)
 	self.list.ScrollBox:ForEachFrame(function(frame)
 		if frame.EvaluateState then
 			frame:EvaluateState()
-		end
-
-		local data = frame:GetElementData().data
-		if setting and data and data.dropdownSetting == setting then
-			local dropdown = frame.Control.Dropdown
-			dropdown:UpdateToMenuSelections(dropdown:GetMenuDescription())
 		end
 	end)
 end
