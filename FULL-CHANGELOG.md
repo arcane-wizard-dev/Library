@@ -1,3 +1,11 @@
+**v1.55 (2026-11-14)**
+- Changed: Error messages for frequently used controls are now built only when a check fails
+- Changed: Reduced repeated option loading and validation when refreshing dropdowns
+- Changed: Reduced repeated options-page refreshes when changing or resetting settings
+- Removed: Support for Blizzard's shared options layout
+- Fixed: Dropdowns with a checkbox now display their default selection immediately after resetting settings
+- Minor code adjustments
+
 **v1.54 (2026-11-10)**
 - Added: Options pages can use their own settings list with the addon logo in the heading and a button to restore the page's default values
 - Fixed: Taint from addon options could trigger blocked-action errors in Blizzard's Social settings and keybindings (#2, #3)
