@@ -11,17 +11,28 @@ local owners = setmetatable({}, {__mode = "k"})
 -----------------------
 
 local function GetAddonName(owner)
-	if type(owner) == "string" then return owner ~= "" and owner or nil end
-	if owners[owner] then return owners[owner] end
+	if type(owner) == "string" then
+		return owner ~= "" and owner or nil
+	end
+
+	if owners[owner] then
+		return owners[owner]
+	end
 
 	local visited = {}
 
 	while type(owner) == "table" or type(owner) == "userdata" do
-		if visited[owner] then return nil end
+		if visited[owner] then
+			return nil
+		end
+
 		visited[owner] = true
 
 		local addonName = owners[owner] or owner.addonName
-		if type(addonName) == "string" and addonName ~= "" then return addonName end
+
+		if type(addonName) == "string" and addonName ~= "" then
+			return addonName
+		end
 
 		if type(owner.GetParent) == "function" then
 			owner = owner:GetParent()
@@ -35,21 +46,15 @@ end
 --- Internal Functions ---
 --------------------------
 
---- Stores the addon name for later calls on a UI element.
----
---- @param frame Frame The created UI element.
---- @param owner table|string|nil Configuration, parent frame or addon name.
+---@param frame Frame
+---@param owner table|string|nil
 function Errors:SetOwner(frame, owner)
 	owners[frame] = GetAddonName(owner)
 end
 
---- Formats an assertion message with its addon and function group.
----
---- @param owner table|string|nil Configuration, frame or addon name.
---- @param group string The function group.
---- @param message string The error description.
----
---- @return string message The formatted error message.
+---@param owner table|string|nil
+---@param group string
+---@param message string
 function Errors:Format(owner, group, message)
 	local addonName = GetAddonName(owner)
 	local context = addonName and addonName .. "/" .. group or group
@@ -57,13 +62,9 @@ function Errors:Format(owner, group, message)
 	return LIB.CommonData.errorPrefix .. " (" .. context .. "): " .. message
 end
 
---- Raises a formatted assertion error only when the condition fails.
---- Message parts are concatenated in order, so callers on hot paths avoid building strings up front.
----
---- @param condition any The condition that must be truthy.
---- @param owner table|string|nil Configuration, frame or addon name.
---- @param group string The function group.
---- @param ... string|number The error description parts.
+---@param owner table|string|nil
+---@param group string
+---@param ... string|number
 function Errors:Assert(condition, owner, group, ...)
 	if condition then return end
 

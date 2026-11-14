@@ -141,7 +141,7 @@ WOW_PROJECT_CAMELOT = nil
 ---@field content Frame Content area inside the popup frame.
 ---@field closeButton? Button Optional close button.
 ---@field closeOnEscape boolean Whether pressing Escape hides the popup.
----@field SetBorderShown fun(self: ArcaneWizardLibraryPopupFrame, shown: boolean) Shows or hides the popup border.
+---@field SetBorderShown fun(self: ArcaneWizardLibraryPopupFrame, shown: boolean) Shows or hides the border while preserving background opacity.
 
 ---@class ArcaneWizardLibraryCloseButtonConfig
 ---@field size? number Button width and height in pixels; defaults to Blizzard's size.
@@ -207,11 +207,11 @@ WOW_PROJECT_CAMELOT = nil
 ---@field tabEntries ArcaneWizardLibraryTabEntry[]
 ---@field tabsById table<string, ArcaneWizardLibraryTabEntry>
 ---@field onTabChanged? fun(id: string?, page: ArcaneWizardLibraryTabPage?)
----@field AddTab fun(self: ArcaneWizardLibraryTabGroup, id: string, text: string): ArcaneWizardLibraryTabPage
----@field SelectTab fun(self: ArcaneWizardLibraryTabGroup, id: string): ArcaneWizardLibraryTabPage
----@field GetSelectedTab fun(self: ArcaneWizardLibraryTabGroup): string?, ArcaneWizardLibraryTabPage?
----@field SetTabEnabled fun(self: ArcaneWizardLibraryTabGroup, id: string, enabled: boolean)
----@field SetOnTabChanged fun(self: ArcaneWizardLibraryTabGroup, callback: fun(id: string?, page: ArcaneWizardLibraryTabPage?)?)
+---@field AddTab fun(self: ArcaneWizardLibraryTabGroup, id: string, text: string): ArcaneWizardLibraryTabPage Adds a tab with a unique ID and selects the first tab automatically.
+---@field SelectTab fun(self: ArcaneWizardLibraryTabGroup, id: string): ArcaneWizardLibraryTabPage Selects an enabled tab and calls onTabChanged when the selection changes.
+---@field GetSelectedTab fun(self: ArcaneWizardLibraryTabGroup): string?, ArcaneWizardLibraryTabPage? Returns the selected tab ID and page, or nil for both when none is selected.
+---@field SetTabEnabled fun(self: ArcaneWizardLibraryTabGroup, id: string, enabled: boolean) Enables or disables a tab and selects an enabled replacement if needed.
+---@field SetOnTabChanged fun(self: ArcaneWizardLibraryTabGroup, callback: fun(id: string?, page: ArcaneWizardLibraryTabPage?)?) Sets the selection callback. Pass nil to remove it.
 
 -- Input
 

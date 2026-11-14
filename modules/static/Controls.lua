@@ -20,11 +20,13 @@ local function CreateInfoTooltip()
 
 	local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLeft")
 	text:SetPoint("TOPLEFT", InfoTooltipConfig.padding, -InfoTooltipConfig.padding)
+
 	return {frame = frame, text = text}
 end
 
 local function HideInfoTooltip(button)
 	if not infoTooltip or infoTooltip.owner ~= button then return end
+
 	local frame = infoTooltip.frame
 	infoTooltip.owner = nil
 	frame:Hide()
@@ -38,7 +40,10 @@ local function AssertSelectionControlConfig(config, methodName)
 		type(config.width) == "number" and config.width >= SelectionConfig.minimumWidth,
 		Errors:Format(config, methodName, "The 'width' value must be at least " .. SelectionConfig.minimumWidth .. ".")
 	)
-	assert(type(config.label) == "string" and config.label ~= "", Errors:Format(config, methodName, "The 'label' value must be a non-empty string."))
+	assert(
+		type(config.label) == "string" and config.label ~= "",
+		Errors:Format(config, methodName, "The 'label' value must be a non-empty string.")
+	)
 	assert(
 		config.onValueChanged == nil or type(config.onValueChanged) == "function",
 		Errors:Format(config, methodName, "The 'onValueChanged' callback must be a function or nil.")
@@ -46,13 +51,19 @@ local function AssertSelectionControlConfig(config, methodName)
 end
 
 local function ValidateOptions(options, selectedValue, owner)
-	assert(type(options) == "table" and #options > 0, Errors:Format(owner, "CreateOptionGroup", "The option list must be a non-empty table."))
+	assert(
+		type(options) == "table" and #options > 0,
+		Errors:Format(owner, "CreateOptionGroup", "The option list must be a non-empty table.")
+	)
 
 	local values = {}
 	local selectedValueExists = false
 
 	for index, option in ipairs(options) do
-		assert(type(option) == "table", Errors:Format(owner, "CreateOptionGroup", "Option " .. index .. " must be a table."))
+		assert(
+			type(option) == "table",
+			Errors:Format(owner, "CreateOptionGroup", "Option " .. index .. " must be a table.")
+		)
 		assert(
 			type(option.label) == "string" and option.label ~= "",
 			Errors:Format(owner, "CreateOptionGroup", "The 'label' value of option " .. index .. " must be a non-empty string.")
@@ -72,7 +83,10 @@ local function ValidateOptions(options, selectedValue, owner)
 		end
 	end
 
-	assert(selectedValueExists, Errors:Format(owner, "CreateOptionGroup", "The 'selectedValue' must match an option value."))
+	assert(
+		selectedValueExists,
+		Errors:Format(owner, "CreateOptionGroup", "The 'selectedValue' must match an option value.")
+	)
 end
 
 local function CreateSelectionControl(config, template)
@@ -114,8 +128,14 @@ end
 --- @param button Button The info button that owns the tooltip.
 --- @param getText fun():string Returns the current, optionally color-formatted help text.
 function ArcaneWizardLibrary.Controls:AttachInfoTooltip(button, getText)
-	assert(button and type(button.SetScript) == "function", Errors:Format(button, "AttachInfoTooltip", "An info button is required."))
-	assert(type(getText) == "function", Errors:Format(button, "AttachInfoTooltip", "The 'getText' callback must be a function."))
+	assert(
+		button and type(button.SetScript) == "function",
+		Errors:Format(button, "AttachInfoTooltip", "An info button is required.")
+	)
+	assert(
+		type(getText) == "function",
+		Errors:Format(button, "AttachInfoTooltip", "The 'getText' callback must be a function.")
+	)
 	button:SetScript("OnEnter", function(owner)
 		infoTooltip = infoTooltip or CreateInfoTooltip()
 		local frame, text = infoTooltip.frame, infoTooltip.text
@@ -147,7 +167,10 @@ function ArcaneWizardLibrary.Controls:CreateButton(config)
 		type(config.width) == "number" and config.width >= ButtonConfig.minimumWidth,
 		Errors:Format(config, "CreateButton", "The 'width' value must be at least " .. ButtonConfig.minimumWidth .. ".")
 	)
-	assert(type(config.label) == "string" and config.label ~= "", Errors:Format(config, "CreateButton", "The 'label' value must be a non-empty string."))
+	assert(
+		type(config.label) == "string" and config.label ~= "",
+		Errors:Format(config, "CreateButton", "The 'label' value must be a non-empty string.")
+	)
 	assert(
 		config.onClick == nil or type(config.onClick) == "function",
 		Errors:Format(config, "CreateButton", "The 'onClick' callback must be a function or nil.")
@@ -172,7 +195,10 @@ end
 --- @return ArcaneWizardLibrarySelectionControl checkbox The created checkbox.
 function ArcaneWizardLibrary.Controls:CreateCheckbox(config)
 	AssertSelectionControlConfig(config, "CreateCheckbox")
-	assert(type(config.checked) == "boolean", Errors:Format(config, "CreateCheckbox", "The 'checked' value must be a boolean."))
+	assert(
+		type(config.checked) == "boolean",
+		Errors:Format(config, "CreateCheckbox", "The 'checked' value must be a boolean.")
+	)
 
 	local checkbox = CreateSelectionControl(config, "UICheckButtonTemplate")
 	checkbox:SetChecked(config.checked)
@@ -225,7 +251,10 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	--- @param value string|number|boolean A value present in the option group.
 	function group:SetValue(value)
 		local selectedButton = self.buttonsByValue[value]
-		Errors:Assert(selectedButton ~= nil, self, "OptionGroup:SetValue", "The selected value must match an option value.")
+		Errors:Assert(
+			selectedButton ~= nil,
+			self, "OptionGroup:SetValue", "The selected value must match an option value."
+		)
 
 		self.value = value
 
@@ -238,7 +267,10 @@ function ArcaneWizardLibrary.Controls:CreateOptionGroup(config)
 	---
 	--- @param enabled boolean Whether the options can be selected.
 	function group:SetEnabled(enabled)
-		Errors:Assert(type(enabled) == "boolean", self, "OptionGroup:SetEnabled", "The 'enabled' value must be a boolean.")
+		Errors:Assert(
+			type(enabled) == "boolean",
+			self, "OptionGroup:SetEnabled", "The 'enabled' value must be a boolean."
+		)
 
 		self.enabled = enabled
 

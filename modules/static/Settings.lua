@@ -79,6 +79,7 @@ function CanvasMixin:Init(name, parentCategory)
 	frame:Hide()
 
 	local displayName = name
+
 	if parentCategory then
 		local parentCanvas = canvasByCategory[parentCategory]
 		self.icon = parentCanvas and parentCanvas.icon
@@ -95,6 +96,7 @@ function CanvasMixin:Init(name, parentCategory)
 	local title = header.Title
 	local titleConfig = SettingsConfig.title
 	title:SetText(displayName)
+
 	if self.icon and self.icon ~= "" then
 		local point, relativeTo, relativePoint, offsetX, offsetY = title:GetPoint()
 		local titleOffsetX = titleConfig.offsetX + titleConfig.iconSize + titleConfig.iconSpacing
@@ -140,6 +142,7 @@ function CanvasMixin:Refresh(setting)
 	if setting then
 		self.list.ScrollBox:ForEachFrame(function(frame)
 			local data = frame:GetElementData().data
+
 			if data and data.dropdownSetting == setting then
 				local dropdown = frame.Control.Dropdown
 				dropdown:UpdateToMenuSelections(dropdown:GetMenuDescription())
@@ -155,6 +158,7 @@ end
 
 function CanvasMixin:RefreshNow()
 	self.refreshPending = false
+
 	if not self.list:IsVisible() then return end
 
 	self.list:RepairDisplay(self.layout)
@@ -173,7 +177,10 @@ end
 
 local function RegisterSetting(category, settingKey, variableName, variableTable, varType, name, default)
 	local canvas = canvasByCategory[category]
-	assert(canvas, Errors:Format(nil, "Settings", "The category must be created with ArcaneWizardLibrary.Settings:CreateCategory."))
+	assert(
+		canvas,
+		Errors:Format(nil, "Settings", "The category must be created with ArcaneWizardLibrary.Settings:CreateCategory.")
+	)
 
 	local setting = Settings.RegisterAddOnSetting(category, settingKey, variableName, variableTable, varType, name, default)
 	canvas:TrackSetting(setting)
@@ -211,14 +218,20 @@ local function GetDropdownDefault(value, multiSelect)
 			return 0
 		end
 
-		assert(type(value) == "number", Errors:Format(nil, "Settings", "A multi-select default must be a numeric bitmask."))
+		assert(
+			type(value) == "number",
+			Errors:Format(nil, "Settings", "A multi-select default must be a numeric bitmask.")
+		)
 	end
 
 	return value
 end
 
 local function GetMultiSelectText(selections)
-	if not selections or #selections == 0 then return L["settings.dropdown.no-selection"] end
+	if not selections or #selections == 0 then
+		return L["settings.dropdown.no-selection"]
+	end
+
 	return nil
 end
 
@@ -257,7 +270,10 @@ end
 --- @return table category The settings category.
 --- @return table layout The layout to pass to the Add* functions.
 function ArcaneWizardLibrary.Settings:CreateCategory(name, parentCategory)
-	assert(type(name) == "string" and name ~= "", Errors:Format(nil, "CreateCategory", "The 'name' value must be a non-empty string."))
+	assert(
+		type(name) == "string" and name ~= "",
+		Errors:Format(nil, "CreateCategory", "The 'name' value must be a non-empty string.")
+	)
 
 	local canvas = CreateFromMixins(CanvasMixin)
 	canvas:Init(name, parentCategory)
@@ -276,7 +292,10 @@ end
 --- @param optionKeys table Boolean option keys in bit-position order (1-32).
 --- @return table proxy The variable table for a multi-select dropdown or checkbox-dropdown combination.
 function ArcaneWizardLibrary.Settings:CreateMultiSelectProxy(variableTable, selectionKey, optionKeys)
-	assert(#optionKeys >= 1 and #optionKeys <= 32, Errors:Format(nil, "Settings", "A multi-select binding requires 1 to 32 option keys."))
+	assert(
+		#optionKeys >= 1 and #optionKeys <= 32,
+		Errors:Format(nil, "Settings", "A multi-select binding requires 1 to 32 option keys.")
+	)
 
 	return setmetatable({}, {
 		__index = function(_, key)
@@ -285,16 +304,19 @@ function ArcaneWizardLibrary.Settings:CreateMultiSelectProxy(variableTable, sele
 			end
 
 			local selection = 0
+
 			for position, optionKey in ipairs(optionKeys) do
 				if variableTable[optionKey] then
 					selection = bit.bor(selection, bit.lshift(1, position - 1))
 				end
 			end
+
 			return selection
 		end,
 		__newindex = function(_, key, value)
 			if key ~= selectionKey then
 				variableTable[key] = value
+
 				return
 			end
 
@@ -317,6 +339,7 @@ function ArcaneWizardLibrary.Settings:AddKeyBinding(layout, config)
 			local initializer = CreateKeybindingEntryInitializer(index)
 			ApplyInitializerConfig(initializer, config)
 			layout:AddInitializer(initializer)
+
 			return initializer
 		end
 	end
@@ -376,6 +399,7 @@ function ArcaneWizardLibrary.Settings:AddCheckboxButtonCombo(category, layout, c
 	)
 
 	ApplyInitializerConfig(initializer, config)
+
 	if config.checkboxOnClick then
 		settingCheckbox:SetValueChangedCallback(config.checkboxOnClick)
 	end
@@ -557,6 +581,7 @@ function ArcaneWizardLibrary.Settings:AddDropdown(category, config)
 	local canvas = canvasByCategory[category]
 	local initializer = Settings.CreateDropdownInitializer(setting, GetOptions, config.tooltip)
 	canvas.layout:AddInitializer(initializer)
+
 	if config.multiSelect then
 		ConfigureMultiSelectText(initializer)
 	end
@@ -621,6 +646,7 @@ function ArcaneWizardLibrary.Settings:AddCheckboxDropdownCombo(category, layout,
 	if config.multiSelect then
 		ConfigureMultiSelectText(initializer)
 	end
+
 	ApplyInitializerConfig(initializer, config)
 
 	if config.checkboxOnClick then
@@ -647,7 +673,10 @@ end
 --- @return function isExpandedPredicate A function that returns the current expanded state (boolean).
 function ArcaneWizardLibrary.Settings:AddExpandableHeader(layout, name, getStatusText)
 	local canvas = canvasByLayout[layout]
-	assert(canvas, Errors:Format(nil, "AddExpandableHeader", "The layout must be created with ArcaneWizardLibrary.Settings:CreateCategory."))
+	assert(
+		canvas,
+		Errors:Format(nil, "AddExpandableHeader", "The layout must be created with ArcaneWizardLibrary.Settings:CreateCategory.")
+	)
 
 	local initializer = CreateFromMixins(SettingsExpandableSectionInitializer)
 	local data = {name = name, expanded = false, canvas = canvas}
@@ -669,6 +698,7 @@ function ArcaneWizardLibrary.Settings:AddExpandableHeader(layout, name, getStatu
 
 		function initializer:RefreshStatusText()
 			local frame = self.frame
+
 			if frame and frame:GetElementData() == self then
 				frame.Button.Text:SetText(self:GetName())
 			end

@@ -39,6 +39,7 @@ end
 --- @return string|nil characterRealmKey "CharacterName#RealmName", or nil if either name is unavailable.
 function ArcaneWizardLibrary.Utils:GetCharacterRealmKey()
 	local characterName, realmName = self:GetCharacterAndRealm()
+
 	if not characterName or characterName == "" or not realmName or realmName == "" then
 		return nil
 	end
@@ -51,6 +52,7 @@ end
 --- @return string|nil characterGUID The GUID, or nil if unavailable.
 function ArcaneWizardLibrary.Utils:GetCharacterGUID()
 	local guid = UnitGUID("player")
+
 	if not guid or guid == "" then
 		return nil
 	end

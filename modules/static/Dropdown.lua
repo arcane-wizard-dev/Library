@@ -43,7 +43,10 @@ local function ValidateDropdownOptions(options, values, context)
 				option.atlas == nil or type(option.atlas) == "string",
 				owner, "CreateDropdown", "The 'atlas' value of ", path, " option ", index, " must be a string or nil."
 			)
-			Errors:Assert(not (option.icon and option.atlas), owner, "CreateDropdown", path, " option ", index, " cannot define both 'icon' and 'atlas'.")
+			Errors:Assert(
+				not (option.icon and option.atlas),
+				owner, "CreateDropdown", path, " option ", index, " cannot define both 'icon' and 'atlas'."
+			)
 
 			if option.textColor then
 				Errors:Assert(
@@ -61,7 +64,10 @@ local function ValidateDropdownOptions(options, values, context)
 			end
 
 			if option.children then
-				Errors:Assert(option.value == nil, owner, "CreateDropdown", path, " option ", index, " cannot define both 'value' and 'children'.")
+				Errors:Assert(
+					option.value == nil,
+					owner, "CreateDropdown", path, " option ", index, " cannot define both 'value' and 'children'."
+				)
 				ValidateDropdownOptions(option.children, values, {path = path .. " option " .. index .. " children", owner = owner})
 			else
 				Errors:Assert(
@@ -79,6 +85,7 @@ local function FindDropdownOption(options, value)
 	for _, option in ipairs(options) do
 		if option.children then
 			local childOption = FindDropdownOption(option.children, value)
+
 			if childOption then
 				return childOption
 			end
@@ -198,11 +205,17 @@ function ArcaneWizardLibrary.Controls:CreateDropdown(config)
 	---
 	--- @param value string|number|boolean|nil An option value, or nil to clear it.
 	function dropdown:SetValue(value)
-		Errors:Assert(value == nil or IsDropdownValue(value), self, "Dropdown:SetValue", "The selected value is invalid.")
+		Errors:Assert(
+			value == nil or IsDropdownValue(value),
+			self, "Dropdown:SetValue", "The selected value is invalid."
+		)
 
 		local canReuseOptions = type(self.optionsSource) == "table" or self.value == value
 		local options = value ~= nil and ResolveOptions(self) or nil
-		Errors:Assert(value == nil or FindDropdownOption(options, value), self, "Dropdown:SetValue", "The selected value must match an option.")
+		Errors:Assert(
+			value == nil or FindDropdownOption(options, value),
+			self, "Dropdown:SetValue", "The selected value must match an option."
+		)
 
 		self.value = value
 		self.pendingOptions = canReuseOptions and options or nil

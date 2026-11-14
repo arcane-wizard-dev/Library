@@ -35,11 +35,6 @@ local function SyncOptions(target, defaults, reservedKey)
 	end
 end
 
---- Creates or returns the cached addon context.
----
---- @param addonName string The addon name.
----
---- @return ArcaneWizardLibraryAddon context The addon context.
 local function CreateAddonContext(addonName)
 	if addonContexts[addonName] then
 		return addonContexts[addonName]
@@ -58,9 +53,9 @@ local function CreateAddonContext(addonName)
 	return context
 end
 
---------------------------
+-------------------------
 --- Addon Context API ---
---------------------------
+-------------------------
 
 --- Returns the addon media path or a file path below it.
 ---
@@ -210,7 +205,10 @@ end
 function AddonContextMixin:OpenSettingsOnLoading()
 	local options = GetOptions(self)
 	local profileKey = options.database.profileKeys[options.characterGUID]
-	if not profileKey["open-settings"] then return false end
+
+	if not profileKey["open-settings"] then
+		return false
+	end
 
 	local opened = nil
 
@@ -220,7 +218,9 @@ function AddonContextMixin:OpenSettingsOnLoading()
 		opened = self:OpenCategory()
 	end
 
-	if not opened then return false end
+	if not opened then
+		return false
+	end
 
 	profileKey["open-settings"] = false
 
@@ -259,11 +259,16 @@ end
 ---
 --- @return boolean opened False during combat or after initialization was aborted.
 function AddonContextMixin:OpenCategory()
-	if self.initializationAborted then return false end
+	if self.initializationAborted then
+		return false
+	end
 
 	local categoryId = self.mainCategoryId
 
-	assert(categoryId, Errors:Format(self.name, "OpenCategory", "No options category ID has been defined. The options menu cannot be opened."))
+	assert(
+		categoryId,
+		Errors:Format(self.name, "OpenCategory", "No options category ID has been defined. The options menu cannot be opened.")
+	)
 
 	if not InCombatLockdown() then
 		Settings.OpenToCategory(categoryId)
@@ -318,7 +323,10 @@ end
 ---
 --- @return ArcaneWizardLibraryAddon context The addon context.
 function ArcaneWizardLibrary:NewAddon(addonName)
-	assert(type(addonName) == "string" and addonName ~= "", Errors:Format(addonName, "NewAddon", "No addon name has been defined."))
+	assert(
+		type(addonName) == "string" and addonName ~= "",
+		Errors:Format(addonName, "NewAddon", "No addon name has been defined.")
+	)
 
 	return CreateAddonContext(addonName)
 end

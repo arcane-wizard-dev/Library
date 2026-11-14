@@ -48,7 +48,10 @@ function ArcaneWizardLibrary.Controls:CreateInput(config)
 		Errors:Format(config, "CreateInput", "The 'width' value must be at least " .. InputConfig.minimumWidth .. ".")
 	)
 	assert(type(config.text) == "string", Errors:Format(config, "CreateInput", "The 'text' value must be a string."))
-	assert(type(config.placeholder) == "string", Errors:Format(config, "CreateInput", "The 'placeholder' value must be a string."))
+	assert(
+		type(config.placeholder) == "string",
+		Errors:Format(config, "CreateInput", "The 'placeholder' value must be a string.")
+	)
 	assert(
 		config.maxLetters == nil
 		or type(config.maxLetters) == "number"

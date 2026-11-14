@@ -89,7 +89,10 @@ end
 --- @return ArcaneWizardLibraryTable frame The table body; rows remain addon-owned.
 function ArcaneWizardLibrary.Tables:CreateTable(config)
 	assert(type(config) == "table", Errors:Format(config, "CreateTable", "The 'config' value must be a table."))
-	assert(type(config.columns) == "table" and #config.columns > 0, Errors:Format(config, "CreateTable", "At least one column is required."))
+	assert(
+		type(config.columns) == "table" and #config.columns > 0,
+		Errors:Format(config, "CreateTable", "At least one column is required.")
+	)
 	assert(
 		config.tableMenu == nil or type(config.tableMenu) == "function",
 		Errors:Format(config, "CreateTable", "The 'tableMenu' value must be a function or nil.")
@@ -104,7 +107,10 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 	)
 
 	for _, column in ipairs(config.columns) do
-		assert(type(column) == "table" and type(column.text) == "string", Errors:Format(config, "CreateTable", "Each column requires a text label."))
+		assert(
+			type(column) == "table" and type(column.text) == "string",
+			Errors:Format(config, "CreateTable", "Each column requires a text label.")
+		)
 		assert(
 			column.width == nil or type(column.width) == "number" and column.width > TableConfig.cellPadding * 2,
 			Errors:Format(config, "CreateTable", "A fixed column width must exceed the cell padding.")
@@ -199,6 +205,7 @@ function ArcaneWizardLibrary.Tables:CreateTable(config)
 		end
 
 		local layout = self.columnLayouts[index]
+
 		return layout.x, layout.width, layout.align
 	end
 

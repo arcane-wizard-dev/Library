@@ -43,13 +43,19 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 		type(config.height) == "number" and config.height >= ScrollFrameConfig.minimumHeight,
 		Errors:Format(config, "CreateScrollFrame", "The 'height' value is too small.")
 	)
-	assert(type(config.showBorder) == "boolean", Errors:Format(config, "CreateScrollFrame", "The 'showBorder' value must be a boolean."))
+	assert(
+		type(config.showBorder) == "boolean",
+		Errors:Format(config, "CreateScrollFrame", "The 'showBorder' value must be a boolean.")
+	)
 	assert(
 		type(config.backgroundAlpha) == "number" and config.backgroundAlpha >= 0 and config.backgroundAlpha <= 1,
 		Errors:Format(config, "CreateScrollFrame", "The 'backgroundAlpha' value must be between 0 and 1.")
 	)
 	local insets = config.contentInsets or ScrollFrameConfig.contentInsets
-	assert(type(insets) == "table", Errors:Format(config, "CreateScrollFrame", "The 'contentInsets' value must be a table."))
+	assert(
+		type(insets) == "table",
+		Errors:Format(config, "CreateScrollFrame", "The 'contentInsets' value must be a table.")
+	)
 
 	for _, side in ipairs({"left", "right", "top", "bottom"}) do
 		assert(
@@ -116,7 +122,10 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param step number Positive distance in pixels.
 	function frame:SetScrollStep(step)
-		Errors:Assert(type(step) == "number" and step > 0, self, "ScrollFrame:SetScrollStep", "The scroll step must be a positive number.")
+		Errors:Assert(
+			type(step) == "number" and step > 0,
+			self, "ScrollFrame:SetScrollStep", "The scroll step must be a positive number."
+		)
 		self.scrollStep = step
 		self.scrollFrame:SetPanExtent(step)
 		UpdateScrollRange(self)
@@ -126,7 +135,10 @@ function ArcaneWizardLibrary.ScrollFrames:CreateScrollFrame(config)
 	---
 	--- @param value number Offset in pixels.
 	function frame:SetVerticalScroll(value)
-		Errors:Assert(type(value) == "number", self, "ScrollFrame:SetVerticalScroll", "The scroll position must be a number.")
+		Errors:Assert(
+			type(value) == "number",
+			self, "ScrollFrame:SetVerticalScroll", "The scroll position must be a number."
+		)
 		self.scrollFrame:SetVerticalScroll(math.max(0, math.min(value, self.scrollFrame:GetVerticalScrollRange())))
 	end
 

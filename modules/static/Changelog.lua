@@ -143,7 +143,10 @@ local function FinishChangelogLayout(frame)
 end
 
 local function ValidateChangelog(versions, addonName)
-	assert(type(versions) == "table" and #versions > 0, Errors:Format(addonName, "OpenChangelog", "The version list must be a non-empty table."))
+	assert(
+		type(versions) == "table" and #versions > 0,
+		Errors:Format(addonName, "OpenChangelog", "The version list must be a non-empty table.")
+	)
 	assert(
 		versions.notices == nil or type(versions.notices) == "table",
 		Errors:Format(addonName, "OpenChangelog", "The 'notices' value must be a table or nil.")
@@ -159,7 +162,10 @@ local function ValidateChangelog(versions, addonName)
 	for versionIndex, versionData in ipairs(versions) do
 		local versionLabel = "Version " .. versionIndex
 
-		assert(type(versionData) == "table", Errors:Format(addonName, "OpenChangelog", versionLabel .. " must be a table."))
+		assert(
+			type(versionData) == "table",
+			Errors:Format(addonName, "OpenChangelog", versionLabel .. " must be a table.")
+		)
 		assert(
 			type(versionData.version) == "string" and versionData.version ~= "",
 			Errors:Format(addonName, "OpenChangelog", versionLabel .. " must define a non-empty version string.")
@@ -176,7 +182,11 @@ local function ValidateChangelog(versions, addonName)
 		for entryIndex, entry in ipairs(versionData.entries) do
 			assert(
 				type(entry) == "string" and entry ~= "",
-				Errors:Format(addonName, "OpenChangelog", "Entry " .. entryIndex .. " of " .. versionLabel .. " must be a non-empty string.")
+				Errors:Format(
+					addonName,
+					"OpenChangelog",
+					"Entry " .. entryIndex .. " of " .. versionLabel .. " must be a non-empty string."
+				)
 			)
 		end
 	end
@@ -210,7 +220,10 @@ local function CreateChangelogWindow(addonName)
 		end
 	})
 
-	closeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight())
+	closeButton:SetPoint(
+		"BOTTOMRIGHT", frame, "BOTTOMRIGHT",
+		-insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight()
+	)
 
 	local scrollConfig = ChangelogConfig.scrollFrame
 	local contentWidth = math.max(frame:GetWidth() - insets.left - insets.right, scrollConfig.minimumWidth)
