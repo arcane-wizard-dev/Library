@@ -19,7 +19,7 @@ WOW_PROJECT_CAMELOT = nil
 ---@field initializationAborted boolean|nil
 ---@field GetMediaPath fun(self: ArcaneWizardLibraryAddon, fileName: string|nil): string Returns the addon media path or a media file path below it.
 ---@field PrintDebug fun(self: ArcaneWizardLibraryAddon, msg: any, ...: any) Prints a debug message with the addon name and optional format values.
----@field PrintSlashHelp fun(self: ArcaneWizardLibraryAddon, alias: string, subcommands?: string[], messageFormat?: string) Prints the supported slash commands or a hint to use help.
+---@field PrintSlashHelp fun(self: ArcaneWizardLibraryAddon, alias: string, subcommands?: string[]) Prints the supported slash commands or a hint to use help.
 ---@field SetMainCategoryId fun(self: ArcaneWizardLibraryAddon, categoryId: number) Stores the Blizzard settings category ID for this addon.
 ---@field OpenCategory fun(self: ArcaneWizardLibraryAddon): boolean Opens the stored Blizzard settings category when not blocked by combat lockdown.
 ---@field InitializeOptions fun(self: ArcaneWizardLibraryAddon, config: table): table|nil Initializes and binds this addon's GUID-based option profiles.
