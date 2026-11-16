@@ -18,7 +18,7 @@ Arcane Wizard: Library provides reusable components that simplify addon developm
 
 #### Addon Context
 
-The library provides shared addon registration, access to settings, minimap and Addon Compartment integration, and debug output.
+The library provides shared addon registration, access to settings, minimap and Addon Compartment integration, slash command help, and debug output.
 
 #### Frames, Tables & Controls
 

@@ -4,6 +4,11 @@ if GetLocale() ~= "ruRU" then return end
 
 local L = LIB.Localization
 
+-- Slash Commands
+
+L["chat.slash.help"] = "Доступные команды: %s"
+L["chat.slash.unknown"] = "Неизвестная команда. Список доступных команд: %s."
+
 -- Dialog
 
 L["dialog.link.text"] = "Чтобы скопировать ссылку, нажмите CTRL + C."

@@ -2,9 +2,5 @@
 ### [@project-version@](https://github.com/arcane-wizard-dev/Library/tree/@project-version@) (@build-date@)
 [Full Changelog](@full-changelog@) - [Previous Releases](https://github.com/arcane-wizard-dev/Library/releases)
 
-- Changed: Error messages for frequently used controls are now built only when a check fails
-- Changed: Reduced repeated option loading and validation when refreshing dropdowns
-- Changed: Reduced repeated options-page refreshes when changing or resetting settings
-- Removed: Support for Blizzard's shared options layout
-- Fixed: Dropdowns with a checkbox now display their default selection immediately after resetting settings
-- Minor code adjustments
+- Added: Shared chat output for slash command help and unknown command hints
+- Raised the revision of Arcane Wizard: Library to 6

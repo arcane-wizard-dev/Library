@@ -12,6 +12,11 @@ LIB.Localization = setmetatable({}, {
 
 local L = LIB.Localization
 
+-- Slash Commands
+
+L["chat.slash.help"] = "Available commands: %s"
+L["chat.slash.unknown"] = "Unknown command. Type %s for a list of commands."
+
 -- Dialog
 
 L["dialog.link.text"] = "To copy the link, press CTRL + C."

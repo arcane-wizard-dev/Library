@@ -4,6 +4,11 @@ if GetLocale() ~= "deDE" then return end
 
 local L = LIB.Localization
 
+-- Slash Commands
+
+L["chat.slash.help"] = "Verfügbare Befehle: %s"
+L["chat.slash.unknown"] = "Unbekannter Befehl. %s zeigt die verfügbaren Befehle an."
+
 -- Dialog
 
 L["dialog.link.text"] = "Um den Link zu kopieren, drücke STRG + C."

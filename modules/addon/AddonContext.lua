@@ -1,6 +1,7 @@
 local _, LIB = ...
 
 local Errors = LIB.Internal.Errors
+local L = LIB.Localization
 
 local AddonContextMixin = {}
 
@@ -90,6 +91,31 @@ function AddonContextMixin:PrintDebug(msg, ...)
 	local prefix = ORANGE_FONT_COLOR:WrapTextInColorCode(self.name .. " (Debug): ")
 
 	DEFAULT_CHAT_FRAME:AddMessage(prefix .. tostring(msg))
+end
+
+--- Prints the available slash commands or a hint to use the help command.
+---
+--- @param alias string The addon's primary slash command, including the leading slash.
+--- @param subcommands string[]|nil Additional supported commands, or nil to print only the help hint.
+--- @param messageFormat string|nil Optional localized override with one string placeholder.
+function AddonContextMixin:PrintSlashHelp(alias, subcommands, messageFormat)
+	local help = alias .. " help"
+	local message = nil
+
+	if subcommands then
+		local commands = {alias, help}
+
+		for _, command in ipairs(subcommands) do
+			commands[#commands + 1] = alias .. " " .. command
+		end
+
+		message = (messageFormat or L["chat.slash.help"]):format(table.concat(commands, ", "))
+	else
+		message = (messageFormat or L["chat.slash.unknown"]):format(help)
+	end
+
+	local prefix = NORMAL_FONT_COLOR:WrapTextInColorCode(self.name .. ": ")
+	DEFAULT_CHAT_FRAME:AddMessage(prefix .. message)
 end
 
 --- Initializes GUID-based options after SavedVariables have loaded.
