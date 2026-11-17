@@ -1,3 +1,7 @@
+**v1.56 (2026-11-17)**
+- Added: Shared chat output for slash command help and unknown command hints
+- Raised the revision of Arcane Wizard: Library to 6
+
 **v1.55 (2026-11-14)**
 - Changed: Error messages for frequently used controls are now built only when a check fails
 - Changed: Reduced repeated option loading and validation when refreshing dropdowns
