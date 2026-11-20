@@ -1,3 +1,7 @@
+**v1.57 (2026-11-20)**
+- Changed: Addons can now report which requirement is missing when they cannot start
+- Raised the revision of Arcane Wizard: Library to 7
+
 **v1.56 (2026-11-17)**
 - Added: Shared chat output for slash command help and unknown command hints
 - Raised the revision of Arcane Wizard: Library to 6
