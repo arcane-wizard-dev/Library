@@ -27,7 +27,7 @@ WOW_PROJECT_CAMELOT = nil
 ---@field OpenSettingsOnLoading fun(self: ArcaneWizardLibraryAddon): boolean Opens settings when requested by a profile change.
 ---@field ToggleProfileMode fun(self: ArcaneWizardLibraryAddon) Switches the profile selection and requests settings after reload.
 ---@field ResetAllCharacterProfiles fun(self: ArcaneWizardLibraryAddon) Resets character profiles while preserving account settings.
----@field AbortInitialization fun(self: ArcaneWizardLibraryAddon, frame: Frame) Stops startup when the player identity is unavailable.
+---@field AbortInitialization fun(self: ArcaneWizardLibraryAddon, frame: Frame, reason?: string) Stops startup and reports the reason.
 ---@field RegisterMinimapButton fun(self: ArcaneWizardLibraryAddon, config: table): table Registers a LibDataBroker minimap button for this addon.
 ---@field CreateCompartmentHandlers fun(self: ArcaneWizardLibraryAddon, config: table): table Creates AddonCompartment handler functions for this addon.
 

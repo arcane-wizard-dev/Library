@@ -310,7 +310,8 @@ end
 --- Does not unload Lua files or disable the addon.
 ---
 --- @param frame Frame The addon's startup event frame.
-function AddonContextMixin:AbortInitialization(frame)
+--- @param reason string|nil The reason to report when a specific startup requirement is missing.
+function AddonContextMixin:AbortInitialization(frame, reason)
 	self.initializationAborted = true
 	frame:UnregisterAllEvents()
 	frame:SetScript("OnEvent", nil)
@@ -318,7 +319,7 @@ function AddonContextMixin:AbortInitialization(frame)
 	geterrorhandler()(Errors:Format(
 		self.name,
 		"AbortInitialization",
-		"Startup aborted because the player GUID, name or realm is unavailable."
+		reason or "Startup aborted because the player GUID, name or realm is unavailable."
 	))
 end
 
