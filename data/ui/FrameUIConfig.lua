@@ -19,7 +19,12 @@ LIB.UIConfig.Frame = {
 	},
 	portrait = {minimumWidth = 192, minimumHeight = 128},
 	inset = {
-		template = "InsetFrameTemplate4",
+		borderTemplates = {
+			standard = "InsetFrameTemplate4",
+			outline = "BackdropTemplate"
+		},
+		outlineTexture = "Interface\\Buttons\\WHITE8X8",
+		outlineGray = 0.25,
 		backgroundAtlases = {
 			textured = "character-panel-background",
 			shaded = "auctionhouse-background-index",

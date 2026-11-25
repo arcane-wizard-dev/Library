@@ -7,16 +7,28 @@ local L = LIB.Localization
 -- Slash Commands
 
 L["chat.slash.help"] = "Доступные команды: %s"
-L["chat.slash.unknown"] = "Неизвестная команда. Список доступных команд: %s."
+L["chat.slash.unknown"] = "Неизвестная команда. Введите %s, чтобы открыть справку."
 
 -- Dialog
 
 L["dialog.link.text"] = "Чтобы скопировать ссылку, нажмите CTRL + C."
 
+-- Help
+
+L["help.button"] = "Справка"
+L["settings.help.name"] = "Дополнительная информация"
+L["help.title"] = "%s – Справка"
+L["help.intro"] = "Здесь собраны подсказки по использованию аддона %s и описания доступных команд чата. Щелчок по заголовку разворачивает или сворачивает раздел."
+L["help.commands"] = "Команды чата"
+L["help.faq"] = "Частые вопросы"
+L["help.settings"] = "Открывает настройки аддона."
+L["help.changelog"] = "Открывает журнал изменений."
+L["help.open"] = "Открывает это окно справки."
+
 -- Changelog
 
 L["changelog.window.title"] = "Журнал изменений - %s"
-L["changelog.window.close"] = "Закрыть"
+L["window.close"] = "Закрыть"
 L["settings.changelog.name"] = "Примечания к версии"
 L["settings.changelog.button"] = "Журнал изменений"
 L["settings.changelog.tooltip"] = "Открывает окно журнала изменений."
@@ -59,6 +71,6 @@ L["settings.about.button-curseforge.button"] = "CurseForge"
 L["settings.about.button-wago.name"] = "Страница проекта Wago"
 L["settings.about.button-wago.tooltip"] = "Открывает всплывающее окно со ссылкой на Wago."
 L["settings.about.button-wago.button"] = "Wago"
-L["settings.about.button-github.name"] = "Обратная связь и помощь"
+L["settings.about.button-github.name"] = "Отзывы и сообщения об ошибках"
 L["settings.about.button-github.tooltip"] = "Открывает всплывающее окно со ссылкой на GitHub."
 L["settings.about.button-github.button"] = "GitHub"

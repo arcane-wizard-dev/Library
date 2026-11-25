@@ -7,16 +7,28 @@ local L = LIB.Localization
 -- Slash Commands
 
 L["chat.slash.help"] = "Verfügbare Befehle: %s"
-L["chat.slash.unknown"] = "Unbekannter Befehl. %s zeigt die verfügbaren Befehle an."
+L["chat.slash.unknown"] = "Unbekannter Befehl. %s öffnet die Hilfe."
 
 -- Dialog
 
 L["dialog.link.text"] = "Um den Link zu kopieren, drücke STRG + C."
 
+-- Help
+
+L["help.button"] = "Hilfe"
+L["settings.help.name"] = "Weitere Informationen"
+L["help.title"] = "%s – Hilfe"
+L["help.intro"] = "Hier stehen Hinweise zur Bedienung von %s und kurze Erklärungen zu den verfügbaren Chatbefehlen. Ein Klick auf eine Überschrift klappt den Abschnitt auf oder zu."
+L["help.commands"] = "Chatbefehle"
+L["help.faq"] = "Häufige Fragen"
+L["help.settings"] = "Öffnet die Addon-Einstellungen."
+L["help.changelog"] = "Öffnet das Changelog."
+L["help.open"] = "Öffnet das Hilfefenster."
+
 -- Changelog
 
 L["changelog.window.title"] = "%s - Changelog"
-L["changelog.window.close"] = "Schließen"
+L["window.close"] = "Schließen"
 L["settings.changelog.name"] = "Versionshinweise"
 L["settings.changelog.button"] = "Changelog"
 L["settings.changelog.tooltip"] = "Öffnet das Changelog-Fenster."
@@ -59,6 +71,6 @@ L["settings.about.button-curseforge.button"] = "CurseForge"
 L["settings.about.button-wago.name"] = "Wago-Projektseite"
 L["settings.about.button-wago.tooltip"] = "Öffnet ein Popup-Fenster mit einem Link zu Wago."
 L["settings.about.button-wago.button"] = "Wago"
-L["settings.about.button-github.name"] = "Feedback & Hilfe"
+L["settings.about.button-github.name"] = "Feedback & Fehlermeldungen"
 L["settings.about.button-github.tooltip"] = "Öffnet ein Popup-Fenster mit einem Link zu GitHub."
 L["settings.about.button-github.button"] = "GitHub"

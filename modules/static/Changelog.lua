@@ -2,9 +2,8 @@ local _, LIB = ...
 
 local Errors = LIB.Internal.Errors
 
-local AWL = ArcaneWizardLibrary
-local L = LIB.Localization
 local ChangelogConfig = LIB.UIConfig.Changelog
+local ContentPadding = LIB.UIConfig.TextWindow.contentPadding
 
 local changelogWindows = {}
 
@@ -44,7 +43,7 @@ end
 
 local function AddChangelogRow(layout, text, marker)
 	local state = layout.state
-	local padding = ChangelogConfig.contentPadding.x
+	local padding = ContentPadding.x
 	local spacing = ChangelogConfig.lineSpacing
 	local isNotice = marker == "!" or marker == ""
 	local textInset = marker ~= nil and ChangelogConfig.bulletWidth + ChangelogConfig.bulletSpacing or 0
@@ -81,10 +80,10 @@ local function AddChangelogRow(layout, text, marker)
 end
 
 local function RenderChangelog(state, versions)
-	local padding = ChangelogConfig.contentPadding
+	local padding = ContentPadding
 	local layout = {
 		state = state,
-		width = math.max(1, state.scrollArea.content:GetWidth() - padding.x * 2),
+		width = math.max(1, state.scrollArea.scrollFrame:GetWidth() - padding.x * 2),
 		offset = padding.y,
 		rowCount = 0
 	}
@@ -129,17 +128,11 @@ end
 
 local function FinishChangelogLayout(frame)
 	frame:SetScript("OnUpdate", nil)
-
 	local state = frame.changelogState
-	local versions = state.pendingVersions
-	state.pendingVersions = nil
 
-	if not versions or not frame:IsShown() then
-		return
+	if frame:IsShown() then
+		RenderChangelog(state, state.versions)
 	end
-
-	RenderChangelog(state, versions)
-	state.scrollArea:ScrollToTop()
 end
 
 local function ValidateChangelog(versions, addonName)
@@ -193,60 +186,10 @@ local function ValidateChangelog(versions, addonName)
 end
 
 local function CreateChangelogWindow(addonName)
-	local windowConfig = ChangelogConfig.window
+	local strings = LIB.SlashHelpLocalization and LIB.SlashHelpLocalization[addonName] or LIB.Localization
+	local title = strings["changelog.window.title"]:format(addonName)
 	---@class (partial) ArcaneWizardLibraryChangelogFrame
-	local frame = AWL.Frames:CreateWindow({
-		addonName = addonName,
-		title = "",
-		style = windowConfig.style,
-		width = windowConfig.width,
-		height = windowConfig.height,
-		backgroundAlpha = windowConfig.backgroundAlpha,
-		showPortrait = false,
-		showCloseButton = true,
-		movable = true,
-		closeOnEscape = true
-	})
-	frame:SetFrameStrata("DIALOG")
-	local insets = ChangelogConfig.insets
-	local buttonInset = ChangelogConfig.buttonInset
-
-	local closeButton = AWL.Controls:CreateButton({
-		parent = frame.content,
-		width = ChangelogConfig.closeButtonWidth,
-		label = L["changelog.window.close"],
-		onClick = function()
-			frame:Hide()
-		end
-	})
-
-	closeButton:SetPoint(
-		"BOTTOMRIGHT", frame, "BOTTOMRIGHT",
-		-insets.right - buttonInset, insets.bottom - buttonInset - closeButton:GetHeight()
-	)
-
-	local scrollConfig = ChangelogConfig.scrollFrame
-	local contentWidth = math.max(frame:GetWidth() - insets.left - insets.right, scrollConfig.minimumWidth)
-	local contentHeight = math.max(frame:GetHeight() - insets.top - insets.bottom, scrollConfig.minimumHeight)
-
-	local scrollArea = AWL.ScrollFrames:CreateScrollFrame({
-		parent = frame.content,
-		width = contentWidth,
-		height = contentHeight,
-		backgroundAlpha = scrollConfig.backgroundAlpha,
-		showBorder = scrollConfig.showBorder,
-		contentInsets = scrollConfig.contentInsets
-	})
-	scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", insets.left, -insets.top)
-	scrollArea:SetPoint("BOTTOMRIGHT", closeButton, "TOPRIGHT", buttonInset, buttonInset)
-	local inset = AWL.Frames:CreateInset({
-		parent = scrollArea,
-		width = contentWidth,
-		height = contentHeight,
-		backgroundStyle = scrollConfig.insetBackgroundStyle,
-		backgroundAlpha = scrollConfig.insetBackgroundAlpha
-	})
-	inset:SetAllPoints(scrollArea)
+	local frame, scrollArea = LIB.Internal.CreateTextWindow(addonName, title, strings["window.close"])
 
 	local state = {
 		frame = frame,
@@ -255,6 +198,11 @@ local function CreateChangelogWindow(addonName)
 	}
 	frame.changelogState = state
 	changelogWindows[addonName] = state
+	scrollArea.scrollFrame:HookScript("OnSizeChanged", function()
+		if state.versions and frame:IsShown() then
+			RenderChangelog(state, state.versions)
+		end
+	end)
 
 	return state
 end
@@ -278,12 +226,11 @@ function ArcaneWizardLibrary.Frames:OpenChangelog(addonName, versions)
 
 	local state = changelogWindows[addonName] or CreateChangelogWindow(addonName)
 	local frame = state.frame
-	frame.titleText:SetText(L["changelog.window.title"]:format(addonName))
+	state.versions = versions
 	frame:Show()
 	RenderChangelog(state, versions)
 	state.scrollArea:ScrollToTop()
 
-	state.pendingVersions = versions
 	frame:SetScript("OnUpdate", FinishChangelogLayout)
 
 	return frame

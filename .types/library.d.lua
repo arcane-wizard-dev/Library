@@ -31,6 +31,17 @@ WOW_PROJECT_CAMELOT = nil
 ---@field RegisterMinimapButton fun(self: ArcaneWizardLibraryAddon, config: table): table Registers a LibDataBroker minimap button for this addon.
 ---@field CreateCompartmentHandlers fun(self: ArcaneWizardLibraryAddon, config: table): table Creates AddonCompartment handler functions for this addon.
 
+-- Slash Commands
+
+---@class ArcaneWizardLibrarySlashCommand
+---@field name string Subcommand entered after the alias.
+---@field description string Localized description shown in the help window.
+
+---@class ArcaneWizardLibraryHelpQuestion
+---@field question string Localized question.
+---@field answer string Localized answer.
+---@field available? boolean Whether to show this question on the current client. Defaults to true.
+
 -- Changelog
 
 ---@class ArcaneWizardLibraryChangelogVersion
@@ -158,7 +169,8 @@ WOW_PROJECT_CAMELOT = nil
 ---@field parent Frame Parent of the inset.
 ---@field width number Initial width in pixels.
 ---@field height number Initial height in pixels.
----@field backgroundStyle? "tiled"|"tiled-dark"|"textured"|"shaded"|"shaded-alt" Defaults to tiled.
+---@field borderStyle? "standard"|"outline" Standard Blizzard border or thin gray outline. Defaults to standard.
+---@field backgroundStyle? "plain"|"tiled"|"tiled-dark"|"textured"|"shaded"|"shaded-alt" Defaults to tiled. Plain uses a solid black fill.
 ---@field backgroundAlpha number Background opacity from 0 to 1.
 
 ---@class ArcaneWizardLibraryWindowConfig
@@ -166,7 +178,7 @@ WOW_PROJECT_CAMELOT = nil
 ---@field title string Text displayed in the title bar.
 ---@field width number Initial frame width.
 ---@field height number Initial frame height.
----@field style? "standard"|"flat"|"solid" Native window appearance; defaults to standard. Solid keeps the standard background without top streaks.
+---@field style? "standard"|"flat"|"solid" Defaults to standard. Solid hides the top streaks. Flat uses the settings panel background.
 ---@field backgroundAlpha number Initial background opacity from 0 to 1.
 ---@field showPortrait boolean Whether to create a portrait frame.
 ---@field showCloseButton boolean Whether to create a close button.
@@ -238,7 +250,7 @@ WOW_PROJECT_CAMELOT = nil
 
 -- ScrollFrames
 
----@class ArcaneWizardLibraryScrollFrame: Frame
+---@class ArcaneWizardLibraryScrollFrame: Frame, BackdropTemplate
 ---@field background Texture
 ---@field scrollFrame ScrollFrame
 ---@field content Frame

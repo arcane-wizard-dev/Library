@@ -1,22 +1,6 @@
 local _, LIB = ...
 
 LIB.UIConfig.Changelog = {
-	window = {
-		style = "solid",
-		width = 520,
-		height = 400,
-		backgroundAlpha = 1
-	},
-	scrollFrame = {
-		minimumWidth = 96,
-		minimumHeight = 72,
-		showBorder = false,
-		backgroundAlpha = 0,
-		insetBackgroundStyle = "tiled",
-		insetBackgroundAlpha = 1,
-		contentInsets = {left = 10, right = 25, top = 15, bottom = 15}
-	},
-	contentPadding = {x = 5, y = 0},
 	lineSpacing = 2,
 	bulletWidth = 8,
 	bulletSpacing = 4,
@@ -26,8 +10,5 @@ LIB.UIConfig.Changelog = {
 		size = 16,
 		offsetX = -6,
 		offsetY = 2
-	},
-	insets = {left = 13, right = 9, top = 35, bottom = 37},
-	buttonInset = 5,
-	closeButtonWidth = 100
+	}
 }

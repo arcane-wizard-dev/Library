@@ -9,7 +9,9 @@
 	<Script file="static\ScrollFrames.lua" />
 	<Script file="static\Frames.lua" />
 	<Script file="static\Tables.lua" />
+	<Script file="static\TextWindow.lua" />
 	<Script file="static\Changelog.lua" />
+	<Script file="static\SlashHelp.lua" />
 
 	<Script file="static\Settings.lua" />
 	<Include file="static\SettingsPanel.xml" />

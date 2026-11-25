@@ -9,5 +9,6 @@
 	<Script file="ui/ControlUIConfig.lua" />
 	<Script file="ui/ScrollFrameUIConfig.lua" />
 	<Script file="ui/TableUIConfig.lua" />
+	<Script file="ui/TextWindowUIConfig.lua" />
 	<Script file="ui/ChangelogUIConfig.lua" />
 </Ui>

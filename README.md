@@ -26,7 +26,7 @@ Reusable windows, scrollable tables, tabs, and input controls match Blizzard's n
 
 #### Prebuilt Windows & Dialogs
 
-The library provides ready-to-use changelog windows, link popups, and confirmation dialogs.
+The library provides ready-to-use help and changelog windows, link popups, and confirmation dialogs.
 
 #### Utilities
 

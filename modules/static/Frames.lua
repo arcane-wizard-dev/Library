@@ -109,6 +109,21 @@ local function CreateBaseFrame(config, template)
 	return frame
 end
 
+local function CreateInsetFrame(parent, template)
+	local inset = CreateFrame("Frame", nil, parent, template)
+	inset.background = inset:CreateTexture(nil, "BACKGROUND")
+	inset.background:SetAllPoints(inset)
+
+	return inset
+end
+
+local function UpdateInsetOutline(inset)
+	local data = FrameConfig.inset
+	local pixel = PixelUtil.GetPixelToUIUnitFactor() / inset:GetEffectiveScale()
+	inset:SetBackdrop({edgeFile = data.outlineTexture, edgeSize = pixel})
+	inset:SetBackdropBorderColor(data.outlineGray, data.outlineGray, data.outlineGray, 1)
+end
+
 local function CreateContentFrame(frame, insets)
 	frame.content = CreateFrame("Frame", nil, frame)
 	frame.content:SetPoint("TOPLEFT", insets.left, -insets.top)
@@ -420,27 +435,36 @@ function ArcaneWizardLibrary.Frames:CreateInset(config)
 		Errors:Format(config, "CreateInset", "The 'backgroundAlpha' value must be between 0 and 1.")
 	)
 	local data = FrameConfig.inset
+	local template = data.borderTemplates[config.borderStyle or "standard"]
+	Errors:Assert(template, config, "CreateInset", "The 'borderStyle' value must be 'standard' or 'outline'.")
 	local style = config.backgroundStyle or "tiled"
 
 	local atlas = data.backgroundAtlases[style]
 	local texture = data.backgroundTextures[style]
 	assert(
-		texture ~= nil or atlas ~= nil,
+		style == "plain" or texture ~= nil or atlas ~= nil,
 		Errors:Format(
 			config,
 			"CreateInset",
-			"The 'backgroundStyle' value must be 'tiled', 'tiled-dark', 'textured', 'shaded', or 'shaded-alt'."
+			"The 'backgroundStyle' value must be 'plain', 'tiled', 'tiled-dark', 'textured', 'shaded', or 'shaded-alt'."
 		)
 	)
 
-	local frame = CreateFrame("Frame", nil, config.parent, data.template)
+	local frame = CreateInsetFrame(config.parent, template)
 	Errors:SetOwner(frame, config)
 	frame:SetFrameLevel(config.parent:GetFrameLevel())
 	frame:SetSize(config.width, config.height)
-	frame.background = frame:CreateTexture(nil, "BACKGROUND")
-	frame.background:SetAllPoints(frame)
 
-	if atlas and C_Texture.GetAtlasInfo(atlas) then
+	if config.borderStyle == "outline" then
+		UpdateInsetOutline(frame)
+		frame:RegisterEvent("UI_SCALE_CHANGED")
+		frame:RegisterEvent("DISPLAY_SIZE_CHANGED")
+		frame:HookScript("OnEvent", UpdateInsetOutline)
+	end
+
+	if style == "plain" then
+		frame.background:SetColorTexture(0, 0, 0, 1)
+	elseif atlas and C_Texture.GetAtlasInfo(atlas) then
 		frame.background:SetAtlas(atlas)
 	else
 		if style == "textured" then
@@ -477,7 +501,8 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 		Errors:Format(config, "CreateWindow", "The 'style' value must be 'standard', 'flat', or 'solid'.")
 	)
 
-	local template = style == "flat" and "DefaultPanelFlatTemplate" or "DefaultPanelTemplate"
+	local flatPanel = style == "flat"
+	local template = flatPanel and "DefaultPanelFlatTemplate" or "DefaultPanelTemplate"
 	local frame = CreateBaseFrame(config, config.showPortrait and "PortraitFrameTemplate" or template)
 
 	frame.titleBar = frame.TitleContainer
@@ -486,14 +511,12 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 
 	frame.background = frame.Bg
 
-	if config.showPortrait and style == "flat" then
+	if config.showPortrait and flatPanel then
 		frame.Bg:Hide()
 		frame.background = CreateFrame("Frame", nil, frame, "FlatPanelBackgroundTemplate")
 		frame.background:SetFrameLevel(0)
 		frame.background:SetAllPoints(frame.Bg)
 	end
-
-	frame.background:SetAlpha(config.backgroundAlpha)
 
 	if frame.TopTileStreaks then
 		frame.TopTileStreaks:SetShown(style == "standard")
@@ -507,6 +530,7 @@ function ArcaneWizardLibrary.Frames:CreateWindow(config)
 
 	ConfigureCloseButton(frame, config)
 	CreateContentFrame(frame, FrameConfig.window.contentInsets)
+	frame.background:SetAlpha(config.backgroundAlpha)
 
 	if config.movable then
 		RegisterDragHandle(frame, frame.titleBar)

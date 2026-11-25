@@ -771,7 +771,8 @@ end
 --- @param layout table The layout object to append the initializers to.
 --- @param addonName string Addon name used to read metadata.
 --- @param changelog? ArcaneWizardLibraryChangelog Optional changelog versions and notices displayed through an additional button.
-function ArcaneWizardLibrary.Settings:AddAboutSection(layout, addonName, changelog)
+--- @param openHelp? fun() Opens the addon's help window.
+function ArcaneWizardLibrary.Settings:AddAboutSection(layout, addonName, changelog, openHelp)
 	assert(layout ~= nil, Errors:Format(addonName, "AddAboutSection", "A settings layout is required."))
 	assert(
 		type(addonName) == "string" and addonName ~= "",
@@ -835,6 +836,16 @@ function ArcaneWizardLibrary.Settings:AddAboutSection(layout, addonName, changel
 			onClick    = function()
 				ArcaneWizardLibrary.Dialogs:ShowLinkDialog(config.githubLink)
 			end
+		})
+	end
+
+	if openHelp then
+		local strings = LIB.SlashHelpLocalization and LIB.SlashHelpLocalization[addonName] or L
+		self:AddButton(layout, {
+			name       = strings["settings.help.name"],
+			buttonText = strings["help.button"],
+			onClick    = openHelp,
+			tooltip    = strings["help.open"]
 		})
 	end
 
